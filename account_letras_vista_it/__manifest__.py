@@ -3,7 +3,7 @@
 	'name': 'Diferencia de Cambio Asiento IT',
 	'category': 'account',
 	'author': 'ITGRUPO-COMPATIBLE-BO',
-	'depends': ['import_base_it','account_letra_it'],
+	'depends': ['import_base_it','account_letras_it'],
 	'version': '1.0',
 	'description':"""
 	Creacion de Asiento de Diferencia de Cambio
