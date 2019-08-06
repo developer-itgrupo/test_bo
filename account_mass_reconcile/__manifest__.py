@@ -6,7 +6,7 @@
 {
     "name": "Account Mass Reconcile",
     "version": "10.0.1.0.0",
-    "depends": ["account"],
+    "depends": ["account","import_base_it"],
     "author": "Akretion,Camptocamp,Odoo Community Association (OCA)",
     "website": "http://www.akretion.com/",
     "category": "Finance",
