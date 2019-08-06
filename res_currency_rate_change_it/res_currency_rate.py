@@ -97,27 +97,30 @@ class account_invoice(models.Model):
 
 				if len(tipo_cambio)>0:
 					tipo_cambio = tipo_cambio[0]
+
+					vactual = 0
+					ractual = 0
+
+					#if self.check_currency_rate:
+					if True:
+						vactual = tipo_cambio.type_sale
+						ractual = tipo_cambio.rate
+
+						tipo_cambio.type_sale = self.currency_rate_auto
+						print(self.currency_rate_auto)
+						tipo_cambio.rate = 1.0 / self.currency_rate_auto
+
+					else:
+						self.currency_rate_auto = tipo_cambio.type_sale
+
 				else:
 					#raise UserError( 'Error!\nNo existe el tipo de cambio para la fecha: '+ str(fecha) )
 					pass
 				
-				vactual = 0
-				ractual = 0
-
-				#if self.check_currency_rate:
-				if True:
-					vactual = tipo_cambio.type_sale
-					ractual = tipo_cambio.rate
-
-					tipo_cambio.type_sale = self.currency_rate_auto
-					print(self.currency_rate_auto)
-					tipo_cambio.rate = 1.0 / self.currency_rate_auto
-
-				else:
-					self.currency_rate_auto = tipo_cambio.type_sale
 
 				t = super(account_invoice,self).action_move_create()
 				self.refresh()
+				
 				for i in self.move_id.line_ids:
 					i.tc = tipo_cambio.type_sale
 					if i.tax_amount:
