@@ -52,9 +52,11 @@ class account_move(models.Model):
 							flag = False
 
 					if flag:
-						raise UserError( ('NO HAY SECUENCIA GENERADA PARA  LA FECHA CONTABLE INGRESADA,  DEBE IR AL MENU  CONTABILIDAD/CONFIGURACION/CONTABILIDAD/GENERAR SECUENCIAS, ELEGIR EL PERIODO FISCAL, LUEGO EL DIARIO Y A CONTINUACION DARLE CLICK EN EL BOTON MOSTRAR.'))
+						pass
+						#raise UserError( ('NO HAY SECUENCIA GENERADA PARA  LA FECHA CONTABLE INGRESADA,  DEBE IR AL MENU  CONTABILIDAD/CONFIGURACION/CONTABILIDAD/GENERAR SECUENCIAS, ELEGIR EL PERIODO FISCAL, LUEGO EL DIARIO Y A CONTINUACION DARLE CLICK EN EL BOTON MOSTRAR.'))
 				else:
-					raise UserError( ('Falta definir una secuencia de Diario.'))
+					pass
+					#raise UserError( ('Falta definir una secuencia de Diario.'))
 
 
 		t = super(account_move,self).post()
