@@ -192,7 +192,3 @@ CREATE OR REPLACE VIEW public.vst_kardex_fisico_proc_1 AS
           WHERE ir_property.name::text = 'property_stock_valuation_account_id'::text) j ON k.category_id = j.categ_id
      LEFT JOIN account_account aa_cp ON j.account_id = aa_cp.id;
 
-ALTER TABLE public.vst_kardex_fisico_proc_1
-    OWNER TO openpg;
-
-GRANT ALL ON TABLE public.vst_kardex_fisico_proc_1 TO openpg;

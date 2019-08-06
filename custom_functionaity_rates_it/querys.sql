@@ -47,8 +47,6 @@ Create or replace function public.get_lista(
 				LANGUAGE plpgsql VOLATILE
 				COST 100
 				ROWS 1000;
-				ALTER FUNCTION public.get_lista(integer, integer, integer)
-				OWNER TO openpg;
 			
 
 
@@ -63,8 +61,6 @@ create or replace view public.vst_last_fecha as
 				where purchase_order.state = 'purchase' or purchase_order.state = 'done'
 				group by purchase_order_line.product_id,res_currency.symbol;
 
-				alter table public.vst_last_fecha
-				owner to openpg;
 
 
 
@@ -77,8 +73,6 @@ create or replace view public.vst_oc as
 				from purchase_order_line
 				join purchase_order on purchase_order.id = purchase_order_line.order_id;
 
-				alter table public.vst_oc
-				  owner to openpg;
 
 
 create or replace view public.vst_ultimos_precios_compra as 
@@ -90,8 +84,6 @@ create or replace view public.vst_ultimos_precios_compra as
 				join vst_oc on vst_oc.product_id = vst_last_fecha.product_id and vst_oc.date_order = vst_last_fecha.last_fecha
 				order by vst_last_fecha.product_id;
 
-				alter table public.vst_ultimos_precios_compra
-				owner to openpg;
 
 
 				
@@ -118,7 +110,5 @@ END; $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100
   ROWS 1000;
-ALTER FUNCTION public.get_rep_tarifa(integer)
-  OWNER TO openpg;
 
 
