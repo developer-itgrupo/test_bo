@@ -37,7 +37,6 @@
         'security/ir.model.access.csv',
     ],
     'demo': [
-        'demo/sql_export.xml',
     ],
     'installable': True,
     }

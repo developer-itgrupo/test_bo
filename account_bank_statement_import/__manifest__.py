@@ -12,7 +12,6 @@
         'wizard/journal_creation.xml',
     ],
     'demo': [
-        'demo/partner_bank.xml',
     ],
     'installable': True,
     'auto_install': True,

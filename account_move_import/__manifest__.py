@@ -34,7 +34,6 @@
         'wizard/import_move_line_wizard.xml',
     ],
     'demo': [
-        'demo/account_move.xml',
     ],
     'installable': True,
 }
