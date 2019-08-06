@@ -1,0 +1,4 @@
+descripcion;producto;unit of measure;account;cantidad;unit price;taxes;analytic account;
+prueba1;x1;t;601101;2;13.00;IGV-1;1002;
+prueba2;x1;t;601101;2;15.00;IGV-1;1003;
+

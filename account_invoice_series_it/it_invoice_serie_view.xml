@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- session form view -->
+        <record model="ir.ui.view" id="it_invoice_serie_form_view">
+            <field name="name">Series en Facturas de Clientes</field>
+            <field name="model">it.invoice.serie</field>
+            <field name="arch" type="xml">
+                <form string="Series en Facturas de Clientes" version="8.0">
+					<group>
+						<field name="name" string="Serie" required="1" />
+						<field name="type_document_id" required="1" />
+						<field name="sequence_id" required="1" />
+						<field name="description" />
+					</group>
+                </form>
+            </field>
+        </record>
+
+
+		<record id="it_invoice_serie_tree_view" model="ir.ui.view">
+            <field name="name">Series en Facturas de Clientes</field>
+            <field name="model">it.invoice.serie</field>
+            <field name="arch" type="xml">
+                <tree string="Series en Facturas de Clientes">
+					<field name="name" string="Serie"/>
+					<field name="type_document_id" />
+					<field name="sequence_id" />
+                </tree>
+
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="it_invoice_serie_action">
+            <field name="name">Series en Facturas de Clientes</field>
+            <field name="res_model">it.invoice.serie</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="it_payment_voucher" name="Series en Facturas de Cliente"
+                  parent="account.account_account_menu"
+                  action="it_invoice_serie_action"/>
+    </data>
+</openerp>

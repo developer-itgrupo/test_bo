@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+        <record id="view_diferencia_cambio_it_tree" model="ir.ui.view">
+            <field name="name">view.diferencia.cambio.it.tree</field>
+            <field name="model">view.diferencia.cambio.it</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Diferencia de Cambio" create="false" delete="false">
+                    <field name="tipo" string="Tipo"/>
+                    <field name="cuenta" string="Cuenta"/>
+                    <field name="debe" string="Debe"/>
+                    <field name="haber" string="Haber"/>
+                    <field name="saldomn" string="Saldo MN"/>
+                    <field name="saldome" string="Saldo ME" />
+                    <field name="tc" string="TC" />
+                    <field name="saldomn_act" string="Saldo MN Actual" />
+                    <field name="diferencia" string="Diferencia" />
+                    <field name="resultado" string="Resultado" />
+                </tree>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

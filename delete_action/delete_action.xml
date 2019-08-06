@@ -1,0 +1,6 @@
+<odoo>
+	<data noupdate="1">
+		<function id="delete_function_id" model="delete.action.it" name="delete_function"/>
+		<!--<delete model="ir.values" search="[('name', '=', 'Imprimir PDF')]" />-->
+	</data>
+</odoo>

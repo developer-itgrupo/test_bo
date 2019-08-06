@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+
+        <record model='ir.ui.view' id='account_invoice_nf1_form_view'>
+            <field name='name'>account.invoice.form</field>
+            <field name='model'>account.invoice</field>
+            <field name='inherit_id' ref='account_invoice_it.invoice_form'/>
+            <field name='arch' type='xml'>
+
+                        <!--
+                   <header > 
+
+                    <button string="Cancelar Fact. Elect."  name="cancel_eletronico_button" confirm="Esta seguro de enviar la Anulación a Sunat?" type="object" class="oe_highlight"/> 
+
+                    </header> -->
+
+                <!--<field name="currency_rate_auto" position="replace"/>
+                <label for="currency_rate_auto" string="TC. Sunat" position="replace"/>-->
+                <xpath expr="//div[@groups='base.group_multi_currency']" position="after">
+                    <label for="sunat_transaction_type"/>
+                    <field name="sunat_transaction_type" nolabel="1" required="1" attrs="{'readonly':[('state','not in',('draft','cancel'))]}"/>
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    <page string="Adelantos">
+                        <field name="advance_payment_ids" attrs="{'readonly':[('state','not in',('draft','cancel'))]}">
+                            <tree string="Adelantos" editable="botton">
+                                <field name="serial" required="1"/>
+                                <field name="number" required="1"/>
+                                <field name="name" required="1"/>
+                                <field name="amount" required="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <field name="date_due" position="after">
+                    <field name = "hash_ebill" readonly="1"/>
+                    <field name = "url_pdf" readonly="1" widget="url"/>
+                    <field name = "url_pdf2" readonly="1" widget="url"/>
+                </field>
+                <field name="reference" position="after">
+                    <field name="credit_invoice_type" attrs="{'invisible':[('type','=','out_invoice')],'required':[('type','=','out_refund')]}" />
+                    <field name="debit_invoice_type" attrs="{'invisible':[('type','!=','out_invoice')]}"/>
+                </field>
+                 <field name="code_operation" position="before">
+                    <field name="have_detraction"/>
+                </field>
+                <field name="numero_serie" position="after">
+                    <field name="perception_type"/>
+                    <field name="preception_base"/>
+                    <field name="perception_amount"/>
+                </field>
+            </field>
+        </record>
+
+
+<!--         <record model='ir.ui.view' id='account_invoice_nf2_form_view'>
+            <field name='name'>account.invoice.form</field>
+            <field name='model'>account.invoice</field>
+            <field name='inherit_id' ref='account_type_doc_it.invoice_form'/>
+            <field name='arch' type='xml'>
+                <field name="reference" position="after">
+                    <field name="credit_invoice_type" attrs="{'invisible':[('type','=','out_invoice')],'required':[('type','=','out_refund')]}" />
+                    <field name="debit_invoice_type" attrs="{'invisible':[('type','!=','out_invoice')]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="invoice_nf3_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_improve_sunat_it.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="code_operation" position="before">
+                    <field name="have_detraction"/>
+                </field>
+                <field name="numero_serie" position="after">
+                    <field name="perception_type"/>
+                    <field name="preception_base"/>
+                    <field name="perception_amount"/>
+                </field>
+            </field>
+        </record>-->
+
+
+        <record id="product_template_view" model="ir.ui.view">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="priority">16</field>
+            <field name="arch" type="xml">
+
+                <field name="uom_id" position="after">
+                    <field name="code_onu" />
+
+                </field>
+
+
+
+            </field>
+        </record>
+
+	</data>
+</openerp>

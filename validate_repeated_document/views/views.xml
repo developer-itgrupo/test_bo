@@ -1,0 +1,59 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="diff_rate_it.list">
+      <field name="name">diff_rate_it list</field>
+      <field name="model">diff_rate_it.diff_rate_it</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="diff_rate_it.action_window">
+      <field name="name">diff_rate_it window</field>
+      <field name="res_model">diff_rate_it.diff_rate_it</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="diff_rate_it.action_server">
+      <field name="name">diff_rate_it server</field>
+      <field name="model_id" ref="model_diff_rate_it_diff_rate_it"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="diff_rate_it" id="diff_rate_it.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="diff_rate_it.menu_1" parent="diff_rate_it.menu_root"/>
+    <menuitem name="Menu 2" id="diff_rate_it.menu_2" parent="diff_rate_it.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="diff_rate_it.menu_1_list" parent="diff_rate_it.menu_1"
+              action="diff_rate_it.action_window"/>
+    <menuitem name="Server to list" id="diff_rate_it" parent="diff_rate_it.menu_2"
+              action="diff_rate_it.action_server"/>
+    -->
+  </data>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_ht_sunat_txt_wizard_form">
+			<field name="name">ht.sunat.txt.wizard.form</field>
+			<field name="model">ht.sunat.txt.wizard</field>
+			<field name="arch" type="xml">
+				<form string="" version="8.0">
+						<group string="Balance Comprobación">
+                				<field name="form_pdt" attrs="{'invisible': [('tipo','!=', 'txt')], 'required': [('tipo','=', 'txt')]}" />
+                				<field name="ejercicio"/>
+                				<field name="tipo"/>
+                		</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuilds" type="object" class="oe_highlight" attrs="{'invisible': [('tipo','=', 'txt')]}"/>
+
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight" attrs="{'invisible': [('tipo','!=', 'txt')]}"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="ht_sunat_txt_wizard_action" model="ir.actions.act_window">
+			<field name="name">Balance Comprobación</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">ht.sunat.txt.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+        <menuitem name="BC Sunat"
+            id="menu_action_ht_sunat_all_it"
+            parent="account.menu_finance_reports"
+            sequence="11"
+        />
+
+        <menuitem name="B. Comprobación"
+            action="ht_sunat_txt_wizard_action"
+            id="menu_action_ht_sunat_txt_wizard_sunat_it_report"
+            parent="menu_action_ht_sunat_all_it"
+            sequence="11"
+        /> 
+
+	</data>
+</openerp>

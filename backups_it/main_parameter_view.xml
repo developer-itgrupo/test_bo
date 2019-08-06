@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_utilitario_parameter_form" model="ir.ui.view">
+            <field name="name">utilitario.parameter.form</field>
+            <field name="model">utilitario.parameter</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+				<form string="Utilitario" version="8.0" create="false" delete="false">
+                    <notebook>
+                        <page string="Asistentes">
+        					<group string="Directorio">
+								<field name="directorio"/>
+								<field name="directorio_dropb"/>
+								<field name="directorio_pg"/>
+        						<field name="database_name"/>
+								<field name="database_user"/>
+								<field name="database_password" />
+								<field name="ip_serverpg"/>
+								<field name="port_serverpg"/>
+                            </group>
+                            <group>                            	
+        					</group>
+
+                        </page>
+                    </notebook>
+				</form>
+            </field>
+        </record>
+
+		<record id="view_utilitario_parameter_tree" model="ir.ui.view">
+            <field name="name">utilitario.parameter.tree</field>
+            <field name="model">utilitario.parameter</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="utilitario Parameter" create="false" delete="false">
+                    <field name="directorio"/>
+					<field name="database_name"/>
+					<field name="database_user"/>
+					<field name="database_password" />
+					<field name="ip_serverpg"/>
+					<field name="port_serverpg"/>
+                </tree>
+            </field>
+        </record>
+		
+		<record id="action_utilitario_parameter" model="ir.actions.act_window">
+            <field name="name">Parametros de backup</field>
+            <field name="res_model">utilitario.parameter</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="sequence" eval="1"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!-- <field name="search_view_id" ref="account_move_line_book_search"/> -->
+        </record>
+		
+
+        <menuitem id="menu_utilitario_princpial" name="Utilitarios Copia de seguridad" parent="base.menu_automation"/>
+ 	    <menuitem action="action_utilitario_parameter" id="menu_utilitario_parameter" parent="menu_utilitario_princpial"/>
+
+
+
+        <record model="ir.ui.view" id="view_backup_utilitario_form">
+            <field name="name">backup.utilitario.form</field>
+            <field name="model">backup.utilitario</field>
+            <field name="arch" type="xml">
+                <form string="backup" version="8.0">
+
+                    <label string="Generar Backup de la Base de Datos Actual?" />
+
+                    <footer>
+                        <button string="Generar" name="generar_backup" type="object" class="oe_highlight"/>
+                        <!-- <button string="Actualizar" name="actualizarsaldoinicial" type="object" class="oe_highlight"/> -->
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="backup_utilitario_action" model="ir.actions.act_window">
+            <field name="name">Backup</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">backup.utilitario</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <menuitem name="Backup"
+            action="backup_utilitario_action"
+            id="backup_utilitario_actionmenu"
+            parent="menu_utilitario_princpial"
+            sequence="11"
+        />
+
+
+
+	</data>
+</openerp>

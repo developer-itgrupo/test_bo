@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_account_account_analytic_rep_t" model="ir.ui.view">
+            <field name="name">account.account.analytic.rep.t.tree</field>
+            <field name="model">account.account.analytic.rep.t</field>
+            <field name="arch" type="xml">
+                <tree string="Análisis de Destino" create="false">
+                    <field name="periodo" />
+                    <field name="fecha" />
+                    <field name="libro" />
+                    <field name="voucher" />
+                    <field name="ruc" />
+                    <field name="partner" />
+                    <field name="tipo" />
+                    <field name="comprobante" />
+                    <field name="destinodebe" />
+                    <field name="destinodebename" />                    
+                    <field name="debe" sum="debe"/>
+                    <field name="haber" sum="haber"/>
+                    <field name="divisa" />
+                    <field name="importedivisa" sum="importedivisa"/>
+                    <field name="ctaanalitica" />
+                    <field name="destinohaber" />
+                    <field name="cuenta" />
+                    <field name="glosa" /> 
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="account_account_analytic_rep_search_t" model="ir.ui.view">
+            <field name="name">account.account.analytic.rep.t.search</field>
+            <field name="model">account.account.analytic.rep.t</field>
+            <field name="arch" type="xml">
+                <search string="Análisis de Destino">
+                    <field name="ctaanalitica"/>
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                        <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+                        <filter string="Cta. Financiera" name="cuenta" icon="terp-partner" context="{'group_by':'cuenta'}"/>
+                        <filter string="Cta. Analítica" name="ctaanalitica" icon="terp-partner" context="{'group_by':'ctaanalitica'}"/>
+                        <filter string="Comprobante" name="comprobante" icon="terp-partner" context="{'group_by':'comprobante'}"/>
+                        <filter string="Destino Debe" name="destinodebe" icon="terp-partner" context="{'group_by':'destinodebe'}"/>
+                        <filter string="Destino Haber" name="destinohaber" icon="terp-partner" context="{'group_by':'destinohaber'}"/>
+                        <filter string="Tipo" name="tipo" icon="terp-partner" context="{'group_by':'tipo'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="account_account_analytic_rep_action_t" model="ir.actions.act_window">
+            <field name="name">Análisis de Destino</field>
+            <field name="res_model">account.account.analytic.rep.t</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_account_analytic_rep_t"/>
+            <field name="search_view_id" ref="account_account_analytic_rep_search_t"/>
+        </record>
+
+
+
+
+        <record model="ir.ui.view" id="view_account_account_analytic_wizard_form_t">
+            <field name="name">account.account.analytic.wizard.t.form</field>
+            <field name="model">account.account.analytic.wizard.t</field>
+            <field name="arch" type="xml">
+                <form string="Consistencia Destino" version="7.0">
+                        <group>
+                            <field name="period_ini" />
+                            <field name="period_end" />
+                        </group>
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_account_analytic_rep_wizard_action_t" model="ir.actions.server">
+            <field name="name">Consistencia Destino</field>
+            <field name="model_id" ref="model_account_account_analytic_wizard_t" />   
+            <field name="condition">True</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">action = model.get_wizard()</field>
+        </record>
+        
+        <menuitem name="Consistencia Destinos" id="account_account_analytic_wizard_menu_t"  parent="menu_finance_move_expense" action="account_account_analytic_rep_wizard_action_t" sequence="7" />
+            
+
+    </data>
+</openerp>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+
+
+        <record id="view_account_form" model="ir.ui.view">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+
+                <field name="user_type_id" position="attributes">
+                    <attribute name="widget" />
+                </field>
+                <field name="user_type_id" position="after">
+                    <field name="type_it"/>
+                </field>
+
+                <field name="name" position="after">
+                    <field name="parent_id" />  
+                    <field name="code_sunat" />                 
+                </field>
+                <field name="deprecated" position="after">                    
+                    <field name="fefectivo_id" />
+                    <field name="tipo_adquisicion_diario" />
+                    <field name="patrimony_id" />
+                    <field name="check_moorage" /> 
+                    <field name="account_analytic_account_moorage_id" /> 
+                    <field name="account_analytic_account_moorage_debit_id" />    
+                    <field name="clasification_sheet" required="1" />
+                    <field name="level_sheet" required="1" />   
+                    <field name="cashbank_code" />   
+                    <field name="cashbank_number" />   
+                    <field name="cashbank_financy" />                
+
+                    
+
+                </field>
+            </field>
+        </record>
+
+
+        <menuitem id="menu_account_type_it" name="Tipo de Cuentas Contables"
+                  parent="account.menu_finance_entries"
+                  action="account.action_account_type_form"/>
+
+
+
+
+
+        <record id="view_account_type_it_form" model="ir.ui.view">
+            <field name="name">account.account.type.it.form</field>
+            <field name="model">account.account.type.it</field>
+            <field name="arch" type="xml">
+                <form string="Tipo Estado Financiero">
+                    <group>
+                        <field name="name" required="1"/>
+                        <field name="code" />                        
+                    </group>
+                    <group>
+                        <group>                            
+                            <field name="group_balance"/>
+                            <field name="order_balance"/>
+                            <field name="group_nature"/>
+                            <field name="order_nature"/>
+                            <field name="group_function"/>
+                            <field name="order_function"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_account_typeit_tree" model="ir.ui.view">
+            <field name="name">account.account.type.it.tree</field>
+            <field name="model">account.account.type.it</field>
+            <field name="arch" type="xml">
+                <tree string="Tipo Estado Financiero" >
+                    <field name="name"  />
+                    <field name="group_balance" />
+                    <field name="group_nature" />
+                    <field name="group_function" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_type_it_account" model="ir.actions.act_window">
+            <field name="name">Tipo Estado Financiero</field>
+            <field name="res_model">account.account.type.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_account_type_it_it" name="Tipo Estado Financiero"
+                  parent="account.account_account_menu"
+                  action="action_type_it_account"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <record id="view_account_patrimony_it_tree" model="ir.ui.view">
+            <field name="name">account.patrimony.it.tree</field>
+            <field name="model">account.patrimony.it</field>
+            <field name="arch" type="xml">
+                <tree string="Tipo de Patrimonio Neto" editable="bottom">
+                    <field name="name"  required="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_account_patrimony_it" model="ir.actions.act_window">
+            <field name="name">Tipo de Patrimonio Neto</field>
+            <field name="res_model">account.patrimony.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+        <menuitem id="menu_account_patrimony_it" name="Tipo de Patrimonio Neto"
+                  parent="account.account_account_menu"
+                  action="action_account_patrimony_it"/>
+
+
+
+<!--
+        <record id="view_account_type_form" model="ir.ui.view">
+            <field name="name">account.account.type.form</field>
+            <field name="model">account.account.type</field>
+            <field name="inherit_id" ref="account.view_account_type_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group" position="after">
+                    <group>
+                        <group>
+                            <field name="group_balance"/>
+                        </group>
+                        <group>
+                            <field name="order_balance"/>
+                        </group>
+
+                    </group>
+
+                    <group>
+                        <group>
+                            <field name="group_nature"/>
+                        </group>
+                        <group>
+                            <field name="order_nature"/>
+                        </group>
+
+                    </group>
+
+                    <group>
+                        <group>
+                            <field name="group_function"/>
+                        </group>
+                        <group>
+                            <field name="order_function"/>
+                        </group>
+
+                    </group>
+                </xpath>
+
+            </field>
+        </record>
+
+-->
+
+        <record id="view_account_journal_form_inherit" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account_cancel.view_account_journal_form_inherit"/>
+            <field name="arch" type="xml">
+                <field name="update_posted" position="replace">
+                    <field name="update_posted" />
+                </field>
+            </field>
+        </record>
+
+	</data>
+</openerp>

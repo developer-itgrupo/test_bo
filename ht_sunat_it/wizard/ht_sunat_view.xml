@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record id="view_ht_sunat_form_un" model="ir.ui.view">
+            <field name="name">ht.sunat.form</field>
+            <field name="model">ht.sunat</field>
+            <field name="arch" type="xml">
+                <tree string="HT Sunat" create='false'>
+                    <field name="cuenta"/>
+                    <field name="debe_si"/>
+                    <field name="haber_si"/>
+                    <field name="debe"/>
+                    <field name="haber"/>
+                    <field name="debe_trans"/>
+                    <field name="haber_trans"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.values" id="ht_sunat_item_transference">
+            <field name="name">Añadir/Cambiar Transferencia</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,%d'%ht_sunat_transference_wizard_action" />
+            <field name="key">action</field>
+            <field name="model">ht.sunat</field>
+        </record>
+
+    </data>
+</openerp>

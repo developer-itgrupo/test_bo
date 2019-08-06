@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="action_account_invoice_del_linea" model="ir.actions.server">
+            <field name="name">Reemplazar lineas fr</field>
+            <field name="condition">True</field>
+            <field name="model_id" ref="model_account_invoice"/>
+            <field name="state">code</field>
+            <field name="code">action = env['account.invoice'].browse(context['active_ids']).genera_asiento_nota_credito()</field>
+        </record>
+
+        <record model="ir.values" id="value_account_invoice_del_linea">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'account.invoice'" name="model"/>
+            <field name="name">Test Itemdf</field>
+            <field name="value" eval="'ir.actions.server,%d'%action_account_invoice_del_linea"/>
+            <field name="object" eval="True"/>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <button name="action_invoice_draft" position="after">
+                    <button name="genera_asiento_nota_credito" string="Reemplazar lineas fr" type="object" invisible="1" /> <!-- attrs="{'invisible':[('is_nota_credito','=',False)]}"/> -->
+                </button>
+                <field name="it_type_document" position="after">
+                    <field name="is_nota_credito" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <button name="action_invoice_draft" position="after">
+                    <button name="genera_asiento_nota_credito" string="Reemplazar lineas fr" type="object" invisible="1" /> <!-- attrs="{'invisible':[('is_nota_credito','=',False)]}"/> -->
+                </button>
+                <field name="it_type_document" position="after">
+                    <field name="is_nota_credito" invisible="1"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

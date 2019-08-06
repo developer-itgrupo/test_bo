@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+		<record model="ir.ui.view" id="view_ple_sale_wizard_form">
+			<field name="name">ple.sale.wizard.form</field>
+			<field name="model">ple.sale.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Ple Ventas" version="7.0">
+						<group>
+							<field name="period" required="1" />
+							<field name="tipo_ple" />
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="ple_sale_wizard_action" model="ir.actions.act_window">
+			<field name="name">Ple Ventas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">ple.sale.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+		<menuitem name="Ple Ventas" id="ple_sale_wizard_menu"  parent="ple_diario_sunat_it.libro_electronico_wizard_menu" action="ple_sale_wizard_action" sequence="3" />
+
+
+	</data>
+</openerp>

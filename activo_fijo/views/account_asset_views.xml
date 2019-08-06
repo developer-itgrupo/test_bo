@@ -1,0 +1,521 @@
+<odoo>
+  <data>
+
+    <!-- <record id="view_account_asset_asset_form" model="ir.ui.view">
+            <field name="name">account.asset.asset.form</field>
+            <field name="model">account.asset.asset</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_asset_form"/>
+            <field name="arch" type="xml">
+
+               <field name="date" position="after">
+                    <field  name="date_init"/>
+                    <field  name="is_baja"/>
+                    <field  name="date_baja" attrs="{'invisible':[('is_baja', '=', False)],'required':[('is_baja', '=', True)]}"/>
+                    <field  name="nro_comprobante"/>
+
+               </field>
+
+                <field name="category_id" position="after">
+                    <field  name="padre_id">
+
+                    </field>
+
+               </field> 
+
+
+            </field>
+    </record> --> 
+
+        <record model="ir.ui.view" id="account_asset.view_account_asset_asset_form">
+        <field name="name">account.asset.asset.form</field>
+        <field name="model">account.asset.asset</field>
+        <field name="arch" type="xml">
+            <form string="Asset">
+                <header>
+                    <button name="validate" states="draft" string="Confirm" type="object" class="oe_highlight"/>
+                    <button type="object" name="compute_depreciation_board" string="Compute Depreciation" states="draft"/>
+                    <button name="set_to_close" states="open" string="Sell or Dispose" type="object" class="oe_highlight"/>                    
+                    <button name="set_to_draft" string="Set to Draft" type="object" attrs="{'invisible': ['|', ('entry_count', '!=', 0), ('state', '!=', 'open')]}"/>
+                    <button name="%(account_asset.action_asset_modify)d" states="open" string="Modify Depreciation" type="action"/>
+                    <button name="button_retire" string="Dar de Baja" type="object" attrs="{'invisible': [('f_baja','!=', False)]}" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="open_entries"  type="object" icon="fa-pencil">
+                            <field string="Items" name="entry_count" widget="statinfo" />
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Laptop iBook"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="codigo" string="Codigo"/>
+                            <field name="category_id" domain="[('type', '=', 'purchase')]" context="{'default_type': 'purchase'}" help="Category of asset"/>
+                            <field  name="parent_id"/>
+                            <field name="type" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="date" string="Fecha compra" help="Date of asset"/>
+                            <field  name="date_start"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                            
+                            
+                            <field name="invoice_id" string="Invoice" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+
+                        <page string="General">
+                          <group col="2" colspan="2">
+                            <field name="value" widget="monetary" options="{'currency_field': 'currency_id'}" help="Gross value of asset"/>
+                              <field name="salvage_value" widget="monetary" options="{'currency_field': 'currency_id'}" attrs="{'invisible': [('type','=','sale')]}"/>
+                              <field name="value_residual" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                          </group>
+                        </page>
+                        <page string="Depreciation Board">
+                            <field name="depreciation_line_ids" mode="tree" options="{'reload_whole_on_button': true}">
+                                <tree string="Depreciation Lines" decoration-info="(move_check == False)" create="false">
+                                    <field name="depreciation_date"/>
+                                    <field name="depreciated_value" readonly="1"/>
+                                    <field name="amount" widget="monetary" string="Depreciation"/>
+                                    <field name="remaining_value" readonly="1" widget="monetary" string="Residual"/>
+                                    <field name="move_check" invisible="1"/>
+                                    <field name="move_posted_check" invisible="1"/>
+                                    <field name="parent_state" invisible="1"/>
+                                    <button name="create_move" type="object" widget="widgetonbutton"/>
+                                </tree>
+                                <form string="Depreciation Lines"> 
+                                    <group>
+                                        <group>
+                                            <field name="parent_state" invisible="1"/>
+                                            <field name="name"/>
+                                            <field name="sequence"/>
+                                            <field name="move_id"/>
+                                            <field name="move_check"/>
+                                            <field name="parent_state" invisible="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="amount" widget="monetary"/>
+                                            <field name="depreciation_date"/>
+                                            <field name="depreciated_value"/>
+                                            <field name="remaining_value"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Movimientos">
+                           <field name="movimientos" readonly="1">
+                                <tree string="Movimientos">
+                                    <field name="state" invisible="1" />
+                                    <field name="date"/>
+                                    <field name="tipo"/>
+                                    <field name="value_residual"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Caracteristicas">
+                           <group>
+                                <group>
+                                    <field name="ubicacion"/>
+                                    <field name="marca"/>
+                                </group>
+                                <group>
+                                    <field name="modelo"/>
+                                    <field name="serie"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Contabilidad">
+                          <group>
+                                <group>
+                                    <field name="partner_id"/>
+                                    <field name="tipo"/>
+                                    <field name="valor_retiro" readonly="1" />
+                                    <field name="depreciacion_retiro" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="code"/>
+                                    <field name="invoice_id"/>
+                                    <field name="f_baja" readonly="1"/>
+                                    <field name="autorizacion_depreciacion" />
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Leasing">
+                          <group>
+                                <group>
+                                    <field name="f_contra"/>
+                                    <field name="num_contra" />
+                                    <field name="f_ini_arren"/>
+                                </group>
+                                <group>
+                                    <field name="num_cuotas"/>
+                                    <field name="monto_contra"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notas">
+                          <field name="note" placeholder="Add an internal note here..."/>
+                        </page>
+                        <page string="Depreciation Information">
+                            <group>
+                                <field name="method" widget="radio" attrs="{'invisible': [('type','=','sale')]}"/>
+                                <field name="method_progress_factor" attrs="{'invisible':[('method','=','linear')], 'required':[('method','=','degressive')]}"/>
+                                <field name="method_time" string="Time Method Based On" widget="radio" attrs="{'invisible': [('type','!=','purchase')]}"/>
+                                <field name="prorata" attrs="{'invisible': [('method_time','=','end')]}"/>
+                            </group>
+                            <group>
+                                <field name="method_number" attrs="{'invisible':[('method_time','=','end')], 'required':[('method_time','=','number')]}"/>
+                                <field name="method_period"/>
+                                <field name="method_end" attrs="{'required': [('method_time','=','end')], 'invisible':[('method_time','=','number')]}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+
+    <record id="view_account_asset_category_form" model="ir.ui.view">
+            <field name="name">account.asset.category.form</field>
+            <field name="model">account.asset.category</field>
+            <field name="inherit_id" ref="account_asset.view_account_asset_category_form"/>
+            <field name="arch" type="xml">
+
+               <field name="account_depreciation_expense_id" position="after">
+                        <field  name="account_retire"/>
+               </field> 
+
+               <field name="method_time" position="replace">
+                    <field name="method_time" string="Time Method Based On" widget="radio" invisible="1"/>
+               </field>
+               
+
+               <xpath expr="//form//group//group[3]" position="replace">
+                    <group string="Periodicidad">
+                    <field name="method_time" string="Time Method Based On" widget="radio" invisible="1"/>
+                                    <field name="percent_depreciacion" readonly="0"/>
+                                    <field name="year_depreciacion" readonly="1"/>
+                                    <field name="method_number" string="Número de Periodos de Depreciación" attrs="{'invisible':[('method_time','=','end')], 'required':[('method_time','=','number')]}" readonly="1"/>
+                                    <field name="method_end" attrs="{'required': [('method_time','=','end')], 'invisible':[('method_time','=','number')]}"/>
+                    </group>
+               </xpath> 
+
+            </field>
+    </record>   
+
+
+
+
+    <record model="ir.ui.view" id="view_account_asset_asset_purchase_tree">
+        <field name="name">account.asset.asset.tree</field>
+        <field name="model">account.asset.asset</field>
+        <field name="field_parent">child_ids</field>
+        <field name="inherit_id" ref="account_asset.view_account_asset_asset_purchase_tree"/>
+        <field name="arch" type="xml">
+        
+        <xpath expr="//tree" position="replace">
+
+            <tree string="Assets" colors="blue:(state == 'draft');grey:(state == 'close')">
+                <field name="codigo"/>
+                <field name="name"/>
+                <field name='parent_id'/>
+                <field name="category_id"/>
+                <field name="date"/>
+                <field name="date_start"/>
+                <field name="f_baja"/>
+                <field name="partner_id"/>
+                <field name="value"/>
+                <field name="value_residual"/>
+                <field name="currency_id" groups="base.group_multi_currency" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state" invisible="1"/>
+                <field name="cta_activo" />
+                <field name="ubicacion" />
+                <field name='state' />
+            </tree>
+
+        </xpath>
+
+        </field>
+    </record>
+
+
+
+    <record id="view_account_asset_search" model="ir.ui.view">
+        <field name="name">account.asset.asset.search</field>
+        <field name="model">account.asset.asset</field>
+        <field name="inherit_id" ref="account_asset.view_account_asset_search"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                    <group expand="0" string="Group By">
+                        <filter name="id_grupo_asset" string="Padre" context="{'group_by':'id_grupo_asset'}"/>
+                        <filter name="ubicacion" string="Ubicación" context="{'group_by':'ubicacion'}"/>  
+                        <filter name="cta_activo" string="Cta. Activo" context="{'group_by':'cta_activo'}"/>  
+                        <filter name="state" string="Estado" context="{'group_by':'state'}"/>                        
+                    </group>
+            </field>
+        </field>
+    </record>
+
+
+        <record model="ir.ui.view" id="view_invoice_asset_category">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_asset.view_invoice_asset_category"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='asset_category_id']" position="replace">
+                </xpath>
+
+
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_id']" position="before">
+                    <field name="asset_category_id"/>
+                </xpath>                
+                    
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_account_asset_wizard_analisis_wizard_form">
+            <field name="name">account.asset.retire.form</field>
+            <field name="model">account.asset.retire</field>
+            <field name="arch" type="xml">
+                <form string="Dar de Baja" version="7.0">
+                        <group>
+                            <field name="date" />
+                            <field name="journal_id" />
+                        </group>
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="view_account_asset_analisis_wizard_form">
+            <field name="name">account.asset.analisis.wizard.form</field>
+            <field name="model">account.asset.analisis.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Análisis de Depreciaciones" version="7.0">
+                        <group>
+                            <field name="period_id" />
+                        </group>
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_asset_analisis_wizard_action" model="ir.actions.act_window">
+            <field name="name">Análisis de Depreciaciones</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.asset.analisis.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem name="Libro Activos Fijo" string="Libro Activos Fijo" parent="account.menu_finance_entries" id="menu_action_account_asset_libro_padre_wizard" sequence="99999" />
+
+        <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="menu_action_account_asset_analisis_wizard" action="account_asset_analisis_wizard_action"/>
+
+        <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="menu_action_account_asset_asset_list_normal2" action="account_asset.action_account_asset_asset_list_normal_purchase" name="Categoría de Activo" string="Categoría de Activo"/>
+
+
+        <record id="view_analisis_asset_tree" model="ir.ui.view">
+            <field name="name">account.asset.analisis.depreciacion.tree</field>
+            <field name="model">account.asset.analisis.depreciacion</field>
+            <field name="arch" type="xml">
+                <tree string="Análisis de Depreciaciones" create="0" delete="0">
+                    <field name="activofijo"/>
+                    <field name="mes"/>
+                    <field name="periodo"/>
+                    <field name="depreciacion"/>
+                    <field name="categoria"/>
+                    <field name="cta_gasto"/>
+                    <field name="cta_depre"/>
+                    <field name="cta_analitica"/>
+                    <field name="distrib_analitica"/>
+                    <field name="asentado"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_asset_tree_filter" model="ir.ui.view">
+            <field name="name">account.asset.analisis.depreciacion.select</field>
+            <field name="model">account.asset.analisis.depreciacion</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice">
+                    <field name="periodo"/>
+                    <field name="categoria"/>
+                    <field name="cta_gasto"/>
+                    <field name="cta_depre"/>
+                    <field name="asentado"/>
+
+                    <group expand="0" string="Group By">
+                        <filter name="periodo" string="Periodo" context="{'group_by':'periodo'}"/>
+                        <filter name="categoria" string="Categoria" context="{'group_by':'categoria'}"/>
+                        <filter name="cta_gasto" string="Cta. Gasto" context="{'group_by':'cta_gasto'}"/>
+                        <filter name="cta_depre" string="Cta. Depreciacion" context="{'group_by':'cta_depre'}"/>
+                        <filter name="asentado" string="Estado" context="{'group_by':'asentado'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+
+
+
+
+        <record model="ir.ui.view" id="view_account_asset_analisis_asiento_wizard_form">
+            <field name="name">account.asset.analisis.asiento.wizard.form</field>
+            <field name="model">account.asset.analisis.asiento.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Asiento de Depreciaciones" version="7.0">
+                        <group>
+                            <field name="period_id" />
+                            <field name="journal_id" />
+                        </group>
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_asset_analisis_asiento_wizard_action" model="ir.actions.act_window">
+            <field name="name">Asiento de Depreciaciones</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.asset.analisis.asiento.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="menu_action_account_asset_asiento_analisis_wizard" action="account_asset_analisis_asiento_wizard_action"/>
+
+
+        
+    <record model="ir.ui.view" id="view_account_asset_leasing_tree">
+        <field name="name">account.asset.leasing.tree</field>
+        <field name="model">account.asset.leasing</field>
+        <field name="arch" type="xml">
+            <tree string="Leasing" >
+                <field name="asset_name" />
+                <field name="category_name" />
+                <field name="f_contra" />
+                <field name="num_contra" />
+                <field name="f_ini_arren" />
+                <field name="num_cuotas" />
+                <field name="monto_contra" />
+            </tree>
+        </field>
+    </record>
+
+
+        <record id="account_asset_analisis_leasing_wizard_action" model="ir.actions.act_window">
+            <field name="name">Leasing</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.asset.leasing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+        <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="menu_action_account_asset_leasing_wizard" action="account_asset_analisis_leasing_wizard_action"/>
+
+
+
+
+        <record model="ir.ui.view" id="view_account_asset_analisis_71wizard_form">
+            <field name="name">account.asset.formato.71.form</field>
+            <field name="model">account.asset.formato.71</field>
+            <field name="arch" type="xml">
+                <form string="Activo Formato 71" version="7.0">
+                        <group>
+                            <field name="period_id" />
+                            <field name="date" />
+                            <field name="tipo" />
+                        </group>
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_asset_analisis_setenta_action_wizard_action" model="ir.actions.act_window">
+            <field name="name">Formato 7.1</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.asset.formato.71</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="account_asset_analisis_menu_setenta_wizard_action" action="account_asset_analisis_setenta_action_wizard_action"/>
+
+
+        <record model="ir.ui.view" id="view_account_asset_analisis_74wizard_form">
+            <field name="name">account.asset.formato.74.form</field>
+            <field name="model">account.asset.formato.74</field>
+            <field name="arch" type="xml">
+                <form string="Activo Formato 74" version="7.0">
+                        <group>
+                            <field name="period_id" />
+                            <field name="date" />
+                            <field name="tipo" />
+                        </group>
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_asset_analisis_74wizard_action" model="ir.actions.act_window">
+            <field name="name">Formato 7.4</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.asset.formato.74</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="menu_action_account_asset_analisis_74wizard" action="account_asset_analisis_74wizard_action"/>
+
+    <menuitem parent="menu_action_account_asset_libro_padre_wizard" id="account_asset.menu_action_account_asset_asset_form" action="account_asset.action_account_asset_asset_form" sequence="101" />
+
+
+
+  </data>
+</odoo>

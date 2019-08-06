@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_saldo_comprobante_empresa" model="ir.ui.view">
+            <field name="name">saldo.comprobante.empresa.tree</field>
+            <field name="model">saldo.comprobante.empresa</field>
+            <field name="arch" type="xml">
+                <tree string="Saldo Por Periodo" create="false">
+                    <field name="periodo" />
+                    <field name="empresa" />
+                    <field name="ruc" />
+                    <field name="tipo_cuenta" />
+                    <field name="code" />
+                    <field name="descripcion" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldo" />
+                </tree>
+            </field>
+        </record>
+
+
+		<record id="saldo_comprobante_empresa_search" model="ir.ui.view">
+	        <field name="name">saldo.comprobante.empresa.search</field>
+	        <field name="model">saldo.comprobante.empresa</field>
+	        <field name="arch" type="xml">
+	            <search string="Saldo por Empresa">
+	                <separator/>
+	                <group expand="1" string="Group By...">
+	                    <filter string="Empresa" name="empresa" icon="terp-partner" context="{'group_by':'empresa'}"/>
+                        <filter string="Cuenta" name="code" icon="terp-partner" context="{'group_by':'code'}"/>
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+	                </group>
+	            </search>
+	        </field>
+	    </record>
+
+
+
+        <record id="saldo_comprobante_empresa_action" model="ir.actions.act_window">
+            <field name="name">Saldo por Empresa</field>
+            <field name="res_model">saldo.comprobante.empresa</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_saldo_comprobante_empresa"/>
+			<field name="search_view_id" ref="saldo_comprobante_empresa_search"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+        <record id="view_resumen_fe_tree" model="ir.ui.view">
+            <field name="name">resumen.fe.tree</field>
+            <field name="model">resumen.fe</field>
+            <field name="arch" type="xml">
+                <tree string="Resumen F.E.">
+                    <field name="fecha"/>
+                    <field name="motivo"/>
+                    <field name="nro_correlativo"/> 
+                    <field name="enviado"/>                    
+                </tree>
+            </field>
+        </record>
+
+    	<record model="ir.ui.view" id="view_resumen_fe_form">
+			<field name="name">resumen.fe.form</field>
+			<field name="model">resumen.fe</field>
+			<field name="arch" type="xml">
+				<form string="Resumen Contingencia Fact. Elect." version="7.0">
+                    <header>
+                        <button name="do_rebuild" string="Crear Resumen" type="object" />
+                    </header>
+                    
+                    <group>
+                        <group>
+                            <field name="fecha" required="1"/>
+                            <field name="nro_correlativo" required="1"/>
+                        </group>
+                        <group>
+                            <field name="motivo" required="1"/>
+                            <field name="enviado" />
+                        </group>
+                    </group>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_fe_resumen_cont_action" model="ir.actions.act_window">
+	        <field name="name">Resumen Contingencia</field>
+	        <field name="type">ir.actions.act_window</field>
+	        <field name="res_model">resumen.fe</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">tree,form</field>
+	    </record>
+    
+		<menuitem name="Facturación Electrónica" id="generar_fe_menu_padre"
+	     sequence="7" />
+		
+		<menuitem name="Facturación Electrónica" id="generar_fe_menu_h1"
+	    parent="generar_fe_menu_padre"  sequence="7" />
+
+		<menuitem name="Resumen Contingencia" id="generar_resumen_cont_fe_menu"
+	    parent="generar_fe_menu_h1" action="account_fe_resumen_cont_action" sequence="7" />
+	
+
+
+
+	</data>
+</odoo>

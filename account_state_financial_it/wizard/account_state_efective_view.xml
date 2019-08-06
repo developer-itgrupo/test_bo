@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_account_estate_efective_wizard_form">
+			<field name="name">account.state.efective.wizard.form</field>
+			<field name="model">account.state.efective.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Flujo Efectivo" >
+						<group>
+							<group>
+								<field name="fiscalyear_id" />
+								<field name="type_show" />
+							</group>
+							<group>
+								<field name="periodo_si" />
+								<field name="periodo_ini" />
+								<field name="periodo_fin" />
+							</group>
+							
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="account_state_efective_format_action" model="ir.actions.server">
+			<field name="name">Flujo Efectivo</field>
+			<field name="model_id" ref="model_account_state_efective_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+		<menuitem id="menu_state_efective" name="F. Efectivo" parent="account_sheet_work.account_finance_state_it" sequence="108" action="account_state_efective_format_action" />
+		
+
+		
+		<record id="view_account_state_efective_c_tree" model="ir.ui.view">
+            <field name="name">account.state.efective.tree</field>
+            <field name="model">account.state.efective</field>
+            <field name="arch" type="xml">
+                <tree string="Flujo Efectivo" create="false">
+                    <field name="periodo" />
+                    <field name="code" />
+                    <field name="concept" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldo" string="Saldo Año"/>
+                    <field name="orden" />
+                </tree>
+            </field>
+        </record>
+
+
+	</data>
+</openerp>

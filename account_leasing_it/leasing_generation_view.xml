@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <record id="leasing_generation_wizard_view" model="ir.ui.view">
+            <field name="name">leasing_generation_view</field>
+            <field name="model">leasing.generation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Generacion de Factura">
+                    <group>
+                        <field name="journal_id" required="1"/>
+                        <field name="mora"/>
+                        <field name="factura_cuota"/>
+                        <field name="tc_cuota"/>
+                        <field name="factura_mora"/>
+                        <field name="tc_mora"/>
+                    </group>
+                    <footer>
+                        <button name="generar_factura" string="Generar Factura" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+             </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+        <record id="it_invoice_serie_tree_view" model="ir.ui.view">
+            <field name="name">Series en Facturas de Clientes</field>
+            <field name="model">it.invoice.serie</field>
+            <field name="inherit_id" ref="account_invoice_series_it.it_invoice_serie_tree_view"/>
+            <field name="arch" type="xml">
+
+                <field name="name" position="before">
+                    <field name="manual" />
+                </field>
+
+            </field>
+        </record>
+		
+		
+		<record model="ir.ui.view" id="it_invoice_serie_form_view">
+            <field name="name">Series en Facturas de Clientes</field>
+            <field name="model">it.invoice.serie</field>
+			<field name="inherit_id" ref="account_invoice_series_it.it_invoice_serie_form_view"/>
+            <field name="arch" type="xml">
+                <field name="description" position="after">
+                    <field name="manual" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,115 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_leasing_form_view">
+            <field name="name">account_leasing_form_view</field>
+            <field name="model">account.leasing</field>
+            <field name="arch" type="xml">
+                <form string="Leasing">
+                    <header>
+                        <button name="importation" type="object" string="Importar" class="oe_highlight" states="draft"/>
+                        <button name="validate" type="object" string="Validar" class="oe_highlight" states="draft"/>
+                        <button name="cancel" type="object" string="Cancelar" class="oe_highlight" states="validated"/>
+                        <button name="eliminar_lineas" type="object" string="Eliminar Lineas" confirm="¿Estas seguro que quieres eliminar todas las lineas de este Leasing?" class="oe_highlight" states="draft"/>
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
+                    <sheet>
+                        <h1>Leasings</h1>
+                        <group>
+                            <group>
+                                <field name="nro_contrato" required="1"/>
+                                <field name="activo_category_id" options="{'no_create_edit': True}" required="1"/>
+                                <field name="activo_id" required="1"/>
+                                <field name="fecha_contrato"/>
+                                <field name="partner_id"/>
+                                <field name="fecha_calculo" required="1"/>
+                            </group>
+                            <group>
+                                <field name="nro_cuotas"/>
+                                <field name="total_arrendamiento" required="1"/>
+                                <field name="saldo" required="1"/>
+                                <field name="currency_id" required="1"/>
+                                <field name="tc" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Detalle">
+                                <field name="leasing_line">
+                                    <tree editable="bottom" delete="false">
+                                        <field name="nro_cuota" required="1"/>
+                                        <field name="fecha" required="1"/>
+                                        <field name="saldo"/>
+                                        <field name="capital" required="1"/>
+                                        <field name="gastos" required="1"/>
+                                        <field name="seguro" required="1"/>
+                                        <field name="intereses" required="1"/>
+                                        <field name="subtotal" required="1"/>
+                                        <field name="comision" required="1"/>
+                                        <field name="igv" required="1"/>
+                                        <field name="total" required="1"/>
+                                        <field name="invoice_1" invisible="1"/>
+                                        <field name="invoice_2" invisible="1"/>
+                                        <field name="move" invisible="1"/>
+                                        <button name="generar_wizard" string="Crear Factura" type="object" attrs="{'invisible':['|','|',('invoice_1','!=',False),('invoice_2','!=',False),('move','!=',False)]}"/>
+                                        <button name="delete_leasing_line" type="object" confirm="¿Esta seguro que desea eliminar esta Cuota?" icon="fa fa-trash-o"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Facturas">
+                                <field name="factura_line">
+                                    <tree create="false" edit="false" delete="false">
+                                        <field name="nro_cuota"/>
+                                        <field name="libro"/>
+                                        <field name="factura"/>
+                                        <field name="nro_comprobante"/>
+                                        <field name="fecha_emision"/>
+                                        <field name="fecha_contable"/>
+                                        <button name="delete_invoice" type="object" confirm="¿Esta seguro que desea eliminar esta Factura?" icon="fa fa-trash-o"/>
+                                    </tree>
+                                </field>
+                            </page>
+                             <page string="Asientos">
+                                <field name="leasing_asiento_line">
+                                    <tree create="false" edit="false" delete="false">
+                                        <field name="nro_cuota"/>
+                                        <field name="asiento"/>
+                                        <field name="libro"/>
+                                        <field name="fecha_contable"/>
+                                        <button name="delete_move" type="object" confirm="¿Esta seguro que desea eliminar este Asiento Contable?" icon="fa fa-trash-o"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_leasing_tree" model="ir.ui.view">
+            <field name="name">account_leasing_tree_view</field>
+            <field name="model">account.leasing</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="fecha_contrato"/>
+                    <field name="activo_id"/>
+                    <field name="activo_category_id"/>
+                    <field name="partner_id"/>
+                    <field name="nro_cuotas"/>
+                    <field name="total_arrendamiento"/>
+                    <field name="currency_id"/>
+                    <field name="tc"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="account_leasing_action"> 
+            <field name="name">Leasing</field>
+            <field name="res_model">account.leasing</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create"> Haga click aqui para crear un nuevo Leasing.</p>
+            </field>
+        </record>
+        <menuitem id="account_leasing_menu" name="Leasing" parent="account.menu_finance_entries" action="account_leasing_action" sequence="100001"/>
+    </data>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+         <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="priority" eval="1"/>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/notebook/page/group[3]" position="after">
+                    <!--<xpath expr="//form//group//group[3]" position="replace">-->
+                    <!--<xpath expr="//group[@string='Secuencias para Asistentes']" position="after">-->
+                    <group string="Nota de credito nacional">
+                        <field name="type_document_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+
+</odoo>

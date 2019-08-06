@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_period_llenar_wizard_form">
+            <field name="name">account.period.llenar.wizard.form</field>
+            <field name="model">account.period.llenar.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Generar Periodos" version="8.0">
+                        <group>
+                            <group>
+                                <field name="fiscal_id"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_period_llenar_wizard_action" model="ir.actions.act_window">
+            <field name="name">Generar Periodos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.period.llenar.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem action="account_period_llenar_wizard_action" id="menu_main_period_llenar_unique" parent="account.account_account_menu"/>
+    </data>
+</openerp>

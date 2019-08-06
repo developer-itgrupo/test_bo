@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_sequence_journal_wizard_form">
+            <field name="name">account.sequence.journal.wizard.form</field>
+            <field name="model">account.sequence.journal.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Generar Secuencias" version="8.0">
+                        <group>
+                            <group>
+                                <field name="fiscal_id"/>
+                            </group>
+                            <group>
+                            </group>
+                            <notebook>
+                                <page string="Diarios">
+                                    <group>
+                                        <field name="journal_ids" nolabel="1"/>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+
+                        <footer>
+                            <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_sequence_journal_wizard_action" model="ir.actions.act_window">
+            <field name="name">Generar Secuencias</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.sequence.journal.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <record id="sequence_view_tree" model="ir.ui.view">
+            <field name="model">ir.sequence</field>
+            <field name="arch" type="xml">
+                <tree string="Sequences">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ir_sequence_journal" model="ir.actions.act_window">
+            <field name="name">Secuencias de Diarios</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ir.sequence</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('code','=','account.journal')]</field>
+            <field name="view_id" ref="sequence_view_tree"/>
+        </record>
+
+        <menuitem action="account_sequence_journal_wizard_action" id="menu_main_sequence_fiscal_unique" parent="account.account_account_menu"/>
+        <menuitem action="ir_sequence_journal" string="Secuencias de Diarios" id="menu_journal_sequence" parent="account.menu_finance_configuration"/>
+    </data>
+</openerp>

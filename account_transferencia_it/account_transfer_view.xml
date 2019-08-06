@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+        <record id="account_transfer_it_form" model="ir.ui.view">
+            <field name="name">account.transfer.it.form</field>
+            <field name="model">account.transfer.it</field>
+            <field name="arch" type="xml">
+                <form string="Transferencias">
+                <header>
+                        <button name="transferir" type="object" states="draft" string="Transferir" class="oe_highlight" />
+                        <button name="reestablecername" type="object" states="draft" string="Reestablecer Secuencias" class="oe_highlight" />                        
+                        <button name="cancel" type="object" states="transfer" string="Cancelar" class="oe_highlight" />
+                        <button name="borrador" type="object" states="cancel" string="Regresar a Borrador" class="oe_highlight" />
+                    <field name="state" widget="statusbar" />
+                </header>
+
+                <sheet string="Transferir">
+                    <div>
+                        <label string="Transferencia "/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline" readonly="1" />
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="fecha" required="1" attrs="{'readonly': [('state','!=','draft')]}" />
+                            <field name="glosa" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="tc_oficial" readonly="1" required="1" />
+                        </group>
+                        <group>
+                            <field name="doc_origen" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="doc_destino" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="tc_personalizado" required="1"  attrs="{'readonly': [('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalle">
+                            <group>
+                                <group string="Origen">
+                                    <field name="caja_origen" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="monto" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                </group>
+                                <group string="Destino">
+                                    <field name="caja_destino" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="nro_destino" required="0" attrs="{'readonly': [('state','!=','draft')]}" domain="[('journal_id.type', '=', 'cash')]"/>
+                                    <field name="monto_destino" required="1" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Asientos">
+                            <group>
+                                <group>
+                                    <field name="asiento_origen" readonly="1" />
+                                    <field name="asiento_destino" readonly="1" />
+                                </group>
+                                <group>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_transfer_it_tree" model="ir.ui.view">
+            <field name="name">account.transfer.it.tree</field>
+            <field name="model">account.transfer.it</field>
+            <field name="arch" type="xml">
+                <tree string="Transferencias">
+                    <field name="fecha"  />
+                    <field name="doc_origen"  />
+                    <field name="doc_destino"  />
+                    <field name="glosa"  />
+                    <field name="caja_origen"  />
+                    <field name="caja_destino"  />
+                    <field name="state"  />
+                </tree>
+            </field>
+        </record>
+
+<!--
+        <record id="action_account_transfer_it_form" model="ir.actions.act_window">
+            <field name="name">Transferencias</field>
+            <field name="res_model">account.transfer.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain" eval="False"/>--> <!-- Force empty -->
+<!--        </record>
+    -->
+
+        <record id="transfer_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="attributes">
+                    <attribute name="widget"></attribute>
+                </field>
+                <field name="destination_journal_id" position="attributes">
+                    <attribute name="widget"></attribute>
+                </field>
+                <field name="communication" position="attributes">
+                    <attribute name="required">1</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="transfer_view_tree" model="ir.ui.view">
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Transferencias">
+                    <field name="partner_id"/>
+                    <field name="payment_date"/>
+                    <field name="journal_id"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="change_type"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_account_transfer_it_form" model="ir.actions.act_window">
+            <field name="name">Transferencias</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('payment_type','=','transfer')]</field>
+            <field name="view_id" ref="transfer_view_tree"/>
+            <field name="context">{'default_payment_type': 'transfer'}</field>
+        </record>
+
+        <!--<menuitem action="action_account_transfer_it_form" id="menu_action_account_transfer_it_form" parent="account_bank_statement_it.menu_banco_caja" sequence="1"/>-->
+
+        <menuitem action="action_account_transfer_it_form" id="menu_action_account_transfer_it_form" parent="account_bank_statement_it.menu_banco_caja" sequence="1"/>
+
+
+
+
+        <record id="view_account_transfer_it_search" model="ir.ui.view">
+            <field name="name">account.transfer.it.search</field>
+            <field name="model">account.transfer.it</field>
+            <field name="arch" type="xml">
+                <search string="Transferencias">
+                    <field name="name" />
+                    <field name="doc_origen" />
+                    <field name="doc_destino" />
+                    <field name="glosa" />
+                    <field name="caja_origen"  />
+                    <field name="caja_destino"  />
+                    <group string="Group By">
+                        <filter string="Estado" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Caja Origen" domain="[]" context="{'group_by':'caja_origen'}"/>
+                        <filter string="Caja Destino" domain="[]" context="{'group_by':'caja_destino'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+</odoo>

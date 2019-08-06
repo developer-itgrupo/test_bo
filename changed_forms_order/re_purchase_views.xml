@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="it_invoice_serie_form_view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+			<field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="picking_type_id" position="replace">
+                </field>
+                <field name="date_order" position="after">
+                    <field name="picking_type_id" domain="[('code','=','incoming')]" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

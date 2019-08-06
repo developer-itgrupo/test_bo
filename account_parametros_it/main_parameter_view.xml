@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <template id="hello">
+            <ul>
+                <li t-foreach="name" t-as="letter">
+                    <t t-esc="letter_index"/>: <t t-esc="letter"/>
+                </li>
+            </ul>
+        </template>
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+				<form string="Libro Diario" version="8.0" create="false" delete="false">
+                    <notebook>
+                        <page string="Asistentes">
+        					<group string="Cuentas para Asistentes">
+        						<field name="deliver_account_mn" string="Rendicion Moneda Nacional"/>
+                            	<field name="deliver_account_me" string="Rendicion Moneda Extranjera"/>
+                            	<field name="loan_account_mn" string="Cuenta Prestamos M.N."/>
+                            	<field name="loan_account_me" string="Cuenta Prestamos M.E."/>
+                                <field name="account_anticipo_proveedor_mn"/>
+                                <field name="account_anticipo_proveedor_me"/>
+                                <field name="account_anticipo_clientes_mn"/>
+                                <field name="account_anticipo_clientes_me"/>
+                                <field name="account_cobranza_letras_mn"/>
+                                <field name="account_cobranza_letras_me"/>
+                                <field name="account_descuento_letras_mn"/>
+                                <field name="account_descuento_letras_me"/>
+                            </group>
+                            <group string="Diarios para Asistentes">
+                            	<field name="loan_journal_mn" string="Diario Rendiciones M.N."/>
+                            	<field name="loan_journal_me" string="Diario Rendiciones M.E."/>
+                                <field name="diario_destino" string="Diario Destino"/>
+        					</group>
+
+                            <group string="Secuencias para Asistentes">
+                            </group>
+                        </page>
+                        <page string="SUNAT">
+        					<group string="Exportacion">
+        						<field name="export_document_id" />
+        						<field name="no_home_document_id" />
+        						<field name="no_home_debit_document_id" />
+        						<field name="no_home_credit_document_id" />
+        					</group>
+                            <group string="Documentos SUNAT">
+                                <field name="sunat_type_document_ruc_id" />
+                                <field name="l_ruc" />
+                                <field name="sunat_type_document_dni_id" />
+                                <field name="l_dni" />
+                            </group>
+                            <group string="SUNAT">
+                                <field name="template_account_contable"/>
+                            </group>
+                            <group string="Partner Anulado">
+                                <field name="partner_null_id"/>
+                                <field name="product_null_id"/>
+                                <field name="partner_venta_boleta"/>
+                            </group>
+                        </page>
+                        <page string="Configuración">
+                            <group string="Configuración" >
+                                <field name="dir_create_file" />
+                                <field name="dir_ple_create_file" />
+                                <field name="download_directory" />
+                                <field name="download_url" />
+                                <field name="fiscalyear" />
+                            </group>
+                        </page>
+                        <page string="Percepción">
+
+                            <group string="Percepción">
+                                <field name="account_perception_igv" />
+                                <field name="account_perception_tipo_documento" />
+                            </group>
+                        </page>
+                    </notebook>
+				</form>
+            </field>
+        </record>
+
+		<record id="view_main_parameter_tree" model="ir.ui.view">
+            <field name="name">main.parameter.tree</field>
+            <field name="model">main.parameter</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Main Parameter" create="false" delete="false">
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
+		
+		<record id="action_main_parameter" model="ir.actions.act_window">
+            <field name="name">Parametros</field>
+            <field name="res_model">main.parameter</field>
+            <field name="view_id" ref="view_main_parameter_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="sequence" eval="1"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <!-- <field name="search_view_id" ref="account_move_line_book_search"/> -->
+        </record>
+		
+		<menuitem action="action_main_parameter" id="menu_main_parameter" parent="account.menu_finance_configuration"/>
+
+	</data>
+</openerp>

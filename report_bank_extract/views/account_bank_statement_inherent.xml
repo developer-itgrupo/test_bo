@@ -1,0 +1,27 @@
+<odoo>
+    <!-- <record id="view_form_purchase_order_proyecto_inherited" model="ir.ui.view">
+        <field name="name">view_form_sale_order_proyecto_inherited</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="picking_type_id" position="after">
+                <field name ="proyecto"/>
+            </field>
+        </field>
+    </record> -->
+    <record id="view_bank_statement_form" model="ir.ui.view">
+        <field name="name">account.bank.statement.form.xls</field>
+        <field name="model">account.bank.statement</field>
+        <field name="inherit_id" ref="account.view_bank_statement_form"/>
+        <field name="arch" type="xml">
+            <button name="importar_lineas" position="after">
+                <button name="generate_excel" states="open" string="Imprimir Excel" type="object"/>
+            </button>
+
+            <field name="ref" position="attributes">
+                <attribute name="groups"/>
+            </field>
+
+        </field>
+    </record>
+</odoo>

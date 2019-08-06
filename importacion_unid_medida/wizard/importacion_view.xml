@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+
+		<record model="ir.ui.view" id="view_importacion_unidad_medi_i_form">
+			<field name="name">importacion.unidad.medi.i.form</field>
+			<field name="model">importacion.unidad.medi.i</field>
+			<field name="arch" type="xml">
+				<form string="Importacion Producto" version="7.0">
+					<header>
+		                <button string="Procesar Archivo" name="primerpaso" type="object" class="oe_highlight" states="1"/>
+		                <button string="Importar" name="segundopaso" type="object" class="oe_highlight" states="2" />
+		                <button string="Regresar a Borrador" name="regresar_borrador" type="object" states="2" class="oe_highlight" />
+		                <field name="state" widget="statusbar" />
+		            </header> 
+						<group>
+							<group>
+								<field name="fecha" required="1" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="period_id" required="1" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="delimitador" required="1" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="glosa" attrs="{'readonly':[('state','!=','1')]}"/>
+								
+								<field name="sal_name1" invisible="1"/>
+								<field name="file_partner_imp_text" invisible="1"/>
+							</group>
+							<group>
+								<field name="file_unit_imp" required="1" string="Importador Producto" filename="file_partner_imp_text" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="file_sal_error_partner" string="Observaciones Unidad" filename="sal_name1" readonly="1"/>
+							</group>
+						</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_importacion_unidad_medi_i_tree" model="ir.ui.view">
+            <field name="name">importacion.unidad.medi.i.tree</field>
+            <field name="model">importacion.unidad.medi.i</field>
+            <field name="arch" type="xml">
+                <tree string="Importacion Producto">
+                   <field name="period_id"/>
+                   <field name="fecha"/>
+                   <field name="glosa"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+           </record>
+
+
+		<record id="importacion_unidad_medi_i_action" model="ir.actions.act_window">
+			<field name="name">Importacion unidad de medida</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">importacion.unidad.medi.i</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		
+
+
+		<menuitem name="Importacion Unidad de medida" id="importacion_unidad_i_menu"  parent="importacion_extras_it.importacion_inforest_menu" sequence="7"  action="importacion_unidad_medi_i_action" />
+
+
+	</data>
+</odoo>

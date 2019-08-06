@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_account_form" model="ir.ui.view">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account_moorage_analytic_it.view_account_form"/>
+            <field name="arch" type="xml">
+                <field name="account_analytic_account_moorage_id" position="after">
+                    <field name="had_account_analytic" />
+                    <field name="had_product" />
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

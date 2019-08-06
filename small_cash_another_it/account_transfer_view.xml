@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="account_transfer_it_form">
+			<field name="name">account.transfer.it.form</field>
+			<field name="model">account.transfer.it</field>
+			<field name="inherit_id" ref="account_transferencia_it.account_transfer_it_form"/>
+			<field name="arch" type="xml">
+				<field name="caja_origen" position="after">
+					<field name="origin_hide" invisible="1"/>
+					<field name="small_cash_origin_id" domain="[('state','=','done'),('journal_id','=',caja_origen)]" attrs="{'required':[('origin_hide','=',True)], 'invisible':[('origin_hide','=',False)],'readonly':[('state','!=','draft')]}" />
+				</field>
+				<field name="caja_destino" position="after">
+					<field name="destiny_hide" invisible="1"/>
+					<field name="small_cash_destiny_id" ddomain="[('state','=','done'),('journal_id','=',caja_destino)]" attrs="{'required':[('destiny_hide','=',True)], 'invisible':[('destiny_hide','=',False)],'readonly':[('state','!=','draft')]}" />
+				</field>
+            </field>
+        </record>
+	</data>
+</openerp>

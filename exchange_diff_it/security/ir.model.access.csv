@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_exchange_diff_it_exchange_diff_it,exchange_diff_it.exchange_diff_it,model_exchange_diff_it_exchange_diff_it,,1,0,0,0

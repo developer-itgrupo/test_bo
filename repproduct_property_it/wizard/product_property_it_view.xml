@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_product_property_it" model="ir.ui.view">
+            <field name="name">product.property.it.tree</field>
+            <field name="model">product.property.it</field>
+            <field name="arch" type="xml">
+                <tree string="Reporte de Cuenta Corriente" create="false">
+                    <field name="codigo" />
+                    <field name="descripcion" />
+                    <field name="categoria" />
+                    <field name="tipo" />
+                    <field name="cuentaingreso" />
+                    <field name="cuentagasto" />
+                    <field name="cuentaentrada" />
+                    <field name="cuentasalida" />
+                    <field name="cuentavaluacion" />
+                </tree>
+
+            </field>
+        </record>
+
+    <record id="view_product_property_it_search" model="ir.ui.view">
+        <field name="name">product.property.it.search</field>
+        <field name="model">product.property.it</field>
+        <field name="arch" type="xml">
+            <search string="Características Productos">
+                <group expand="1" string="Group By">
+                    <filter string="Categoria" context="{'group_by':'categoria'}"/>
+                    <filter string="Cuenta de Ingreso" context="{'group_by':'cuentaingreso'}"/>
+                    <filter string="Cuenta de Gasto" context="{'group_by':'cuentagasto'}"/>
+                    <filter string="Cuenta de Entrada" context="{'group_by':'cuentaentrada'}"/>
+                    <filter string="Cuenta de Salida" context="{'group_by':'cuentasalida'}"/>
+                    <filter string="Cuenta de Valuación" context="{'group_by':'cuentavaluacion'}"/>
+                 </group>
+            </search>
+        </field>
+    </record>
+
+        <record id="product_property_it_action" model="ir.actions.act_window">
+            <field name="name">Características Producto</field>
+            <field name="res_model">product.property.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_product_property_it"/>
+        </record>
+
+
+        <menuitem name="Características Producto" id="menu_product_property_it" action="product_property_it_action"
+            parent="menu_consistencia.menu_consistencia_principal" />
+    </data>
+</openerp>

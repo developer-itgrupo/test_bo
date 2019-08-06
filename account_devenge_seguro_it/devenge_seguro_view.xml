@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+        <record model="ir.ui.view" id="view_crear_asiento_devenge">
+            <field name="name">crear.asiento.devenge.form</field>
+            <field name="model">crear.asiento.devenge</field>
+            <field name="arch" type="xml">
+                <form string="Creación de Asiento Devenge Seguro" version="7.0">
+                        <group>
+                            <field name="diario" required="1"/>
+                        </group>
+                        <footer>
+                            <button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_importacion_detalle_insurance">
+            <field name="name">importacion.detalle.insurance.form</field>
+            <field name="model">importacion.detalle.insurance</field>
+            <field name="arch" type="xml">
+                <form string="Importacion Cronograma" version="7.0">
+                        <group>
+                            <field name="nombre" invisible="1" />
+                            <field name="csv" required="1" filename="nombre"/>
+                            <field name="delimitador" required="1"/>
+                        </group>
+                        <footer>
+                            <button string="Importar" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="ctrl_insurance_form_view" model="ir.ui.view">
+            <field name="name">ctrl.insurance.form</field>
+            <field name="model">ctrl.insurance</field>
+            <field name="arch" type="xml">
+                <form string="Devenge Seguro">
+                    <header>
+                        <button string="Importar Cronograma" type="object" name="importacion_detalle" states="draft" class="oe_highlight"/>
+                        <button string="Validar" type="object" name="validar" states="draft" class="oe_highlight"/>
+                        <button string="Finalizar" type="object" name="finalizar" states="process" class="oe_highlight"/>
+                        <button string="Cancelar" type="object" name="cancelar" states="process,done" class="oe_highlight"/>
+                        
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
+                    <!-- <group>
+                        <field name="name" readonly="1"/>
+                    </group> -->
+                    <group>
+                        <group> 
+                            <field name="partner_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="date" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="amount_ins" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="insurance_account_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>                            
+                            <field name="contract" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                        <group> 
+                            <field name="name" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="nro_dues" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="amount_due" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="due_account_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="analitic_account_id" required="1" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="saldo" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalle">
+                            <field name="line_ids"  attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree editable="bottom" create="0" delete="0">
+                                    <field name="number_due" readonly="1" />
+                                    <field name="date_due" readonly="1" />
+                                    <field name="amount_ini" readonly="1" />
+                                    <field name="amount_due" readonly="1" />
+                                    <field name="insurance_balance" readonly="1" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- multipayment.invoice tree view -->
+        <record id="ctrl_insurance_view_tree" model="ir.ui.view">
+            <field name="name">ctrl.insurance.tree</field>
+            <field name="model">ctrl.insurance</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="partner_id"/>
+                    <field name="date"/>
+                    <field name="amount_due"/>
+                    <field name="amount_ins"/>
+                    <field name="saldo"/>
+                    <field name="name" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- multipayment.invoice action window -->
+        <record id="ctrl_insurance_action" model="ir.actions.act_window">
+            <field name="name">Control Seguro</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ctrl.insurance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+
+
+
+        <menuitem id="ctrl_insurance_total_menu" name="Control Seguro"
+                  parent="account.menu_finance_entries"
+                  action="ctrl_insurance_action" sequence="415"/>
+
+
+
+
+        <!-- multipayment.invoice tree view -->
+        <record id="ctrl_insurance_line_view_tree" model="ir.ui.view">
+            <field name="name">ctrl.insurance.line.tree</field>
+            <field name="model">ctrl.insurance.line</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="parent_contract"/>
+                    <field name="parent_partner_id"/>
+                    <field name="parent_date"/>
+                    <field name="parent_insurance_account_id"/>
+                    <field name="parent_due_account_id"/>
+                    <field name="parent_analitic_account_id"/>
+                    <field name="date_due"/>
+                    <field name="number_due"/>
+                    <field name="amount_due"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- multipayment.invoice action window -->
+        <record id="ctrl_insurance_action_line" model="ir.actions.act_window">
+            <field name="name">Generador Asientos Seguro</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ctrl.insurance.line</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('parent_state','=','process'),('asiento','=',False)]</field>
+        </record>
+
+
+        <menuitem id="ctrl_insurance_total_line_menu" name="Generador Asientos Seguro"
+                  parent="account.menu_finance_entries"
+                  action="ctrl_insurance_action_line" sequence="416"/>
+
+    
+    <record id="asentar_devenge_insurance_action" model="ir.actions.server">
+        <field name="name">Generar Asientos</field>
+        <field name="model_id" ref="model_ctrl_insurance_line"/>
+        <field name="state">code</field>
+        <field name="code"> action= env['ctrl.insurance.line'].create_move()</field>
+    </record>
+
+
+    <record id="asentar_devenge_insurance_union_it" model="ir.values">
+        <field eval="'client_action_multi'" name="key2"/>
+        <field eval="'ctrl.insurance.line'" name="model"/>
+        <field name="name">Generar Asientos</field>
+        <field eval="'ir.actions.server,%d'%asentar_devenge_insurance_action" name="value"/>
+    </record>
+
+
+	</data>
+</odoo>

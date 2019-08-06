@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	
+		
+		<record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+				<xpath expr="//form/sheet" position="before">
+					<header>
+						<h5 class="oe_edit_only">
+							<button string="Consultar RUC" name="verify_ruc" type="object" class="oe_highlight" /> 
+						</h5>
+					</header>
+				</xpath>
+                <field name="lang" position="after">
+                    <field name="ruc_state" readonly="1"/>
+                    <field name="ruc_condition" readonly="1"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

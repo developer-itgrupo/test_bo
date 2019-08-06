@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+        <record id="leasing_wizard_view" model="ir.ui.view">
+            <field name="name">leasing_wizard_view</field>
+            <field name="model">leasing.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Importacion de Cronograma">
+                    <group>
+                        <field name="file_name" invisible="1"/>
+                        <field widget="binary" name="file_fees" filename="file_name"/>
+                        <field name="separator" style="width:5%%"/>
+                    </group>
+                    <footer>
+                        <button name="csv_import" string="Importar CSV" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+             </field>
+        </record>
+    </data>
+</odoo>

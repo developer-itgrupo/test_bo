@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+        <record id="account_rendicion_it_form" model="ir.ui.view">
+            <field name="name">account.rendicion.it.form</field>
+            <field name="model">account.rendicion.it</field>
+            <field name="arch" type="xml">
+                <form string="rendicionencias">
+                <header>
+                        <button name="entrega" type="object" states="draft" string="Entregar" class="oe_highlight" />
+                        <button name="rendir_state" type="object" states="entregado" string="Rendir" class="oe_highlight" />
+                        <button name="cancelar" type="object" states="entregado,rendido" string="Cancelar" class="oe_highlight" />
+                        <button name="borrador" type="object" states="cancel" string="Regresar a Borrador" class="oe_highlight" />
+                        <button name="excel" type="object" string="Reporte Excel" class="oe_highlight" />
+                    <field name="state" widget="statusbar" />
+                </header>
+
+
+                <sheet string="Rendición">
+                    <div>
+                        <label string="Rendición"/>
+                        <h1 class="mt0">
+                            <field name="name" class="oe_inline" readonly="1" />
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="fecha" required="1" attrs="{'readonly': [('state','!=','draft')]}" />
+                            <field name="empleado" required="1" attrs="{'readonly': [('state','!=','draft')]}" domain="[('es_empleado','=',True)]" />
+                            <field name="monto" required="1" attrs="{'readonly': [('state','!=','draft')],'invisible': [('state','!=','draft')]}"/>
+                            <field name="caja_entrega" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="es_caja" invisible="1" />
+                            
+                            <field name="small_cash" domain="[('state','=','done'),('journal_id','=',caja_entrega)]" attrs="{'required':[('es_caja','=',True)], 'invisible':[('es_caja','=',False)],'readonly':[('state','!=','draft')]}" />
+
+                            <field name="medio_pago" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="tc_oficial" readonly="1" required="1" />
+                                    <field name="tc_personalizado" required="1"  attrs="{'readonly': [('state','!=','draft')]}"/>
+                        </group>
+                        <group>
+                            <field name="nro_comprobante" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="memoria" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="referencia" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="fecha_rendicion" required="0" attrs="{'readonly': [('state','not in',('draft','entregado'))]}"/>
+                            <field name="monto_entregado" attrs="{'invisible':[('state','=','draft')]}"/>
+                            <field name="monto_rendido" readonly="1" />
+                            <field name="saldo" readonly="1" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Asientos">
+                            <group>
+                                <group>
+                                    <field name="asiento1" readonly="1" />
+                                    <field name="asiento2" readonly="1" />
+                                </group>
+                                <group>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_account_rendicion_it_tree" model="ir.ui.view">
+            <field name="name">account.rendicion.it.tree</field>
+            <field name="model">account.rendicion.it</field>
+            <field name="arch" type="xml">
+                <tree string="Rendiciones">
+                    <field name="name"  />
+                    <field name="referencia"  />
+                    <field name="empleado"  />
+                    <field name="fecha"  />
+                    <field name="fecha_rendicion"  />
+                    <field name="monto"  />
+                    <field name="monto_rendido"  />
+                    <field name="saldo"  />
+                    <field name="state"  />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_account_rendicion_it_form" model="ir.actions.act_window">
+            <field name="name">Rendiciones</field>
+            <field name="res_model">account.rendicion.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain" eval="False"/> <!-- Force empty -->
+        </record>
+
+        <menuitem action="action_account_rendicion_it_form" id="menu_action_account_rendicion_it_form" parent="account_bank_statement_it.menu_banco_caja" sequence="1"/>
+
+
+
+
+        <record id="view_account_rendicion_it_search" model="ir.ui.view">
+            <field name="name">account.rendicion.it.search</field>
+            <field name="model">account.rendicion.it</field>
+            <field name="arch" type="xml">
+                <search string="Rendiciones">
+                    <field name="name"  />
+                    <field name="referencia"  />
+                    <field name="empleado"  />
+                    <field name="fecha"  />
+                    <field name="fecha_rendicion"  />
+                    <field name="state"  />
+                    <group string="Group By">
+                        <filter string="Estado" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Empleado" domain="[]" context="{'group_by':'empleado'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+</odoo>

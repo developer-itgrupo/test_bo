@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <menuitem name="Multi Monedas"
+        id="menu_multimonedas"
+        parent="res_currency_rate_it.menu_main_usd_unique" 
+        action="base.action_currency_form"/>
+    </data>
+</openerp>
+
+
+
+

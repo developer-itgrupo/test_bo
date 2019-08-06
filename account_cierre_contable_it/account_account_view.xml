@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record model="ir.ui.view" id="view_account_form">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                 <field name="user_type_id" position="after">
+                    <field name="metodo_cierre" />
+                    <field name="cuenta_cierre" attrs="{'invisible':[('metodo_cierre','!=','1')]}" />
+                </field>
+            </field>
+        </record>
+
+
+
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Cierre Contable">
+                        <group >
+                            <group>
+                            <field name="cuenta_cierre_contable" />
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <record id="view_asientoscierrecontable_tree" model="ir.ui.view">
+            <field name="name">asiento.cierre.contable.tree</field>
+            <field name="model">asiento.cierre.contable</field>
+            <field name="arch" type="xml">
+                <tree string="Cierre Contable">
+                    <field name="anio_fiscal"/>
+                    <field name="period_cierre" />
+                    <field name="journal_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_asientocierrecontable_form">
+            <field name="name">asiento.cierre.contable.form</field>
+            <field name="model">asiento.cierre.contable</field>
+            <field name="arch" type="xml">
+                <form string="Cierre Contable" version="7.0">
+                    <header>
+                        <button name="cierre_contable_0" type="object" states="draft" string="GENERAR BALANCE COMPROBACION" class="oe_highlight"/>
+                        <button name="cierre_contable_1" type="object" states="0" string="COSTO DE VENTAS" class="oe_highlight"/>
+                        <button name="cierre_contable_2" type="object" states="1" string="CANCELACION CLASE 9" class="oe_highlight"/>
+                        <button name="cierre_contable_3" type="object" states="2" string="MARGEN COMERCIAL" class="oe_highlight"/>
+                        <button name="cierre_contable_4" type="object" states="3" string="PRODUCCION DE EJERCICIO" class="oe_highlight"/>
+                        <button name="cierre_contable_5" type="object" states="4" string="VALOR AGREGADO" class="oe_highlight"/>
+                        <button name="cierre_contable_6" type="object" states="5" string="EXCEDENTE O INSUFICIENCIA" class="oe_highlight"/>
+                        <button name="cierre_contable_7" type="object" states="6" string="RESULTADO DE EXPLOTACION" class="oe_highlight"/>
+                        <button name="cierre_contable_8" type="object" states="7" string="RESULTADO ANTES DE PARTICIPACIONES" class="oe_highlight"/>
+                        <button name="cierre_contable_9" type="object" states="8" string="CIERRE DE ACTIVO Y PASIVO" class="oe_highlight"/>
+                        <button name="cancelar" states="0,1,2,3,4,5,6,7,8,9" string="Regresar" type="object" />
+                        <field name="state" widget="statusbar"  readonly="1"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <!-- <label string="Cuenta por rendir "/> -->
+                                <field name="anio_fiscal" class="oe_inline" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="period_cierre" attrs="{'readonly':[('state','not in',['draft'])]}" required="1"/>
+                            </group>
+                            <group>
+                                <field name="journal_id" attrs="{'readonly':[('state','not in',['draft'])]}" required="1" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Resumen de Cierre">
+                                <group string="Margen Comercial" states="3,4,5,6,7,8,9">
+                                    <group>
+                                        <field name="dat1" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Produccion del Ejercicio" states="4,5,6,7,8,9">
+                                    <group>
+                                        <field name="dat2" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Valor Agregado" states="5,6,7,8,9">
+                                    <group>
+                                        <field name="dat3" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Excedente o Ins. Bruto de Explo." states="6,7,8,9">
+                                    <group>
+                                        <field name="dat4" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Resultado de explotacion" states="7,8,9">
+                                    <group>
+                                        <field name="dat5" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Resultado antes de par e impuestos" states="8,9">
+                                    <group>
+                                        <field name="dat6" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+
+                            </page>
+                            <page string="Asientos Generados">
+                                <group string="Costo de Ventas" states="1,2,3,4,5,6,7,8,9">
+                                    <group>
+                                        <field name="asiento_1" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Cancelacion Clase 9" states="2,3,4,5,6,7,8,9">
+                                    <group>
+                                        <field name="asiento_2" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Margen Comercial" states="3,4,5,6,7,8,9">
+                                    <group>
+                                        <field name="asiento_3" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Produccion de Ejercicio" states="4,5,6,7,8,9">
+                                    <group>
+                                        <field name="asiento_4" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Valor Agregado" states="5,6,7,8,9">
+                                    <group>
+                                        <field name="asiento_5" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Excedente o Insuficiencia" states="6,7,8,9">
+                                    <group>
+                                        <field name="asiento_6" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Resultado de Explotacion" states="7,8,9">
+                                    <group>
+                                        <field name="asiento_7" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Resultado antes de Participaciones" states="8,9">
+                                    <group>
+                                        <field name="asiento_8" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                                <group string="Cierre de Activo y Pasivo" states="9">
+                                    <group>
+                                        <field name="asiento_9" readonly="1"/>
+                                    </group>
+                                    <group>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_cierrecontable" model="ir.actions.act_window">
+            <field name="name">Cierre Contable</field>
+            <field name="res_model">asiento.cierre.contable</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_cierre_contable"
+                parent="account.account_account_menu"
+                action="action_cierrecontable"
+                sequence="-1"/>
+
+		
+	</data>
+</openerp>

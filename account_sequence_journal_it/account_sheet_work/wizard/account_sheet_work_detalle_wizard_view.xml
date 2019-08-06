@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_account_sheet_work_detalle_wizard_form">
+			<field name="name">account.sheet.work.detalle.wizard.form</field>
+			<field name="model">account.sheet.work.detalle.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Hoja de Trabajo" version="8.0">
+						<group>
+							<group>
+								<field name="fiscalyear_id"/>
+								<field name="period_ini" />
+								<field name="period_end" />
+							</group>
+							<group>
+								<field name="wizrd_level_sheet" />
+								<field name="type_show" required="1" />
+								
+							</group>
+						</group>
+
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="account_sheet_detalle_function" model="ir.actions.server">
+			<field name="name">Hoja de Trabajo</field>
+			<field name="model_id" ref="model_account_sheet_work_detalle_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+        <menuitem name="Hoja de Trabajo F1"
+            action="account_sheet_detalle_function"
+            id="menu_action_sheet_work_detalle"
+            parent="account_sheet_work.account_finance_state_it"
+            sequence="11"
+        />
+
+
+	</data>
+</openerp>

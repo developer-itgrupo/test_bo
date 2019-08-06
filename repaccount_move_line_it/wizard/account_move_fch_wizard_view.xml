@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+		<record model="ir.ui.view" id="view_account_move_line_rp_asiento_wizard_form">
+			<field name="name">account.move.line.rep.asiento.wizard.form</field>
+			<field name="model">account.move.line.rep.asiento.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Reporte de Cuenta Corriente">
+						<group>
+							<field name="period_ini" string="Periodo" />
+							<field name="journal_id" string="Libro" />
+							<field name="fecha" />
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_move_line_rep_asiento_wizard_action" model="ir.actions.act_window">
+			<field name="name">Asiento de Movimientos de Existencias</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.move.line.rep.asiento.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+		<menuitem name="Generar Asiento de Destino" id="account_move_line_rep_asiento_wizard_menu"  parent="account_analisis_destino_it.menu_finance_move_expense" action="account_move_line_rep_asiento_wizard_action" sequence="7" />
+
+
+
+		<!-- <record model="ir.ui.view" id="view_account_move_line_rp_wizard_form">
+			<field name="name">account.move.line.rep.wizard.form</field>
+			<field name="model">account.move.line.rep.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Reporte de Cuenta Corriente" version="7.0">
+						<group>
+							<field name="period_ini" />
+							<field name="period_end" />
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_move_line_rep_wizard_action" model="ir.actions.act_window">
+			<field name="name">Reporte de Movimientos de Existencias</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.move.line.rep.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+		<menuitem name="Existencias" id="account_move_line_rep_wizard_menu"  parent="repaccount_account_analytic_it.menu_finance_move_expense" action="account_move_line_rep_wizard_action" sequence="7" />
+ -->
+
+
+	</data>
+</odoo>

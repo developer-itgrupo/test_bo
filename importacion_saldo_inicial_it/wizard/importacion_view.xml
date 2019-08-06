@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+		<record model="ir.ui.view" id="wizard_import_asiento_apertura">
+			<field name="name">wizard.import.asiento.apertura.form</field>
+			<field name="model">wizard.import.asiento.apertura</field>
+			<field name="arch" type="xml">
+				<form string="Importacion Saldo Inicial" version="7.0">
+					<header>				
+		                <button string="Importar" name="importar" type="object" states="draft" class="oe_highlight" />
+		                <button string="Eliminar Importados" name="eliminar" confirm="Se eliminarán los asientos importados. ¿Desea continuar?" states="import" type="object" class="oe_highlight" />
+		                <button string="Regresar Borrador" name="borrador" states="cancel" type="object" class="oe_highlight" />
+						<field name="state" widget="statusbar" />               
+		            </header> 
+						<group>
+							<group>
+								<field name="fecha_contable" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="cuenta_descargo_mn" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="cuenta_descargo_me" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="partner_descargo" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="documento_descargo" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="diario" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="tipo" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+								<field name="delimitador" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+							</group>
+							<group>
+								<field name="nombre" invisible="1"/>
+								<field name="archivo" filename="nombre" string="CSV" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+							</group>
+						</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="wizard_import_asiento_apertura_tree" model="ir.ui.view">
+            <field name="name">wizard.import.asiento.apertura.tree</field>
+            <field name="model">wizard.import.asiento.apertura</field>
+            <field name="arch" type="xml">
+                <tree string="Importacion Saldo Inicial">
+                   <field name="fecha_contable"/>
+                   <field name="cuenta_descargo_mn"/>
+                   <field name="cuenta_descargo_me"/>
+                   <field name="partner_descargo"/>
+                   <field name="documento_descargo"/>
+                   <field name="diario"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+           </record>
+
+
+		<record id="wizard_import_asiento_apertura_action_cliente" model="ir.actions.act_window">
+			<field name="name">Importacion Saldo Inicial</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">wizard.import.asiento.apertura</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{'default_tipo':'1'}</field>
+			<field name="domain">[('tipo','=','1')]</field>
+		</record>
+
+
+		<record id="wizard_import_asiento_apertura_action_proveedor" model="ir.actions.act_window">
+			<field name="name">Importacion Saldo Inicial</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">wizard.import.asiento.apertura</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="context">{'default_tipo':'2'}</field>
+			<field name="domain">[('tipo','=','2')]</field>
+		</record>
+		
+
+		<menuitem name="Importacion Saldo Inicial" id="wizard_1_apertura_invicial"  parent="account.menu_finance_receivables" sequence="77"  action="wizard_import_asiento_apertura_action_cliente" />
+
+
+		<menuitem name="Importacion Saldo Inicial" id="wizard_2_apertura_invicial"  parent="account.menu_finance_payables" sequence="77"  action="wizard_import_asiento_apertura_action_proveedor" />
+
+
+
+
+	</data>
+</odoo>

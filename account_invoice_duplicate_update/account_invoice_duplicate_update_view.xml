@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<openerp>
+	<data>
+
+		<record id="action_duplicate_fact_comp" model="ir.actions.server">
+			<field name="name">Duplicar Fact. Comp.</field>
+			<field name="condition">True</field>
+			<field name="model_id" ref="account.model_account_invoice" />
+			<field name="state">code</field>
+			<field name="code">action= env['account.invoice'].browse(context['active_ids']).duplicate_fact_comp()</field>
+		</record>
+
+		<record model="ir.values" id="test_more_item">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'account.invoice'" name="model"/>
+            <field name="name">Test Item</field>
+            <field name="value" eval="'ir.actions.server,%d'%action_duplicate_fact_comp" />
+            <field name="object" eval="True"/>
+        </record>
+
+	</data>
+</openerp>

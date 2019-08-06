@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  © 2011-2016 Akretion (Alexis de Lattre <alexis.delattre@akretion.com>)
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+
+  <record id="view_account_type_it_form" model="ir.ui.view">
+    <field name="name">account_analytic_required.account_type_form</field>
+    <field name="model">account.account.type.it</field>
+    <field name="inherit_id" ref="account_account_it.view_account_type_it_form" />
+    <field name="arch"  type="xml">
+      <field name="name"  position="after">
+        <field name="analytic_policy" />
+      </field>
+    </field>
+  </record>
+
+  <record id="view_account_typeit_tree" model="ir.ui.view">
+    <field name="name">account_analytic_required.account_type_tree</field>
+    <field name="model">account.account.type.it</field>
+    <field name="inherit_id" ref="account_account_it.view_account_typeit_tree" />
+    <field name="arch"  type="xml">
+      <field name="name" position="after">
+        <field name="analytic_policy" />
+      </field>
+    </field>
+  </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <record model="ir.ui.view" id="view_analytic_view_error_wizard_form">
+      <field name="name">analytic.view.error.wizard.form</field>
+      <field name="model">analytic.view.error.wizard</field>
+      <field name="arch" type="xml">
+        <form string="No tiene Cta. Analitica" >
+            <group>
+              <group>
+                <field name="period_ini" required="1" />
+                <field name="period_fin" required="1"/>        
+              </group>
+              <group>
+              </group>
+            </group>
+
+            <footer>
+              <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+              or
+              <button string="Cancel" class="oe_link" special="cancel"/>
+            </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="analytic_view_error_wizard_action" model="ir.actions.act_window">
+      <field name="name">No tiene Cta. Analitica</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">analytic.view.error.wizard</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <record id="analytic_view_error_wizard_action" model="ir.actions.server">
+      <field name="name">No tiene Cta. Analitica</field>
+      <field name="model_id" ref="model_analytic_view_error_wizard"/>   
+      <field name="condition">True</field>
+      <field name="type">ir.actions.server</field>
+      <field name="state">code</field>
+      <field name="code">action = model.get_wizard()</field>
+    </record>
+
+    <menuitem id="menu_analytic_view_error_wizard" name="No tiene Cta. Analitica" parent="menu_consistencia.menu_consistencia_principal" sequence="4000" action="analytic_view_error_wizard_action" />
+    
+
+
+
+    <record id="view_analytic_view_error_tree" model="ir.ui.view">
+            <field name="name">analytic.view.error.tree</field>
+            <field name="model">analytic.view.error</field>
+            <field name="arch" type="xml">
+                <tree string="No tiene Cta. Analitica" create="false">
+                    <field name="period_id" />
+                    <field name="journal_id" />
+                    <field name="move_id" />
+                    <field name="type_id" />
+                    <field name="partner_id" />
+                    <field name="debit" />
+                    <field name="credit" />
+                    <field name="amount_currency" />
+                </tree>
+            </field>
+        </record>
+</odoo>

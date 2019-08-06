@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record id="view_import_product_form" model="ir.ui.view">
+            <field name="name">import.product.form</field>
+            <field name="model">import.product</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Procesar" type="object" name="pre_process_data" states="draft" class="oe_highlight"/>
+                        <button string="Corregir" type="object" name="correct_data" states="process_exception" class="oe_highlight"/>
+                        <button string="Importar" type="object" name="import_data" states="process_exception,ready" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,process_exception,ready"/>
+                    </header>
+                    <sheet>
+                        <group string="Datos de Importación">
+                            <group>
+                                <field name="import_date"/>
+                            </group>
+                            <group>
+                                <field name="binary_file" filename="file_name"/>
+                                <field name="file_name"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Líneas inválidas" attrs="{'invisible':[('state','in',['draft,done'])]}">
+                                <field name="lines"/>
+                            </page>
+                            <page string="Líneas válidas" attrs="{'invisible':[('state','in',['draft,done'])]}">
+                                <field name="lines2" readonly="1"/>
+                            </page>
+                            <page string="Productos Importados">
+                                <field name="lines3" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_import_product_tree" model="ir.ui.view">
+            <field name="name">import.product.tree</field>
+            <field name="model">import.product</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="import_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_import_product_line_tree" model="ir.ui.view">
+            <field name="name">import.product.line.tree</field>
+            <field name="model">import.product.line</field>
+            <field name="arch" type="xml">
+                <tree delete="0" editable="top" create="0">
+                    <field name="default_code"/>
+                    <field name="name"/>
+                    <field name="uom_id"/>
+                    <field name="type"/>
+                    <field name="categ_id"/>
+                    <field name="sale_ok"/>
+                    <field name="purchase_ok"/>
+                    <field name="uom_po_id"/>
+                    <field name="routes_id"/>
+                    <field name="property_account_income"/>
+                    <field name="property_account_expense"/>
+                    <field name="observations"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_import_product_view" model="ir.actions.act_window">
+            <field name="name">Importar Productos</field>
+            <field name="res_model">import.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem 
+            name="Importar Productos"
+            action="action_import_product_view" 
+            id="menu_import_product" 
+            parent="stock.menu_product_in_config_stock"
+        />
+
+	</data>
+</openerp>

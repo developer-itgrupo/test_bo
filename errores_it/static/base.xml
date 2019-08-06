@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-extend="CrashManager.error">
+        <t t-jquery="div" t-operation="replace"> 
+			    <div class="o_error_detail">        
+			    	<h1>Posible Problema:</h1>
+        			<ul class="nav nav-tabs">
+					  <li class="active"><a data-toggle="tab" href="#home">Descripción</a></li>
+					  <li><a data-toggle="tab" href="#menu1">Datos Técnicos</a></li>
+					</ul>
+
+					<div class="tab-content">
+					  <div id="home" class="tab-pane fade in active">
+					    <h3>Este inconveniente posiblemente por:</h3>
+					    <p> -Alguna configuración pendiente en Odoo.</p>
+					    <p> -Alguna actualización pendiente en Odoo.</p>
+					    <p> -Algun dato incorrecto que no este debidamente ingresado.</p>
+					    <p>Por favor comunicarse con los Partners de Odoo (ITGrupo) enviando los datos técnicos adjuntos para dar solución al problema.</p>
+					  </div>
+					  <div id="menu1" class="tab-pane fade">
+        				<pre><t t-esc="error.data.debug"/></pre>
+					  </div>
+					</div>
+
+			    </div>
+        </t>
+    </t>
+
+</templates>

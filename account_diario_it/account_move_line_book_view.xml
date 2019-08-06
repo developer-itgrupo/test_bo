@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_move_line_book_tree" model="ir.ui.view">
+            <field name="name">account.move.line.book.tree</field>
+            <field name="model">account.move.line.book</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false">
+                    <field name="periodo" string="Periodo"/>
+                    <field name="libro" string="Libro"/>
+                    <field name="voucher" string="Voucher"/>
+                    <field name="cuenta" string="Cuenta"/>
+                    <field name="debe" string="Debe" sum="debe"/>
+                    <field name="haber" string="Haber" sum="haber"/>
+                    <field name="divisa" string="Divisa" />
+                    <field name="tipodecambio" string="Tipo de Cambio" />
+                    <field name="importedivisa" string="Importe Divisa" sum="importedivisa"/>
+                    <field name="codigo" string="Código" />
+                    <field name="partner" string="Partner" />
+                    <field name="tipodocumento" string="Tipo de Documento" />
+                    <field name="numero" string="Número" />
+                    <field name="fechaemision" string="Fecha Emisión" />
+                    <field name="fechavencimiento" string="Fecha Vencimiento" />
+                    <field name="glosa" string="Glosa" />
+                    <field name="ctaanalitica" string="Cta. Analítica" />
+                    <field name="refconcil" string="Referencia Conciliación" />
+                    <field name="state" />
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_move_line_book_search" model="ir.ui.view">
+            <field name="name">account.move.line.book.search</field>
+            <field name="model">account.move.line.book</field>
+            <field name="arch" type="xml">
+                <search string="Libro Diario">
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                        <filter string="Libro" name="libro" icon="terp-partner" context="{'group_by':'libro'}"/>
+                        <filter string="Voucher" name="voucher" icon="terp-partner" context="{'group_by':'voucher'}"/>
+                        <filter string="Cuenta" name="cuenta" icon="terp-partner" context="{'group_by':'cuenta'}"/>
+                        <filter string="Código" name="codigo" icon="terp-partner" context="{'group_by':'codigo'}"/>
+                        <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+                        <filter string="Número" name="numero" icon="terp-partner" context="{'group_by':'numero'}"/>
+                        <filter string="Cta. Analítica" name="ctaanalitica" icon="terp-partner" context="{'group_by':'ctaanalitica'}"/>
+                        <filter string="Referencia Conciliación" name="refconcil" icon="terp-partner" context="{'group_by':'refconcil'}"/>
+                        <filter string="Estado" name="state" icon="terp-partner" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_account_moves_all_it" model="ir.actions.act_window">
+            <field name="name">Libro Diario</field>
+            <field name="res_model">account.move.line.book</field>
+            <field name="view_id" ref="view_move_line_book_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="account_move_line_book_search"/>
+        </record>
+
+        
+        <record id="view_move_line_book_report_tree" model="ir.ui.view">
+            <field name="name">account.move.line.book.report.tree</field>
+            <field name="model">account.move.line.book.report</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false">
+                    <field name="periodo" string="Periodo"/>
+                    <field name="libro" string="Libro"/>
+                    <field name="voucher" string="Voucher"/>
+                    <field name="cuenta" string="Cuenta"/>
+                    <field name="debe" string="Debe" sum="debe"/>
+                    <field name="haber" string="Haber" sum="haber"/>
+                    <field name="divisa" string="Divisa" />
+                    <field name="tipodecambio" string="Tipo de Cambio" />
+                    <field name="importedivisa" string="Importe Divisa" sum="importedivisa"/>
+                    <field name="codigo" string="Código" />
+                    <field name="partner" string="Partner" />
+                    <field name="tipodocumento" string="Tipo de Documento" />
+                    <field name="numero" string="Número" />
+                    <field name="fechaemision" string="Fecha Emisión" />
+                    <field name="fechavencimiento" string="Fecha Vencimiento" />
+                    <field name="glosa" string="Glosa" />
+                    <field name="ctaanalitica" string="Cta. Analítica" />
+                    <field name="refconcil" string="Referencia Conciliación" />
+                    <field name="state" />
+
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="account_move_line_book_report_search" model="ir.ui.view">
+            <field name="name">account.move.line.book.report.search</field>
+            <field name="model">account.move.line.book.report</field>
+            <field name="arch" type="xml">
+                <search string="Libro Diario">
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                        <filter string="Tipo de Documento" name="tipodocumento" icon="terp-partner" context="{'group_by':'tipodocumento'}"/>
+                        <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+                        <filter string="Libro" name="libro" icon="terp-partner" context="{'group_by':'libro'}"/>
+                        <filter string="Voucher" name="voucher" icon="terp-partner" context="{'group_by':'voucher'}"/>
+                        <filter string="Cuenta" name="cuenta" icon="terp-partner" context="{'group_by':'cuenta'}"/>
+                        <filter string="Número" name="numero" icon="terp-partner" context="{'group_by':'numero'}"/>
+                        <filter string="Fecha Emisión" name="fechaemision" icon="terp-partner" context="{'group_by':'fechaemision'}"/>
+                        <filter string="Fecha Vencimiento" name="fechavencimiento" icon="terp-partner" context="{'group_by':'fechavencimiento'}"/>
+                        <filter string="Estado" name="state" icon="terp-partner" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_account_moves_all_report_it" model="ir.actions.act_window">
+            <field name="name">Libro Diario Reporte</field>
+            <field name="res_model">account.move.line.book.report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_id" ref="view_move_line_book_report_tree"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="account_move_line_book_report_search"/>
+        </record>
+
+
+
+
+
+
+
+    </data>
+</openerp>

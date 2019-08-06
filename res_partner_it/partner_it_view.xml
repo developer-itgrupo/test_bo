@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.vat.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base_vat.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="parent_id" position="before">                
+                    <field name="type_document_partner_it" placeholder="Tipo de Documento" />
+                    <field name="nro_documento" placeholder="Número de Documento" />
+                </field>
+
+                <field name="user_id" position="before">
+                    <field name="es_empleado" />
+                </field>
+
+                <label for="vat" position="before">
+
+                    <label for="nombre" />
+                    <div name="vat_info_name" class="o_row">
+                        <field name="nombre" placeholder="Nombres" />
+                    </div>
+
+                    <label for="apellido_p" />
+                    <div name="vat_info_name" class="o_row">
+                        <field name="apellido_p" placeholder="Apellido Paterno" />
+                    </div>
+                    <label for="apellido_m" />
+                    <div name="vat_info_name" class="o_row">
+                        <field name="apellido_m" placeholder="Apellido Materno" />
+                    </div>
+
+                </label>
+
+
+                <xpath expr="//notebook" position="inside">
+                        
+                        <page string="Info. No Domiciliados" name="info_no_domiciliados">
+                            <group>
+                                <group>
+                                    <field name="pais_residencia_nd" />
+                                    <field name="domicilio_extranjero_nd" />
+                                    <field name="numero_identificacion_nd" />
+                                    <field name="vinculo_contribuyente_residente_extranjero" />
+                                </group>
+                                <group>
+                                    <field name="convenios_evitar_doble_imposicion" />
+                                    <field name="is_resident" />   
+                                    <field name="has_agree" />   
+                                </group>
+                            </group>
+                        </page>
+                </xpath>
+
+            </field>
+        </record>
+
+	</data>
+</openerp>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_estado_letras_final_tree" model="ir.ui.view">
+            <field name="name">view.estado.letras.final.tree</field>
+            <field name="model">view.estado.letras.final</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Estado de Letra" create="false" delete="false">
+                    <field name="fecha_canje" />
+                    <field name="fecha_vencimiento" />
+                    <field name="letra" />
+                    <field name="nro_cliente" />
+                    <field name="cliente" />
+                    <field name="cuenta" />
+                    <field name="moneda" />
+                    <field name="monto_canje_mn" />
+                    <field name="pagos_mn" />
+                    <field name="saldomn" />
+                    <field name="monto_canje_me" />
+                    <field name="pagos_me" />
+                    <field name="saldome" />
+                    <field name="estado" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_estado_letras_final_tree_action" model="ir.actions.act_window">
+            <field name="name">Estado Letra</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">view.estado.letras.final</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph,pivot</field>
+        </record>
+
+
+        <menuitem name="Estado Letras"
+            action="view_estado_letras_final_tree_action"
+            id="menu_view_estado_letra_finalreceivable"
+            parent="account.menu_finance_receivables"
+        />
+
+        <menuitem name="Estado Letras"
+            action="view_estado_letras_final_tree_action"
+            id="menu_view_estado_letra_finalpayable"
+            parent="account.menu_finance_payables"
+        />
+
+
+    </data>
+</openerp>

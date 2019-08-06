@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+
+		<record model="ir.ui.view" id="wizard_import_codigo_sunat">
+			<field name="name">wizard.import.codigo.sunat.form</field>
+			<field name="model">wizard.import.codigo.sunat</field>
+			<field name="arch" type="xml">
+				<form string="Importacion Codigo Sunat" version="7.0">
+					<header>				
+		                <button string="Importar" name="importar" type="object" states="draft" class="oe_highlight" />
+		                <field name="state" widget="statusbar" />               
+		            </header> 
+						<group>
+							<group>
+								<field name="delimitador" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+							</group>
+							<group>
+								<field name="nombre" invisible="1"/>
+								<field name="archivo" filename="nombre" string="CSV" required="1" attrs="{'readonly': [('state','!=','draft')]}"/>
+							</group>
+						</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="wizard_import_codigo_sunat_tree" model="ir.ui.view">
+            <field name="name">wizard.import.codigo.sunat.tree</field>
+            <field name="model">wizard.import.codigo.sunat</field>
+            <field name="arch" type="xml">
+                <tree string="Importacion Codigo Sunat">
+                   <field name="state"/>
+                </tree>
+            </field>
+           </record>
+
+
+		<record id="wizard_import_codigo_sunat_action" model="ir.actions.act_window">
+			<field name="name">Importacion Codigo Sunat</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">wizard.import.codigo.sunat</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+
+		<menuitem name="Importacion Codigo Sunat" id="wizard_codigo_sunat"  parent="account.menu_finance_entries" sequence="177"  action="wizard_import_codigo_sunat_action" />
+
+
+
+
+	</data>
+</odoo>

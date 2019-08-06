@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document">
+
+        <!-- <div class="header">
+            <div class="row">
+                <div class="col-xs-3">
+                    <h3>Header title</h3>
+                </div>
+            </div>
+        </div> -->
+        <t t-call="report.external_layout">
+            <div class="page" style="font-size:x-small;">
+                <xpath expr="." position="inside">
+                    <link rel='stylesheet' href="/account_imprimir_asiento_contable_it/static/src/css/estilos.css"/>
+                </xpath>
+                <div class="oe_structure"/>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <td colspan="10" class="text-center">
+                                <center>VOUCHER DE CONTABILIDAD</center>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">PERIODO</td>
+                            <td>LIBRO</td>
+                            <td colspan="3">GLOSA DEL VOUCHER</td>
+                            <td colspan="2">N° VOUCHER</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <t t-esc="docs[0].periodo + ' / ' + docs[0].fecha" />
+                            </td>
+                            <td colspan="1">
+                                <t t-esc="docs[0].diario" />
+                            </td>
+                            <td colspan="3">
+                                <t t-esc="docs[0].glosa" />
+                            </td>
+                            <td colspan="2">
+                                <t t-esc="docs[0].nro_comprobante" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Fila</th>
+                            <th>Voucher </th>
+                            <th>Tipo Doc</th>
+                            <th>Nro Comprobante</th>
+                            <th>Analitica </th>
+                            <th>RUC/DNI</th>
+                            <th>Partner</th>
+                            <th>Cuenta</th>
+                            <th>Cargo</th>
+                            <th>Abono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="aux" t-value="1"/>
+                        <t t-set="debit" t-value="0"/>
+                        <t t-set="credit" t-value="0"/>
+                        <t t-foreach="docs" t-as="line">
+                            <tr>
+                                <td>
+                                    <t t-esc="line.fila" />
+                                </td>
+                                <td class="columnA">
+                                    <t t-esc="line.voucher" />
+                                </td>
+                                <td>
+                                    <t t-esc="line.tipo_doc" />
+                                </td>
+                                <td>
+                                    <t t-esc="line.nro_comprobante" />
+                                </td>
+                                <td>
+                                    <t t-esc="line.cuentaa" />
+                                </td>
+                                <td>
+                                    <t t-esc="line.ruc_dni" />
+                                </td>
+                                <td>
+                                    <t t-esc="line.partner" />
+                                </td>
+                                <td>
+                                    <t t-esc="line.cuenta" />
+                                </td>
+                                <td class="digits">
+                                    <div t-field="line.cargo" t-fields-options='{"widgets":"monetary"}' />
+                                </td>
+                                <td class="digits">
+                                    <div t-field="line.abono" t-fields-options='{"widgets":"monetary"}' />
+                                </td>
+                                <t t-set="aux" t-value="aux+1"/>
+                                <t t-set="debit" t-value="debit + line.cargo"/>
+                                <t t-set="credit" t-value="credit + line.abono"/>
+                                <t t-if="aux == 31100">
+                                    <t t-set="aux" t-value="1"/>
+                                    <tr>
+                                        <td></td>
+                                        <td class="columnA"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <th>Totales:</th>
+                                        <td class="digits">
+                                            <div t-esc="debit" t-fields-options='{"widgets":"monetary"}' />
+                                        </td>
+                                        <td class="digits">
+                                            <div t-esc="credit" t-fields-options='{"widgets":"monetary"}' />
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tr>
+                        </t>
+                        <t t-if="aux &lt; 31100">
+                            <tr>
+                                <td></td>
+                                <td class="columnA"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <th>Totales:</th>
+                                <td class="digits">
+                                    <div t-esc="debit" t-fields-options='{"widgets":"monetary"}' />
+                                </td>
+                                <td class="digits">
+                                    <div t-esc="credit" t-fields-options='{"widgets":"monetary"}' />
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <div class="row" style="margin-top:100px;">
+                    <div class="left">
+                        <p>Hecho Por</p>
+                    </div>
+                    <div class="right">
+                        <p>Aprobado Por</p>
+                    </div>
+
+                </div>
+                <div class="oe_structure"/>
+
+            </div>
+        </t>
+    </template>
+    <template id="report_asientocontable">
+        <t t-call="report.html_container">
+            <t t-call="account_imprimir_asiento_contable_it.report_saleorder_document">
+            </t>
+        </t>
+    </template>
+</odoo>

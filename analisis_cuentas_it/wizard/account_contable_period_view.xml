@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_analisis_cuenta" model="ir.ui.view">
+            <field name="name">analisis.cuenta.tree</field>
+            <field name="model">analisis.cuenta</field>
+            <field name="arch" type="xml">
+                <tree string="Análisis de Cuenta" create="false">
+                    <field name="periodo_inicial" />
+                    <field name="periodo_final" />
+                    <field name="group_balance" />
+                    <field name="group_function" />
+                    <field name="group_nature" />
+                    <field name="rubro" />
+                    <field name="cuenta" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldo" />
+                    <button name="edit_linea_it" icon="fa-building-o" string="Ver Detalle" type="object"/>
+                </tree>
+
+            </field>
+        </record>
+
+
+		<record id="analisis_cuenta_search" model="ir.ui.view">
+	        <field name="name">analisis.cuenta.search</field>
+	        <field name="model">analisis.cuenta</field>
+	        <field name="arch" type="xml">
+	            <search string="Análisis Cuenta">
+	                <separator/>
+	                <group expand="1" string="Group By...">
+	                    <filter string="Tipo Cuenta" name="rubro" icon="terp-partner" context="{'group_by':'rubro'}"/>
+                        <filter string="cuenta" name="cuenta" icon="terp-partner" context="{'group_by':'cuenta'}"/>
+	                </group>
+	            </search>
+	        </field>
+	    </record>
+
+
+
+        <record id="analisis_cuenta_action" model="ir.actions.act_window">
+            <field name="name">Análisis Cuenta</field>
+            <field name="res_model">analisis.cuenta</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_analisis_cuenta"/>
+			<field name="search_view_id" ref="analisis_cuenta_search"/>
+        </record>
+
+
+
+    </data>
+</openerp>

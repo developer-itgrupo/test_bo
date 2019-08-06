@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <menuitem id="menu_main_corrector_ple" string="Corrector PLE" name="Corrector PLE" parent="ple_diario_sunat_it.libro_electronico_wizard_menu"/>
+
+        <record id="view_corrector_ple_compra_form" model="ir.ui.view">
+            <field name="name">corrector.ple.compra.form</field>
+            <field name="model">corrector.ple.compra</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+				<form string="Compra" version="8.0">
+                    <header>
+                        <button name="calcular" string="Verificar" type="object" />
+                        <button name="reparar" string="Reparar" type="object" />
+                    </header>
+                    <group>
+                        <group>
+                            <field name="period_id" />
+                        </group>
+                        <group>
+                            <field name="adquisicion_check" />
+                        </group>
+                    </group>
+
+                    <group string="Estado Actual">
+                        <group>
+                            <field name="anulados_mal" />
+                            <field name="estadodocumento_mal" />
+                        </group>
+                        <group>
+                            <field name="fecha_mal" />
+                            <field name="adquisicion_mal" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Estado Documento">
+                            <field name="estado_documento" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="documento" required="1"/>
+                                    <field name="libro" required="1"/>
+                                    <field name="estado" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Estado Fecha">
+                            <field name="fecha" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="documento" required="1"/>
+                                    <field name="libro" required="1"/>
+                                    <field name="estado" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Anulados">
+                            <field name="anulados" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="libro" required="1"/>
+                                    <field name="estado" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Tipo de Adquisición">
+                            <field name="adquisicion" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="libro" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+				</form>
+            </field>
+        </record>
+
+
+
+
+		<record id="view_corrector_ple_compra_tree" model="ir.ui.view">
+            <field name="name">corrector.ple.compra.tree</field>
+            <field name="model">corrector.ple.compra</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Compra" >
+                    <field name="period_id" />
+                </tree>
+            </field>
+        </record>
+		
+		<record id="action_corrector_ple_compra" model="ir.actions.act_window">
+            <field name="name">Compra</field>
+            <field name="res_model">corrector.ple.compra</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+		
+
+        <menuitem action="action_corrector_ple_compra" id="menu_main_corrector_ple_compra" parent="menu_main_corrector_ple"/>
+
+
+
+
+        <record id="view_corrector_ple_venta_form" model="ir.ui.view">
+            <field name="name">corrector.ple.venta.form</field>
+            <field name="model">corrector.ple.venta</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <form string="Venta" version="8.0">
+                    <header>
+                        <button name="calcular" string="Verificar" type="object" />
+                        <button name="reparar" string="Reparar" type="object" />
+                    </header>
+                    <group>
+                        <group>
+                            <field name="period_id" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <group string="Estado Actual">
+                        <group>
+                            <field name="anulados_mal" />
+                            <field name="estadodocumento_mal" />
+                        </group>
+                        <group>
+                            <field name="fecha_mal" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Estado Documento">
+                            <field name="estado_documento" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="documento" required="1"/>
+                                    <field name="libro" required="1"/>
+                                    <field name="estado" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Estado Fecha">
+                            <field name="fecha" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="documento" required="1"/>
+                                    <field name="libro" required="1"/>
+                                    <field name="estado" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Anulados">
+                            <field name="anulados" nolabel="1" >
+                                <tree editable="bottom">
+                                    <field name="libro" required="1"/>
+                                    <field name="estado" required="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+
+
+
+        <record id="view_corrector_ple_venta_tree" model="ir.ui.view">
+            <field name="name">corrector.ple.venta.tree</field>
+            <field name="model">corrector.ple.venta</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Venta" >
+                    <field name="period_id" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="action_corrector_ple_venta" model="ir.actions.act_window">
+            <field name="name">Venta</field>
+            <field name="res_model">corrector.ple.venta</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+
+        <menuitem action="action_corrector_ple_venta" id="menu_main_corrector_ple_venta" parent="menu_main_corrector_ple"/>
+
+	</data>
+</openerp>

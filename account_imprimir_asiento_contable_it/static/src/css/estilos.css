@@ -1,0 +1,50 @@
+/* table,
+th,
+td {
+    border: 1px solid black;
+} */
+
+/* table {
+    border-spacing: 10px;
+  } */
+
+  
+table {
+    width: 100%;
+}
+
+th {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+td {
+    padding-right: 6px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.digits{
+    text-align: right;
+}
+.columnA {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: None;
+    text-overflow: None;
+}
+
+.left {
+    position: absolute;
+    float: left;
+    border-top: 1px solid black;
+    padding: 0 40px;
+}
+
+.right {
+    position: relative;
+    float: right;
+    border-top: 1px solid black;
+    padding: 0 40px;
+}

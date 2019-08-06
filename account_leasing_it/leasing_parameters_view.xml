@@ -1,0 +1,43 @@
+<odoo>
+    <data>
+        <record id="view_leasing_parameters_inherit" model="ir.ui.view">
+            <field name="name">leasing_parameters_inherit</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//page[1]" position="after">
+                        <page string="Leasing">
+                            <group>
+                                <group>
+                                    <field name="account_capital_id"/>
+                                    <field name="account_gastos_id"/>
+                                    <field name="account_comision_id"/>
+                                     <field name="account_seguro_id"/>
+                                     <field name="account_intereses_id"/>
+                                     <field name="account_cargo_devengamiento_id"/>
+                                     <field name="account_abono_devengamiento_id"/>
+                                     <field name="account_cargo_interes_monetario_id"/>
+                                </group>
+                                <group>
+                                    <field name="tax_capital"/>
+                                    <field name="tax_gastos"/>
+                                    <field name="tax_comision"/>
+                                    <field name="tax_seguro"/>
+                                    <field name="tax_intereses"/>
+                                    <field name="tax_cargo_devengamiento"/>
+                                    <field name="tax_abono_devengamiento"/>
+                                    <field name="tax_interes_monetario"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="journal_asiento_compra_id"/>
+                                <field name="catalog_comprobante_cuotas_id"/>
+                            </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</odoo>

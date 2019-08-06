@@ -1,0 +1,3 @@
+account_id,partner_id,type_document_it,nro_comprobante,name,currency_id,amount_currency,debit,credit,tax_code_id,tax_amount,tc,date_amturity,analytic_account_id
+1011011,20525143555,01,0001-00007852,asiento impportado,USD,1000,3000,0,IGV1,1000,3,02/01/2017,1002
+1011011,20525143555,01,0001-00007852,asiento impportado,USD,-1000,0,3000,IGV1,,3,02/01/2017,1003

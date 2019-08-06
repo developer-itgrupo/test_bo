@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        
+
+        <record id="view_account_sheet_work_simple_search" model="ir.ui.view">
+            <field name="name">account.sheet.work.simple.search</field>
+            <field name="model">account.sheet.work.simple</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="rubro"/>
+                    <field name="cuenta"/>
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Rubro" name="rubro" icon="terp-partner" context="{'group_by':'rubro'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_account_sheet_work_simple_tree" model="ir.ui.view">
+            <field name="name">account.sheet.work.simple.tree</field>
+            <field name="model">account.sheet.work.simple</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Hoja de Trabajo" create="false">
+                    <field name="rubro" />
+                    <field name="cuenta" />
+                    <field name="descripcion" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldodeudor" />
+                    <field name="saldoacredor" />
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_account_sheet_work_simple" model="ir.actions.act_window">
+            <field name="name">Hoja de Trabajo</field>
+            <field name="res_model">account.sheet.work.simple</field>
+            <field name="view_id" ref="view_account_sheet_work_simple_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        
+        <record id="view_account_sheet_work_detallado_tree" model="ir.ui.view">
+            <field name="name">account.sheet.work.detalle.tree</field>
+            <field name="model">account.sheet.work.detalle</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Hoja de Trabajo" create="false">
+                    <field name="cuenta" />
+                    <field name="descripcion" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldodeudor" />
+                    <field name="saldoacredor" />
+                    <field name="activo" />
+                    <field name="pasivo" />
+                    <field name="perdidasnat" />
+                    <field name="ganancianat" />
+                    <field name="perdidasfun" />
+                    <field name="gananciafun" />
+                    <field name="aml_ids" invisible="1" />                    
+                    <button name="edit_linea_it" icon="fa-building-o" string="Ver Detalle" type="object"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_account_sheet_work_detallado" model="ir.actions.act_window">
+            <field name="name">Hoja de Trabajo</field>
+            <field name="res_model">account.sheet.work.detalle</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_id" ref="view_account_sheet_work_detallado_tree"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+
+
+
+
+
+    </data>
+</openerp>

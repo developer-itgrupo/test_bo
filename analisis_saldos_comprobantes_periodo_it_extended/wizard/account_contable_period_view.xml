@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_saldo_comprobante_periodo" model="ir.ui.view">
+            <field name="name">saldo.comprobante.periodo.tree</field>
+            <field name="model">saldo.comprobante.periodo</field>
+            <field name="inherit_id" ref="analisis_saldos_comprobantes_periodo_it.view_saldo_comprobante_periodo"/>
+            <field name="arch" type="xml">
+
+                <field name="divisa" position="after">
+                    <field name="tc"/>
+                </field>
+
+            </field>
+        </record>
+
+
+
+        <record id="view_account_form" model="ir.ui.view">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+
+                <field name="user_type_id" position="after">
+                    <field name="analisis_documento"/>
+                </field>
+
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

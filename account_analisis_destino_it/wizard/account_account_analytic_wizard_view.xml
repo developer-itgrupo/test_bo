@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<menuitem id="menu_finance_move_expense" name="Asientos de Destino" parent="account.menu_finance" sequence="14" groups="account.group_account_user,account.group_account_manager"/>
+
+		<record model="ir.ui.view" id="view_account_account_analytic_wizard_form">
+			<field name="name">account.account.analytic.wizard.form</field>
+			<field name="model">account.account.analytic.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Análisis de Destino" version="7.0">
+						<group>
+							<field name="period_ini" />
+							<field name="period_end" />
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_account_analytic_rep_wizard_action" model="ir.actions.server">
+			<field name="name">Análisis de Destino</field>
+			<field name="model_id" ref="model_account_account_analytic_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+		
+        <menuitem name="Análisis Destinos" id="account_account_analytic_wizard_menu"  parent="menu_finance_move_expense" action="account_account_analytic_rep_wizard_action" sequence="7" />
+		    
+
+
+        <record model="ir.ui.view" id="view_account_account_analytic_asiento_wizard_form">
+			<field name="name">account.account.analytic.asiento.wizard.form</field>
+			<field name="model">account.account.analytic.asiento.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Generar Asiento Clase 9" version="8.0">
+						<group>
+							<field name="period_ini" string="Periodo" />
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_account_analytic_asiento_wizard_action" model="ir.actions.act_window">
+			<field name="name">Generar Asiento Clase 9</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.account.analytic.asiento.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+		<!-- <menuitem name="Generar Asiento Clase 9" id="account_account_analytic_asiento_wizard_menu"  parent="menu_finance_move_expense" action="account_account_analytic_asiento_wizard_action" sequence="1" />
+	-->
+
+
+	</data>
+</openerp>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="view_selection_wizard_form">
+			<field name="name">selection.wizard.form</field>
+			<field name="model">selection.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Seleccionar ajustes">
+					<group>
+						<field name="fiscalyear_id" string="Año Fiscal" required="1"/>
+						<field name="period_id" string="Periodo" required="1" domain="[('fiscalyear_id','=',fiscalyear_id)]" />
+						<field name="type" string="Tipo" required="1"/>
+						<!--<field name="currency_id" />-->
+					</group>
+					<footer>
+						<button string="Buscar" name="print_report" type="object" class="oe_highlight"/>
+						<!--<button string="Generar TXT (PLE)" name="make_txt_ple" type="object" default_focus="1" class="oe_highlight"/>-->
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                	</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="make_selection_wizard_action" model="ir.actions.act_window">
+	        <field name="name">Seleccionar Ajustes de Cambio</field>
+	        <field name="type">ir.actions.act_window</field>
+	        <field name="res_model">selection.wizard</field>
+			<field name="view_type">form</field>
+	        <field name="view_mode">form</field>
+	        <field name="target">new</field>
+	    </record>
+		
+
+		<menuitem name='Ajuste Dif. Cambio' id='ajuste_exchange_diff_config_menu' parent='res_currency_rate_it.menu_main_usd_unique' action="make_selection_wizard_action" />
+		
+	</data>
+</odoo>

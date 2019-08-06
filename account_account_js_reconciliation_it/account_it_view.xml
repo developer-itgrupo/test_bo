@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <template id="assets_backend" name="account assets" inherit_id="account.assets_backend">
+            <xpath expr="//script[@src='/account/static/src/js/account_reconciliation_widgets.js']" position="replace">
+                <script type="text/javascript" src="/account_account_js_reconciliation_it/static/account_reconciliation_widgets.js"></script>
+            </xpath>
+            <xpath expr="//script[@src='/web/static/src/js/views/form_common.js']" position="replace">
+                <script type="text/javascript" src="/account_account_js_reconciliation_it/static/form_common.js"></script>
+            </xpath>
+            <xpath expr="//script[@src='/web/static/src/js/views/form_relational_widgets.js']" position="replace">
+                <script type="text/javascript" src="/account_account_js_reconciliation_it/static/form_relational_widgets.js"></script>
+            </xpath>
+        </template>		
+
+	
+
+	</data>
+</openerp>

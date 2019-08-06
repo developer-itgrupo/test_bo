@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <odoo>
+	<data> 
+		<!-- Add instructor field to existing view -->
+        <record model="ir.ui.view" id="invoice_form">
+            <field name="name">account.invoice</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account_invoice_it.invoice_form"/>
+            <field name="arch" type="xml"> 
+                <xpath expr="//page[@name='other_info']/group/group[2]/field[@name='fecha_perception']" position="replace">
+               		<field name="fecha_perception" invisible="1"/> 
+               </xpath>
+            </field>
+        </record>
+	</data>
+</odoo>

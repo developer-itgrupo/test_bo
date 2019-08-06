@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+        <record id="productos_variation_action" model="ir.actions.server">
+            <field name="name">Actualizar</field>
+            <field name="model_id" ref="model_product_product"/>
+            <field name="code">              
+                    action = model.actualizar_costo_promedio()
+            </field>
+        </record>
+
+        <menuitem name="Actualizar Costo Venta"
+            action="productos_variation_action"
+            id="menu_actualizar_costoventa"
+            parent="account.menu_finance_reports"
+            sequence="13"
+        />
+
+
+    </data>
+</openerp>

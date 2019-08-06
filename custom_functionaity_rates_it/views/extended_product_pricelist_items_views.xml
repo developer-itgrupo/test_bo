@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+<record id="inherit_form_pricelist_item" model="ir.ui.view">
+      <field name="name">inherit.form.pricelist.item</field>
+      <field name="model">product.pricelist.item</field>
+      <field name="inherit_id" ref="product.product_pricelist_item_tree_view"/>
+      <field name="arch" type="xml">
+      	<field name="min_quantity" position="after">
+      		<field name="last_cost" string="Ultima compra"/>
+            <field name="standart_price" string="Costo promedio"/>
+      	</field>
+      </field>
+    </record>
+
+    </data>
+</odoo>
+
+

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_saldo_comprobante_periodo" model="ir.ui.view">
+            <field name="name">saldo.comprobante.periodo.tree</field>
+            <field name="model">saldo.comprobante.periodo</field>
+            <field name="arch" type="xml">
+                <tree string="Saldo Por Periodo" create="false">
+                    <field name="periodo" />
+                    <field name="fecha_emision" />
+					<field name="fecha_venci" />
+					<field name="ruc" />
+                    <field name="empresa" />
+                    <field name="tipo_cuenta" />
+                    <field name="code" />
+                    <field name="tipo" />
+                    <field name="nro_comprobante" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldo" />
+                    <field name="divisa" />
+                    <field name="amount_currency" />
+                    <button name="edit_linea_it" icon="fa-building-o" string="Ver Detalle" type="object"/>
+                </tree>
+            </field>
+        </record>
+
+
+		<record id="saldo_comprobante_periodo_search" model="ir.ui.view">
+	        <field name="name">saldo.comprobante.periodo.search</field>
+	        <field name="model">saldo.comprobante.periodo</field>
+	        <field name="arch" type="xml">
+	            <search string="Saldo por Periodo">
+	                <separator/>
+	                <group expand="1" string="Group By...">
+	                    <filter string="Empresa" name="empresa" icon="terp-partner" context="{'group_by':'empresa'}"/>
+                        <filter string="Cuenta" name="code" icon="terp-partner" context="{'group_by':'code'}"/>
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+	                </group>
+	            </search>
+	        </field>
+	    </record>
+
+
+
+        <record id="saldo_comprobante_periodo_action" model="ir.actions.act_window">
+            <field name="name">Saldo por Periodo</field>
+            <field name="res_model">saldo.comprobante.periodo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_saldo_comprobante_periodo"/>
+			<field name="search_view_id" ref="saldo_comprobante_periodo_search"/>
+        </record>
+
+    </data>
+</openerp>

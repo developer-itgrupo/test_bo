@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+
+
+        <record id="view_account_analisis_meses_tree" model="ir.ui.view">
+            <field name="name">account.analisis.meses.tree</field>
+            <field name="model">account.analisis.meses</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Analisis x Meses">
+                    <field name="cuenta" />
+                    <field name="descrip" />
+                    <field name="apertura" />
+                    <field name="enero" />
+                    <field name="febrero" />
+                    <field name="marzo" />
+                    <field name="abril" />
+                    <field name="mayo" />
+                    <field name="junio" />
+                    <field name="julio" />
+                    <field name="agosto" />
+                    <field name="setiembre" />
+                    <field name="octubre" />
+                    <field name="noviembre" />
+                    <field name="diciembre" />
+                    <field name="total" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_analisis_meses_wizard_form">
+            <field name="name">account.analisis.meses.wizard.form</field>
+            <field name="model">account.analisis.meses.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Analisis x Meses" version="8.0">
+                    <group>
+                        <group>
+                            <field name="fiscalyear_id" />
+                            <field name="tipo" />
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+
+                    <footer>
+                        <button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+                        <!-- <button string="Actualizar" name="actualizarsaldoinicial" type="object" class="oe_highlight"/> -->
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_analisis_meses_wizard_action" model="ir.actions.act_window">
+            <field name="name">Analisis x Meses</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.analisis.meses.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem name="Analisis x Meses"
+            action="account_analisis_meses_wizard_action"
+            id="menu_action_account_analisis_meses_it"
+            parent="account_sheet_work.account_finance_state_it"
+            sequence="13"
+        />
+
+
+    </data>
+</odoo>

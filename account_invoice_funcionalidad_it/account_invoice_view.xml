@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <button name="action_invoice_cancel" position="before">
+                    <button name="renumber"  type="object" string="Borrar Secuencia Asignada" states='draft'/>
+                </button>
+                        
+            </field>
+        </record>
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <button name="action_invoice_cancel" position="before">
+                    <button name="renumber"  type="object" string="Borrar Secuencia Asignada" states='draft'/>
+                </button>
+                        
+            </field>
+        </record>
+
+
+</odoo>

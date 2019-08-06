@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_am_wizard_add_line_it">
+            <field name="name">account.move.wizard.add.linea.form</field>
+            <field name="model">account.move.wizard.add.linea</field>
+            <field name="arch" type="xml">
+                <form string="" version="8.0">
+                    <group string="Agregar Linea">
+
+                        <notebook>
+                            <page string="Diario">
+                                <group col="4" colspan="4">
+
+                                    <group col="2" colspan="2">
+                                        <field name="glosa" required="1"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="currency_id"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="type_change"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="import_divisa"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                            <field name="account_id" domain="[('user_type_id.type', '!=', 'view')]" required="1"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="analytic_id" domain="[('type', '!=', 'view')]" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="debit"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="credit"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="etiqueta_analitica"/>
+                                    </group>
+
+                                </group>             
+                                
+                            </page>
+                            <!--<page string="Documento">
+                                <group col="4" colspan="4">
+                                    <group col="2" colspan="2">
+                                         <field name="is_pago" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                    </group>
+
+                                    <group col="2" colspan="2">
+                                         <field name="empresa" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                    </group>
+
+                                    <group col="2" colspan="2" attrs="{'invisible': [('is_pago','=', True)]}">
+                                         <field name="comprobante_manual" />
+                                    </group>
+                                    <group col="2" colspan="2" attrs="{'invisible': [('is_pago','=', True)]}">
+                                    </group>
+
+
+                                    <group col="2" colspan="2" attrs="{'invisible': [('is_pago','=', False)]}">
+                                         <field name="comprobante_auto" domain="[('partner_id','=',empresa)]" options="{'no_create': True}"/>
+                                    </group>
+                                    <group col="2" colspan="2" attrs="{'invisible': [('is_pago','=', False)]}">
+                                    </group>
+
+                                </group>    
+                            </page>-->
+                            <page string="Documento">
+                                <group col="4" colspan="4">
+                                    <group col="2" colspan="2">
+                                         <field name="empresa" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                         <field name="date_vencimiento"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                         <field name="type_doc_id"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                         <field name="comprobante_manual" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                         <field name="impuesto"/>
+                                    </group>
+                                    <group col="2" colspan="2">
+                                         <field name="importe_impuesto"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Kardex">
+                                <group col="4" colspan="4">
+                                    <group col="2" colspan="2">
+                                        <field name="product_id" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="cantidad" />
+                                    </group>
+                                    <group col="2" colspan="2">
+                                        <field name="uom_id" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </group>                    
+                    <footer>
+                        <button string="Agregar" name="do_rebuild" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='button_cancel']" position="before">
+                        <button name="button_add_linea" states="draft" string="Agregar Linea" type="object" class="oe_highlight oe_edit_only"/>
+                        <button name="export_excel" string="Exportar Excel" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='account_id']" position="before">
+                    <button name="edit_linea_it" icon="fa-pencil-square-o" string="Editar Linea" type="object"/>
+                </xpath>
+            </field>
+        </record>
+    
+        <record id="action_account_move_it_add_line" model="ir.actions.act_window">
+            <field name="name">Agregar Linea</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move.wizard.add.linea</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+<!--
+
+        <record model="ir.values" id="account_move_add_line_it">
+            <field name="name">Añadir Linea</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,%d'%action_account_move_it_add_line" />
+            <field name="key">action</field>
+            <field name="model">account.move</field>
+        </record>
+    -->    
+
+
+        <record model="ir.ui.view" id="view_am_wizard_pdf_pdf_add_line_it">
+            <field name="name">account.move.pdf.form</field>
+            <field name="model">account.move.pdf</field>
+            <field name="arch" type="xml">
+                <form string="" version="8.0">
+                    <group>
+                        <label string="Desea imprimir Asiento Contable en PDF?" />
+                    </group>                    
+                    <footer>
+                        <button string="Imprimir" name="do_rebuild" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_account_pdf_pdf_pdf_move_it_add_line" model="ir.actions.act_window">
+            <field name="name">Imprimir Asiento Contable</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move.pdf</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="account_move_pdf_pdf_add_line_it">
+            <field name="name">Imprimir PDF</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,%d'%action_account_pdf_pdf_pdf_move_it_add_line" />
+            <field name="key">action</field>
+            <field name="model">account.move</field>
+        </record>
+
+    </data>
+</openerp>

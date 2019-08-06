@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="view_exchange_diff_config_form">
+			<field name="name">exchange.diff.config.form</field>
+			<field name="model">exchange.diff.config</field>
+			<field name="arch" type="xml">
+				<form string="exchange_diff_config" create="false" delete="false">
+					<sheet>
+						<group>
+							<field name="earn_account_id" required="1"/>
+							<field name="lose_account_id" required="1"/>
+						</group>
+						<notebook>
+							<page string="Periodos">
+								<field name="lines_id">
+									<tree editable="bottom">
+										<field name="period_id" string="Periodo" required="1"/>
+										<field name="compra" string="Tipo Compra" required="1"/>
+										<field name="venta" string="Tipo Venta" required="1"/>
+										<field name="line_id" string="Linea" invisible="1"/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="view_exchange_diff_config_tree">
+			<field name="name">exchange.diff.config.tree</field>
+			<field name="model">exchange.diff.config</field>
+			<field name="arch" type="xml">
+				<tree string="exchange_diff_config" create="false" delete="false">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+		
+		<record id='view_exchange_diff_config_action' model='ir.actions.act_window'>
+			<field name='name'>Diferencia de Cambio</field>
+			<field name='res_model'>exchange.diff.config</field>
+			<field name='view_type'>form</field>
+			<field name='view_mode'>tree,form</field>
+		</record>
+		
+		<menuitem name='Tipos de Cambio Cierre' id='exchange_diff_config' parent='account.account_account_menu' action="view_exchange_diff_config_action" />
+
+		
+
+		
+	</data>
+</odoo>

@@ -1,0 +1,5 @@
+code,name,user,default tax,tag_ids,currency,reconsile,depreated
+10102,Bank,Current Assets,(standard)Input Tax 12%,"Operating Activities,Financing Activities",INR,1,TRUE
+10103,Prepayments,Current Assets,(standard)Output Tax 12%,Operating Activities,INR,1,TRUE
+10104,GoodsPayments,Bank and Cash,"(standard)Output Tax 12%,(standard)Input Tax 12%",,,TRUE,FALSE
+10105,Work Progress,Income,,"Financing Activities,Operating Activities",EUR,0,1

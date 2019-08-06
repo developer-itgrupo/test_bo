@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+		<record id="main_parameter_currency_update_form" model="ir.ui.view"> 
+			<field name="name">main.parameter.currency.update.form</field>
+			<field name="model">main.parameter</field> 
+			<field name="inherit_id" ref="account_parametros_it.view_main_parameter_form" />
+			<field name="arch" type="xml"> 
+				
+				<xpath expr="//notebook" position="inside">
+                    <page string='Monedas'>
+                    	<group string='Monedas'>
+                    		<field name='currency_name_id' nolabel='1'>
+                    			<tree  editable='bottom'>
+									<field name="currency_id"/>
+									<field name="name_singular"/>
+									<field name="name_plural"/>
+								</tree>
+                    		</field>
+                    	</group>
+                    </page>     
+                </xpath>
+
+			</field>
+		</record>
+
+	
+	</data>
+</odoo>

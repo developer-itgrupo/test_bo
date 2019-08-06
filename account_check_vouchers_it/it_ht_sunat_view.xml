@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Pagos" >
+                        <group>
+                            <group>
+                                <field name="check_voucher_cambio" />
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+                
+
+            </field>
+        </record>
+
+
+
+    </data>
+</openerp>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+
+        <record id="view_account_sequence_tree" model="ir.ui.view">
+            <field name="name">account.sequence.tree</field>
+            <field name="model">account.sequence</field>
+            <field name="arch" type="xml">
+                <tree string="Secuencias" editable="bottom">
+                    <field name="fiscalyear_id" required="1" />
+                    <field name="journal_id" required="1" />
+                    <field name="p0" required="1" />
+                    <field name="p1" required="1" />
+                    <field name="p2" required="1" />
+                    <field name="p3" required="1" />
+                    <field name="p4" required="1" />
+                    <field name="p5" required="1" />
+                    <field name="p6" required="1" />
+                    <field name="p7" required="1" />
+                    <field name="p8" required="1" />
+                    <field name="p9" required="1" />
+                    <field name="p10" required="1" />
+                    <field name="p11" required="1" />
+                    <field name="p12" required="1" />
+                    <field name="p13" required="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_account_sequence_form" model="ir.actions.act_window">
+            <field name="name">Secuencias</field>
+            <field name="res_model">account.sequence</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="domain" eval="False"/> <!-- Force empty -->
+        </record>
+
+<!--        <menuitem action="action_account_sequence_form" id="menu_action_account_sequence_form" parent="account.account_account_menu" sequence="1"/> -->
+
+
+
+        <record id="view_account_sequence_search" model="ir.ui.view">
+            <field name="name">account.sequence.search</field>
+            <field name="model">account.sequence</field>
+            <field name="arch" type="xml">
+                <search string="Secuencias">
+                    <field name="journal_id" />
+                    <field name="fiscalyear_id" />
+                    <group string="Group By">
+                        <filter string="Libro" domain="[]" context="{'group_by':'journal_id'}"/>
+                        <filter string="Año Fiscal" domain="[]" context="{'group_by':'fiscalyear_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+</odoo>

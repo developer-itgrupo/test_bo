@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_account_bank_report_tree" model="ir.ui.view">
+            <field name="name">account.bank.report.tree</field>
+            <field name="model">account.bank.report</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Libro Auxiliar de Caja y Banco" create="false">
+                    <field name="fecha" />
+                    <field name="cheque" />
+                    <field name="nombre" />
+                    <field name="documento" />
+                    <field name="glosa" />
+                    <field name="cargo_mn" />
+                    <field name="abono_mn" />
+                    <field name="saldo_mn" />
+                    <field name="tipo_cambio" />
+                    <field name="cargo_me" />
+                    <field name="abono_me" />
+                    <field name="saldo_me" />
+                    <field name="nro_asiento" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="account_bank_report_search" model="ir.ui.view">
+            <field name="name">account.bank.report.search</field>
+            <field name="model">account.bank.report</field>
+            <field name="arch" type="xml">
+                <search string="Libro Auxiliar de Caja y Banco">
+                    <filter name="cheque" />
+                    <filter name="nombre" />
+                    <filter name="documento" />
+                    <filter name="glosa" />
+                    <filter name="nro_asiento" />
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Cheque" name="" icon="terp-partner" context="{'group_by':''}"/>
+                        <filter string="Razón Social" name="" icon="terp-partner" context="{'group_by':''}"/>
+                        <filter string="Documento" name="" icon="terp-partner" context="{'group_by':''}"/>
+                        <filter string="Glosa" name="" icon="terp-partner" context="{'group_by':''}"/>
+                        <filter string="Nro. Asiento" name="" icon="terp-partner" context="{'group_by':''}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_impresion_cheques_print_wizard_form">
+            <field name="name">impresion.cheques.form</field>
+            <field name="model">impresion.cheques</field>
+            <field name="arch" type="xml">
+                <form string="Imprimir Cheque" version="8.0">
+                        <group>
+                            <label string="¿Desea imprimir el cheque?"/>
+                        </group>
+
+                        <footer>
+                            <button string="Imprimir" name="do_rebuild" type="object" class="oe_highlight"/>
+                            or
+                            <button string="Cancel" class="oe_link" special="cancel"/>
+                        </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_cheques_print_wizard_action" model="ir.actions.act_window">
+            <field name="name">Imprimir Cheque</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">impresion.cheques</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record model="ir.values" id="account_ban_report_print_id">
+            <field name="name">Imprimir Cheque</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('account_bank_report_it.account_cheques_print_wizard_action'))" />
+            <field name="key">action</field>
+            <field name="model">account.bank.report</field>
+        </record>
+
+
+
+
+
+        <record model="ir.ui.view" id="view_impresion_config_cheques_print_wizard_form">
+            <field name="name">config.print.cheques.form</field>
+            <field name="model">config.print.cheques</field>
+            <field name="arch" type="xml">
+                <form string="Configuración de Impresión Cheques" version="8.0">
+                        <group colspan="4">
+                            <group colspan="2">
+                                <field name="journal_id" />
+                            </group>
+                            <group colspan="2">
+
+                            </group>
+                            <field name="texto" colspan="4"/>
+                        </group>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="view_account_config_print_bank_report_tree" model="ir.ui.view">
+            <field name="name">config.print.cheques.tree</field>
+            <field name="model">config.print.cheques</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Config. Impresión Cheques" >
+                    <field name="journal_id" />
+                    <field name="texto" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_cheques_config_print_wizard_action" model="ir.actions.act_window">
+            <field name="name">Conf. Impresión Cheques</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">config.print.cheques</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="account_cheques_config_print_wizard_action" id="menu_config_impresion_cheqes" parent="account.menu_finance_configuration"/>
+
+    </data>
+</openerp>

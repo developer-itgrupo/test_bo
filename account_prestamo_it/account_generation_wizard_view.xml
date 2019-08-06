@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+        <record id="account_generation_wizard_view" model="ir.ui.view">
+            <field name="name">account_generation_view</field>
+            <field name="model">account.generation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Generacion de Asiento">
+                    <group>
+                        <field name="fecha" required="1"/>
+                        <field name="journal_pago_id" required="1"/>
+                        <field name="mora" required="1"/>
+                        <field name="tc" required="1"/>
+                        <field name="nro_comprobante" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="generar_asiento" string="Generar Asiento" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+             </field>
+        </record>
+    </data>
+</odoo>

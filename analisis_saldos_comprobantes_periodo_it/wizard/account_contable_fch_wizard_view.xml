@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_saldo_comprobante_periodo_wizard_form">
+			<field name="name">saldo.comprobante.periodo.wizard.form</field>
+			<field name="model">saldo.comprobante.periodo.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Saldo por Periodo" version="8.0">
+						<group>
+							<group>
+								<field name="fiscal_id" />
+								<field name="periodo_ini" domain="[('fiscalyear_id','=',fiscal_id)]"/>
+								<field name="periodo_fin" domain="[('fiscalyear_id','=',fiscal_id)]"/>
+								<field name="check" />
+							</group>
+							<group>
+								<field name="empresa" />
+								<field name="tipo" />
+								<field name="cuenta" />
+								<field name="mostrar" />
+							</group>
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="saldo_comprobante_periodo_wizard_action" model="ir.actions.server">
+			<field name="name">Saldo Comprobante</field>
+			<field name="model_id" ref="model_saldo_comprobante_periodo_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+	
+		<menuitem name="Saldo por Periodo" id="saldo_comprobante_periodo_wizard_menu"  parent="repaccount_contable_period_it.account_contable_id_fch_wizard_menu" action="saldo_comprobante_periodo_wizard_action" sequence="7" />
+
+
+
+    <record id="cuenta_corriente_account_report_pdf_periodo" model="ir.actions.server">
+        <field name="name">Cuenta Corriente</field>
+        <field name="model_id" ref="account.model_account_account"/>
+        <field name="state">code</field>
+        <field name="code"> action= env['saldo.comprobante.periodo.wizard'].with_context({'opt':context['active_id']}).get_wizard_w()</field>
+    </record>
+
+
+    <record id="more_cuenta_corriente_cuentas_contables" model="ir.values">
+        <field eval="'client_action_multi'" name="key2"/>
+        <field eval="'account.account'" name="model"/>
+        <field name="name">Cuenta Corriente</field>
+        <field eval="'ir.actions.server,%d'%cuenta_corriente_account_report_pdf_periodo" name="value"/>
+    </record>
+
+
+
+
+	</data>
+</openerp>

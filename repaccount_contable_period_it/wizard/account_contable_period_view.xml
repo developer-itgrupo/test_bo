@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_account_contable_period" model="ir.ui.view">
+            <field name="name">account.contable.period.tree</field>
+            <field name="model">account.contable.period</field>
+            <field name="arch" type="xml">
+                <tree string="Reporte de Cuenta Corriente" create="false">
+                    <field name="periodo" />
+                    <field name="libro" />
+                    <field name="voucher" />
+                    <field name="ruc" />
+                    <field name="partner" />
+                    <field name="type_document" />
+                    <field name="comprobante" />
+                    <field name="fecha" />
+                    <field name="cuenta" />
+                    <field name="debe" sum="debe"/>
+                    <field name="haber" sum="haber"/>
+                    <field name="saldo"/>
+                    <field name="saldo_filter" invisible="1"/>
+                    <field name="tipofiltro" invisible="1"/>
+                    <field name="ide" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+		<record id="account_contable_period_search" model="ir.ui.view">
+	        <field name="name">account.contable.period.search</field>
+	        <field name="model">account.contable.period</field>
+	        <field name="arch" type="xml">
+	            <search string="Libro compras">
+	                <field name="partner"/>
+	                <field name="ruc"/>
+	                <field name="periodo"/>
+	                <filter icon="terp-go-year" string="Partner" name="partner"/>
+	                <filter icon="terp-go-year" string="RUC" name="ruc"/>
+	                <filter icon="terp-go-year" string="Periodo" name="periodo"/>
+	                <separator/>
+	                <group expand="1" string="Group By...">
+	                    <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+	                    <filter string="RUC" name="ruc" icon="terp-partner" context="{'group_by':'ruc'}"/>
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                        <filter string="Cuenta" name="cuenta" icon="terp-partner" context="{'group_by':'cuenta'}"/>
+                        <filter string="Comprobante" name="comprobante" icon="terp-partner" context="{'group_by':'comprobante'}"/>
+	                </group>
+	            </search>
+	        </field>
+	    </record>
+
+
+
+        <record id="account_contable_period_action" model="ir.actions.act_window">
+            <field name="name">Reporte de Cuenta Corriente</field>
+            <field name="res_model">account.contable.period</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_contable_period"/>
+			<field name="search_view_id" ref="account_contable_period_search"/>
+        </record>
+
+
+
+        <record model="ir.values" id="action_account_move_line_reconcile_prompt_values_personal">
+            <field name="name">Conciliar</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' +str(ref('account.action_view_account_move_line_reconcile'))" />
+            <field name="key">action</field>
+            <field name="model">account.contable.period</field>
+        </record>
+
+
+        <record model="ir.values" id="account_unreconcile_values_personal">
+            <field name="name">Unreconcile Entries</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('account.action_account_unreconcile'))" />
+            <field name="key">action</field>
+            <field name="model">account.contable.period</field>
+        </record>
+
+    </data>
+</openerp>

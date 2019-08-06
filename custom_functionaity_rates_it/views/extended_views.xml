@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="view_move_form" model="ir.ui.view">
+      <field name="name">rate.lines.import.view</field>
+      <field name="model">product.pricelist</field>
+      <field name="inherit_id" ref="product.product_pricelist_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//sheet" position="before">
+            <header>
+            <button
+                    name="export_excel" type="object" string="Exportar a CSV"
+                    help="Export your Rate lines at Excel file."
+                    icon="fa-arrow-circle-down" class="btn-primary oe_edit_only"/>
+            <button
+                    name="do_oexcel" type="object" string="Exportar a Excel"
+                    help="Export your Rate lines at Excel file."
+                    icon="fa-arrow-circle-down" class="btn-primary oe_edit_only"/>
+            </header>
+
+        </xpath>
+            <xpath expr="//div/field[@name='item_ids']" position="before">
+            <div>
+            <header>
+              <button
+                    name="add_items" type="object" string="Agregar"
+                    help="Agrega items a tus elementos de Tarifa."
+                    icon="fa-crosshairs" class="btn-primary oe_edit_only"/>
+             <button
+                    name="remove_items" type="object" string="Borrar"
+                    help="Remmueve items a tus elementos de Tarifa."
+                    icon="fa-minus-square" class="btn-danger oe_edit_only"/>
+             <button
+                    name="show_cost_for_items" type="object" string="Ultima Compra"
+                    help="Actualiza los Precios con la ultima compra realizada con tus productos"
+                    icon="fa-dollar" class="btn-primary oe_edit_only"/>
+              <button
+                    name="show_costo_prom" type="object" string="Costo Promedio"
+                    help="Actualiza los Costos Con el Promedio de tus Costos."
+                    icon="fa-euro" class="btn-primary oe_edit_only"/>
+
+              <button name="get_lista_items" string="Editar Tarifa" type="object"
+             class="btn-primary oe_edit_only"/>
+
+
+            </header>
+
+              <group>
+                <field name="__last_update" readonly='1' string ="Fecha de Actualizacion"/>
+              </group>
+              
+              <group>
+              <field name="mode_selector"/>
+              <field name="prod_category" attrs="{'invisible': [('mode_selector','!=','category')], 'required': [('mode_selector','=','category')]}"/>
+              </group>
+
+            </div>
+        </xpath>
+        <xpath expr="//div/field[@name='item_ids']/tree/field[@name='min_quantity']" position="after">
+            <field name="last_cost" string="Ultima compra"/>
+            <field name="standart_price" string="Costo promedio"/>
+          
+        </xpath>
+
+
+
+      </field>
+    </record>
+
+
+
+
+
+
+
+    
+
+  </data>
+</odoo>

@@ -1,0 +1,2759 @@
+create extension tablefunc;
+
+-- Function: fecha_num(date)
+
+-- DROP FUNCTION fecha_num(date);
+
+CREATE OR REPLACE FUNCTION fecha_num(date)
+  RETURNS integer AS
+$BODY$
+    SELECT to_char($1, 'YYYYMMDD')::integer;
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION fecha_num(date)
+  OWNER TO openpg;
+
+  
+-- Function: public.getserial(character varying)
+
+-- DROP FUNCTION public.getserial(character varying);
+
+CREATE OR REPLACE FUNCTION public.getserial("number" character varying)
+  RETURNS character varying AS
+$BODY$
+DECLARE
+number1 ALIAS FOR $1;
+res varchar;
+BEGIN
+   select substring(number1,0,position('-' in number1)) into res;
+   return res;  
+END;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.getserial(character varying)
+  OWNER TO openpg;
+
+
+
+
+-- Function: public.getperiod(integer, date, boolean)
+
+-- DROP FUNCTION public.getperiod(integer, date, boolean);
+
+CREATE OR REPLACE FUNCTION public.getperiod(
+    move_id integer,
+    date_picking date,
+    special boolean)
+  RETURNS character varying AS
+$BODY$
+DECLARE
+move_id1 ALIAS FOR $1;
+date_picking1 ALIAS FOR $2;
+res varchar;
+isspecial alias for special;
+BEGIN
+    IF move_id1 !=0 THEN
+  select account_period.name into res from account_move 
+  inner join account_period on account_period.date_start <= account_move.fecha_contable and account_period.date_stop >= account_move.fecha_contable  and account_period.special = account_move.fecha_specia     
+   where account_move.id=move_id1;
+    ELSE 
+  select account_period.name into res from account_period
+  where date_start<=date_picking1 and date_stop>=date_picking1 and account_period.special=isspecial;
+   END IF;
+   return res;  
+END;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.getperiod(integer, date, boolean)
+  OWNER TO openpg;
+
+
+-- Function: public.getperiod(timestamp without time zone, boolean)
+
+-- DROP FUNCTION public.getperiod(timestamp without time zone, boolean);
+
+CREATE OR REPLACE FUNCTION public.getperiod(
+    date_picking timestamp without time zone,
+    special boolean)
+  RETURNS character varying AS
+$BODY$
+DECLARE
+date_picking1 ALIAS FOR $1;
+res varchar;
+isspecial alias for $2;
+BEGIN
+  select account_period.name into res from account_period
+  where date_start<=date_picking1 and date_stop>=date_picking1 and account_period.special=isspecial;
+   return res;  
+END;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.getperiod(timestamp without time zone, boolean)
+  OWNER TO openpg;
+
+
+
+
+
+-- Function: periodo_string(integer)
+
+-- DROP FUNCTION periodo_string(integer);
+
+CREATE OR REPLACE FUNCTION periodo_string(numero integer)
+  RETURNS character varying AS
+$BODY$
+    SELECT CASE WHEN substring(numero::varchar,5,2) = '00' THEN 'Periodo de apertura ' || substring(numero::varchar,1,4) ELSE
+    (substring(numero::varchar,5,2) || '/' ||substring(numero::varchar,1,4) )::varchar END;
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION periodo_string(integer)
+  OWNER TO openpg;
+
+
+-- Function: periodo_num(character varying)
+
+-- DROP FUNCTION periodo_num(character varying);
+
+CREATE OR REPLACE FUNCTION periodo_num(character varying)
+  RETURNS integer AS
+$BODY$
+    SELECT CASE WHEN substring($1,1,19) = 'Periodo de apertura' THEN (substring($1,21,4) || '00' )::integer ELSE
+    (substring( $1,4,4) || substring($1 , 1,2)  )::integer END ;
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION periodo_num(character varying)
+  OWNER TO openpg;
+
+
+
+-- Function: fecha_num(date)
+
+-- DROP FUNCTION fecha_num(date);
+
+CREATE OR REPLACE FUNCTION fecha_num(date)
+  RETURNS integer AS
+$BODY$
+    SELECT to_char($1, 'YYYYMMDD')::integer;
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION fecha_num(date)
+  OWNER TO openpg;
+-- Function: get_balance_general(boolean, integer, integer)
+
+-- DROP FUNCTION get_balance_general(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION get_balance_general(IN has_currency boolean, IN periodo_ini integer, IN periodo_fin integer)
+  RETURNS TABLE(name character varying, grupo character varying, saldo numeric, orden integer) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+    
+select aati.name  , aati.group_balance,
+CASE WHEN $1= false THEN
+  (CASE WHEN aati.group_balance = 'B1' OR aati.group_balance = 'B2' THEN  sum(aml.debit)-sum(aml.credit) 
+   ELSE sum(aml.credit)-sum(aml.debit)  END )
+  --sum(aml.debit)-sum(aml.credit) 
+ELSE
+  (CASE WHEN aati.group_balance = 'B1' OR aati.group_balance = 'B2' THEN  sum(aml.debit)-sum(aml.credit) 
+  ELSE sum(aml.credit)-sum(aml.debit)  END )
+  --sum(aml.debit_me)-sum(aml.credit_me) 
+END as saldo, aati.order_balance
+from account_account aca
+inner join account_account_type aat on aat.id = aca.user_type_id
+inner join account_account_type_it aati on aati.id = aca.type_it
+inner join account_move_line aml on aml.account_id = aca.id
+inner join account_move am on am.id = aml.move_id
+inner join account_period ap on ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+where periodo_num(ap.name) >= $2 and  periodo_num(ap.name) <= $3 and aati.group_balance IS NOT NULL
+and am.state != 'draft'
+group by aati.name, aati.group_balance, aati.order_balance
+order by aati.order_balance,aati.name;
+     
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_balance_general(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+-- Function: get_balance_general(boolean, integer, integer)
+
+-- DROP FUNCTION get_balance_general(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION get_balance_general(IN has_currency boolean, IN periodo_ini integer, IN periodo_fin integer)
+  RETURNS TABLE(name character varying, grupo character varying, saldo numeric, orden integer) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+    
+select aati.name  , aati.group_balance,
+CASE WHEN $1= false THEN
+  (CASE WHEN aati.group_balance = 'B1' OR aati.group_balance = 'B2' THEN  sum(aml.debit)-sum(aml.credit) 
+   ELSE sum(aml.credit)-sum(aml.debit)  END )
+  --sum(aml.debit)-sum(aml.credit) 
+ELSE
+  (CASE WHEN aati.group_balance = 'B1' OR aati.group_balance = 'B2' THEN  sum(aml.debit)-sum(aml.credit) 
+  ELSE sum(aml.credit)-sum(aml.debit)  END )
+  --sum(aml.debit_me)-sum(aml.credit_me) 
+END as saldo, aati.order_balance
+from account_account aca
+inner join account_account_type aat on aat.id = aca.user_type_id
+inner join account_account_type_it aati on aati.id = aca.type_it
+inner join account_move_line aml on aml.account_id = aca.id
+inner join account_move am on am.id = aml.move_id
+inner join account_period ap on ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+where periodo_num(ap.name) >= $2 and  periodo_num(ap.name) <= $3 and aati.group_balance IS NOT NULL
+and am.state != 'draft'
+group by aati.name, aati.group_balance, aati.order_balance
+order by aati.order_balance,aati.name;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_balance_general(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: get_compra_1(integer, integer)
+
+-- DROP FUNCTION get_compra_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION get_compra_1(IN periodo_ini integer, IN periodo_fin integer)
+  RETURNS TABLE(comprobante character varying, am_id integer, clasifica character varying, base_impuesto numeric, monto numeric, record_shop character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+   SELECT account_invoice.reference AS comprobante,
+    account_move.id AS am_id,
+    account_tax_code.name AS clasifica,
+      account_move_line.tax_amount AS base_impuesto,
+        CASE
+            WHEN account_journal.type::text = 'purchase'::text and account_invoice.type = 'in_refund' THEN account_move_line.tax_amount * (-1)::numeric
+            ELSE account_move_line.tax_amount
+        END
+       AS monto,
+    account_tax_code.record_shop
+   FROM account_move
+     JOIN account_invoice on account_invoice.move_id = account_move.id
+     JOIN account_move_line ON account_move.id = account_move_line.move_id
+     JOIN account_journal ON account_move_line.journal_id = account_journal.id AND account_move.journal_id = account_journal.id
+     JOIN account_period ON account_move.fecha_contable >= account_period.date_start AND account_move.fecha_contable <= account_period.date_stop  and account_period.special = account_move.fecha_special
+     JOIN account_tax_code ON account_move_line.tax_code_id = account_tax_code.id
+  WHERE account_journal.register_sunat::text = '1'::text and periodo_num(account_period.name) >= $1 and periodo_num(account_period.name) <= $2
+  and account_move.state != 'draft'
+  ORDER BY account_invoice.reference;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_compra_1(integer, integer)
+  OWNER TO openpg;
+
+-- Function: get_compra_1_1(integer, integer)
+
+-- DROP FUNCTION get_compra_1_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION get_compra_1_1(IN periodo_ini integer, IN periodo_fin integer)
+  RETURNS TABLE(am_id integer, "1" numeric, "2" numeric, "3" numeric, "4" numeric, "5" numeric, "6" numeric, "7" numeric, "8" numeric, "9" numeric) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+
+  SELECT crosstab.am_id,
+    crosstab."1",
+    crosstab."2",
+    crosstab."3",
+    crosstab."4",
+    crosstab."5",
+    crosstab."6",
+    crosstab."7",
+    crosstab."8",
+    crosstab."9"
+   FROM crosstab('SELECT c1.am_id ,c1.record_shop,
+  sum(c1.monto) as monto FROM get_compra_1(' || $1 || ','|| $2 || ') as c1
+  GROUP BY c1.am_id, c1.record_shop
+  ORDER BY 1,2,3'::text, '  select m from generate_series(1,9) m'::text) crosstab(am_id integer, "1" numeric, "2" numeric, "3" numeric, "4" numeric, "5" numeric, "6" numeric, "7" numeric, "8" numeric, "9" numeric);
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_compra_1_1(integer, integer)
+  OWNER TO openpg;
+
+-- Function: get_compra_1_1_1(integer, integer)
+
+-- DROP FUNCTION get_compra_1_1_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION get_compra_1_1_1(IN periodo_ini integer, IN periodo_fin integer)
+  RETURNS TABLE(id bigint, am_id integer, periodo character varying, libro character varying, voucher character varying, fechaemision date, fechavencimiento date, tipodocumento character varying, serie text, numero text, tdp character varying, ruc character varying, razonsocial character varying, bioge numeric, biogeng numeric, biong numeric, cng numeric, isc numeric, igva numeric, igvb numeric, igvc numeric, otros numeric, total numeric, comprobante character varying, moneda character varying, tc numeric, fechad date, numerod character varying, fechadm date, td character varying, anio character varying, seried text, numerodd text, glosa character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,
+    t.am_id,
+    t.periodo,
+    t.libro,
+    t.voucher,
+    t.fechaemision,
+    t.fechavencimiento,
+    t.tipodocumento,
+    t.serie,
+    t.numero,
+    t.tdp,
+    t.ruc,
+    t.razonsocial,
+    t.bioge,
+    t.biogeng,
+    t.biong,
+    t.cng,
+    t.isc,
+    t.igva,
+    t.igvb,
+    t.igvc,
+    t.otros,
+    t.total,
+    t.comprobantenrodomicilio,
+    t.moneda,
+    t.tc,
+    t.fechad,
+    t.numerod,
+    t.fechadm,
+    t.td,
+    t.anio,
+    t.seried,
+    t.numerodd,
+    t.glosa
+    
+    
+   FROM ( SELECT pr.am_id,
+            round(pr.bioge, 2) AS bioge,
+            round(pr.biogeng, 2) AS biogeng,
+            round(pr.biong, 2) AS biong,
+            round(pr.cng, 2) AS cng,
+            round(pr.isc, 2) AS isc,
+            round(pr.otros, 2) AS otros,
+            round(pr.igva, 2) AS igva,
+            round(pr.igvb, 2) AS igvb,
+            round(pr.igvc, 2) AS igvc,
+            round(pr.total, 2) AS total,
+                CASE
+                    WHEN itd.id = mp.no_home_document_id OR itd.id = mp.no_home_debit_document_id OR itd.id = mp.no_home_credit_document_id THEN ai.reference
+                    ELSE NULL::character varying
+                END AS comprobantenrodomicilio,
+            aj.code AS libro,
+            ap.name AS periodo,
+            am.name AS voucher,
+            ai.date_invoice AS fechaemision,
+            ai.date_due AS fechavencimiento,
+            itd.code AS tipodocumento,
+                CASE
+                    WHEN itd.id = mp.no_home_document_id OR itd.id = mp.no_home_debit_document_id OR itd.id = mp.no_home_credit_document_id THEN NULL::text
+                    ELSE
+                    CASE
+                        WHEN "position"(ai.reference::text, '-'::text) = 0 THEN NULL::text
+                        ELSE "substring"(ai.reference::text, 0, "position"(ai.reference::text, '-'::text))
+                    END
+                END AS serie,
+                CASE
+                    WHEN itd.id = mp.no_home_document_id OR itd.id = mp.no_home_debit_document_id OR itd.id = mp.no_home_credit_document_id THEN NULL::text
+                    ELSE
+                    CASE
+                        WHEN "position"(ai.reference::text, '-'::text) = 0 THEN ai.reference::text
+                        ELSE "substring"(ai.reference::text, "position"(ai.reference::text, '-'::text) + 1)
+                    END
+                END AS numero,
+            itdp.code AS tdp,
+            rp.nro_documento AS ruc,
+            rp.name AS razonsocial,
+            rc.name AS moneda,
+            CASE WHEN rc.name = 'USD' THEN round(ai.currency_rate_auto, 3) ELSE Null::numeric END  AS tc,
+            ai.date_detraccion AS fechad,
+            ai.voucher_number AS numerod,
+            apercep.fecha AS fechadm,
+            itd2.code AS td,
+                CASE
+                    WHEN itd.id = mp.export_document_id THEN date_part('year'::text, am.date)::character varying(50)
+                    ELSE NULL::character varying(50)
+                END AS anio,
+                CASE
+                    WHEN "position"(apercep.comprobante::text, '-'::text) = 0 THEN ''::text
+                    ELSE "substring"(apercep.comprobante::text, 0, "position"(apercep.comprobante::text, '-'::text))
+                END AS seried,
+                CASE
+                    WHEN "position"(apercep.comprobante::text, '-'::text) = 0 THEN apercep.comprobante::text
+                    ELSE "substring"(apercep.comprobante::text, "position"(apercep.comprobante::text, '-'::text) + 1)
+                END AS numerodd,
+           ai.name as glosa
+           FROM ( SELECT vst_reg_compras_1_1.am_id,
+                    sum(vst_reg_compras_1_1."1") AS bioge,
+                    sum(vst_reg_compras_1_1."2") AS biogeng,
+                    sum(vst_reg_compras_1_1."3") AS biong,
+                    sum(vst_reg_compras_1_1."4") AS cng,
+                    sum(vst_reg_compras_1_1."5") AS isc,
+                    sum(vst_reg_compras_1_1."6") AS otros,
+                    sum(vst_reg_compras_1_1."7") AS igva,
+                    sum(vst_reg_compras_1_1."8") AS igvb,
+                    sum(vst_reg_compras_1_1."9") AS igvc,
+                    COALESCE(sum(vst_reg_compras_1_1."1"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."2"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."3"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."4"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."5"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."6"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."7"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."8"), 0::numeric) + COALESCE(sum(vst_reg_compras_1_1."9"), 0::numeric) AS total
+                   FROM get_compra_1_1($1,$2) as vst_reg_compras_1_1
+                  GROUP BY vst_reg_compras_1_1.am_id) pr
+             JOIN account_move am ON am.id = pr.am_id
+             JOIN account_invoice ai on ai.move_id = am.id
+             JOIN account_journal aj ON aj.id = am.journal_id
+             JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+             LEFT JOIN einvoice_catalog_01 itd ON itd.id = ai.it_type_document
+             LEFT JOIN res_partner rp ON rp.id = am.partner_id
+             LEFT JOIN einvoice_catalog_06 itdp ON itdp.id = rp.type_document_partner_it
+             LEFT JOIN res_currency rc ON rc.id = ai.currency_id
+             LEFT JOIN account_perception apercep ON apercep.father_invoice_id = ai.id
+             LEFT JOIN einvoice_catalog_01 itd2 ON itd2.id = apercep.tipo_doc
+             CROSS JOIN main_parameter mp
+          WHERE (apercep.id IN ( SELECT min(adr_1.id) AS min
+                   FROM account_move am_1
+                     JOIN account_invoice ai_1 ON ai_1.move_id = am_1.id
+                     JOIN account_perception adr_1 ON adr_1.father_invoice_id = ai_1.id
+                  GROUP BY ai_1.id)) OR apercep.* IS NULL
+          ORDER BY ap.name, aj.code, am.name) t;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_compra_1_1_1(integer, integer)
+  OWNER TO openpg;
+
+
+
+
+-- Function: public.get_estado_funcion(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_estado_funcion(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_estado_funcion(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(name character varying, grupo character varying, saldo numeric, orden integer) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+    
+select aati.name ,aati.group_function,
+CASE WHEN $1= false THEN
+   ((sum(aml.credit)-sum(aml.debit))   )
+  --((sum(aml.debit)-sum(aml.credit))   )
+ELSE
+   ( (sum(aml.credit)-sum(aml.debit))   )
+  --( (sum(aml.debit_me)-sum(aml.credit_me))   )
+END as saldo, aati.order_function
+from account_account aa
+inner join account_account_type aat on aat.id = aa.user_type_id
+inner join account_account_type_it aati on aati.id = aa.type_it
+inner join account_move_line aml on aml.account_id = aa.id
+inner join account_move am on am.id = aml.move_id
+inner join account_period ap on ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+where periodo_num(ap.name) >= $2 and  periodo_num(ap.name) <= $3 and aati.group_function IS NOT NULL
+and am.state != 'draft'
+group by aati.name, aati.group_function, aati.order_function
+order by aati.order_function,aati.name;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_estado_funcion(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+
+-- Function: public.get_estado_nature(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_estado_nature(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_estado_nature(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(name character varying, grupo character varying, saldo numeric, orden integer) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+    
+select aati.name , aati.group_nature,
+CASE WHEN $1= false THEN
+  ((sum(aml.credit)-sum(aml.debit)) )
+  --((sum(aml.debit)-sum(aml.credit)) )
+ELSE
+   ( (sum(aml.credit)-sum(aml.debit))  )
+  --( (sum(aml.debit_me)-sum(aml.credit_me))  )
+END as saldo, aati.order_nature
+from account_account aa
+inner join account_account_type_it aati on aati.id = aa.type_it
+inner join account_account_type aat on aat.id = aa.user_type_id
+inner join account_move_line aml on aml.account_id = aa.id
+inner join account_move am on am.id = aml.move_id
+inner join account_period ap on ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+where periodo_num(ap.name) >= $2 and  periodo_num(ap.name) <= $3 and aati.group_nature IS NOT NULL
+and am.state != 'draft'
+group by aati.name, aati.group_nature,aati.order_nature
+order by aati.order_nature,aati.name;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_estado_nature(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+
+-- Function: public.get_flujo_efectivo(boolean, integer, integer, integer)
+
+-- DROP FUNCTION public.get_flujo_efectivo(boolean, integer, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_flujo_efectivo(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer,
+    IN period_saldo_inicial integer)
+  RETURNS TABLE(periodo character varying, code character varying, concept character varying, debe numeric, haber numeric, saldo numeric, orden integer, grupo character varying) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+$3 := $2;
+END IF;
+
+RETURN QUERY
+
+(
+select
+periodo_string($4), ' '::varchar as code,'Saldo Inicial' as concept,
+CASE WHEN $1 THEN sum(aml.debit) ELSE sum(aml.debit) END as debe,
+CASE WHEN $1 THEN sum(aml.credit) ELSE sum(aml.credit) END as haber,
+CASE WHEN $1 THEN sum(aml.debit)- sum(aml.credit) ELSE sum(aml.debit)- sum(aml.credit) END as saldo,
+-1 as orden, 'E7'::varchar as "group"
+from account_move_line aml
+inner join account_move am on am.id = aml.move_id
+inner join account_account aa on aa.id = aml.account_id
+inner join account_period ap on ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+where aa.code like '10%' and periodo_num(ap.name)>=(substring($4::varchar,1,4) || '00' )::numeric and periodo_num(ap.name)<=$4
+and am.state != 'draft'
+)
+UNION ALL
+(
+select
+ap.name, ace.code,ace.concept,
+CASE WHEN $1 THEN sum(aml.debit) ELSE sum(aml.debit) END as debe,
+CASE WHEN $1 THEN sum(aml.credit) ELSE sum(aml.credit) END as haber,
+CASE WHEN $1 THEN sum(aml.credit)- sum(aml.debit) ELSE sum(aml.credit)- sum(aml.debit) END as saldo,
+ace.order as orden, ace."group"
+from account_move_line aml
+inner join account_move am on am.id = aml.move_id
+inner join account_account aa on aa.id = aml.account_id
+inner join account_config_efective ace on ace.id = aa.fefectivo_id
+inner join account_period ap on ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+where aa.fefectivo_id is not null and periodo_num(ap.name)>=$2 and periodo_num(ap.name)<=$3
+and am.state != 'draft' and am.id in ( select distinct am.id from account_move am inner join account_move_line aml on aml.move_id = am.id inner join account_account aa on aa.id = aml.account_id where aa.code like '10%' )
+group by ap.name,ace.code , ace.concept, ace.order, ace."group"
+order by ace.order);
+
+END; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_flujo_efectivo(boolean, integer, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_hoja_trabajo_detalle(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_hoja_trabajo_detalle(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_hoja_trabajo_detalle(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, clasificationactual character varying, levelactual character varying, cuentaactual character varying, clasification character varying, level character varying, periodo character varying, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric, activo numeric, pasivo numeric, perdidasnat numeric, ganancianat numeric, perdidasfun numeric, gananciafun numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,
+    t.clasificationactual,
+    t.levelactual,
+    t.cuentaactual,
+    t.clasification,
+    t.level,
+    t.periodo,
+    t.cuenta,
+    t.descripcion,
+    t.debe,
+    t.haber,
+    t.saldodeudor,
+    t.saldoacredor,
+    t.activo,
+    t.pasivo,
+    t.perdidasnat,
+    t.ganancianat,
+    t.perdidasfun,
+    t.gananciafun
+   FROM ( SELECT *, 
+
+                CASE
+                    WHEN M.clasification::text = '1'::text AND M.debe > M.haber THEN M.debe - M.haber
+                    ELSE 0::numeric
+                END AS activo,
+                CASE
+                    WHEN M.clasification::text = '1'::text AND M.debe < M.haber THEN M.haber - M.debe
+                    ELSE 0::numeric
+                END AS pasivo,
+                CASE
+                    WHEN (M.clasification::text = '2'::text OR M.clasification::text = '6'::text) AND (M.debe) > (M.haber) THEN (M.debe) - (M.haber)
+                    ELSE 0::numeric
+                END AS perdidasnat,
+                CASE
+                    WHEN (M.clasification::text = '2'::text OR M.clasification::text = '6'::text) AND (M.debe) < (M.haber) THEN (M.haber) - (M.debe)
+                    ELSE 0::numeric
+                END AS ganancianat,
+                CASE
+                    WHEN (M.clasification::text = '3'::text OR M.clasification::text = '6'::text) AND (M.debe) > (M.haber) THEN (M.debe) - (M.haber)
+                    ELSE 0::numeric
+                END AS perdidasfun,
+                CASE
+                    WHEN (M.clasification::text = '3'::text OR M.clasification::text = '6'::text) AND (M.debe) < (M.haber) THEN (M.haber) - (M.debe)
+                    ELSE 0::numeric
+                END AS gananciafun
+
+
+    FROM (
+
+    SELECT aapadre.clasification_sheet AS clasificationactual,
+            aa.level_sheet AS levelactual,
+            aa.code AS cuentaactual,
+            aa.clasification_sheet AS clasification,
+            aapadre.level_sheet AS level,
+            ap.name AS periodo,
+            aapadre.code AS cuenta,
+            aapadre.name AS descripcion,
+            sum(aml.debit) AS debe,
+            sum(aml.credit) AS haber,
+                (CASE
+                    WHEN sum(aml.debit) > sum(aml.credit) THEN sum(aml.debit) - sum(aml.credit)
+                    ELSE 0::numeric
+                END) AS saldodeudor,
+                (CASE
+                    WHEN sum(aml.debit) < sum(aml.credit) THEN sum(aml.credit) - sum(aml.debit)
+                    ELSE 0::numeric
+                END) AS saldoacredor
+                
+           FROM account_move_line aml
+             JOIN account_move am ON am.id = aml.move_id
+             JOIN account_journal aj ON aj.id = am.journal_id
+             JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+             JOIN account_account aa ON aa.id = aml.account_id
+             LEFT JOIN account_account aapadre ON aapadre.code::text = "substring"(''::text || aa.code::text, 0, 3)
+             LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+             LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+             LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+             LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+          WHERE aa.level_sheet IS NOT NULL and periodo_num(ap.name) >= $2 and periodo_num(ap.name) <= $3
+          and am.state != 'draft'
+          GROUP BY aa.code, aa.level_sheet, aa.clasification_sheet, ap.name, aapadre.code, aapadre.level_sheet, aapadre.clasification_sheet, aapadre.name
+          ORDER BY ap.name, aapadre.code)as  M ) t;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_hoja_trabajo_detalle(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_hoja_trabajo_detalle_balance(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_hoja_trabajo_detalle_balance(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_hoja_trabajo_detalle_balance(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric, activo numeric, pasivo numeric, perdidasnat numeric, ganancianat numeric, perdidasfun numeric, gananciafun numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY    
+select row_number() OVER () AS id,T.* from (
+select M.cuenta,M.descripcion, sum(M.debe),sum(M.haber),
+CASE WHEN sum(M.saldodeudor) -sum(M.saldoacredor)> 0 THEN sum(M.saldodeudor) -sum(M.saldoacredor) ELSE 0 END as saldodeudor,
+CASE WHEN sum(M.saldoacredor) -sum(M.saldodeudor)> 0 THEN sum(M.saldoacredor) -sum(M.saldodeudor) ELSE 0 END as saldoacredor,
+CASE WHEN sum(M.activo)-sum(M.pasivo)>0 THEN sum(M.activo)-sum(M.pasivo) ELSE 0 END as activo,
+CASE WHEN sum(M.pasivo)-sum(M.activo)>0 THEN sum(M.pasivo)-sum(M.activo) ELSE 0 END as pasivo,
+CASE WHEN sum(M.perdidasnat)-sum(M.ganancianat) >0 THEN sum(M.perdidasnat)-sum(M.ganancianat) ELSE 0 END as perdidasnat,
+CASE WHEN sum(M.ganancianat)-sum(M.perdidasnat) >0 THEN sum(M.ganancianat)-sum(M.perdidasnat) ELSE 0 END as ganancianat,
+CASE WHEN sum(M.perdidasfun)-sum(M.gananciafun) >0 THEN sum(M.perdidasfun)-sum(M.gananciafun) ELSE 0 END as perdidasfun,
+CASE WHEN sum(M.gananciafun)-sum(M.perdidasfun) >0 THEN sum(M.gananciafun)-sum(M.perdidasfun) ELSE 0 END as gananciafun
+from get_hoja_trabajo_detalle($1,$2,$3) as M
+where M.cuenta is not null
+group by M.cuenta,M.descripcion
+order by M.cuenta
+) AS T;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_hoja_trabajo_detalle_balance(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_hoja_trabajo_detalle_registro(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_hoja_trabajo_detalle_registro(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_hoja_trabajo_detalle_registro(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric, activo numeric, pasivo numeric, perdidasnat numeric, ganancianat numeric, perdidasfun numeric, gananciafun numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY    
+select row_number() OVER () AS id,T.* from (
+select M.cuentaactual,aa.name as descripcion, sum(M.debe),sum(M.haber),
+CASE WHEN sum(M.saldodeudor) -sum(M.saldoacredor)> 0 THEN sum(M.saldodeudor) -sum(M.saldoacredor) ELSE 0 END as saldodeudor,
+CASE WHEN sum(M.saldoacredor) -sum(M.saldodeudor)> 0 THEN sum(M.saldoacredor) -sum(M.saldodeudor) ELSE 0 END as saldoacredor,
+CASE WHEN sum(M.activo)-sum(M.pasivo)>0 THEN sum(M.activo)-sum(M.pasivo) ELSE 0 END as activo,
+CASE WHEN sum(M.pasivo)-sum(M.activo)>0 THEN sum(M.pasivo)-sum(M.activo) ELSE 0 END as pasivo,
+CASE WHEN sum(M.perdidasnat)-sum(M.ganancianat) >0 THEN sum(M.perdidasnat)-sum(M.ganancianat) ELSE 0 END as perdidasnat,
+CASE WHEN sum(M.ganancianat)-sum(M.perdidasnat) >0 THEN sum(M.ganancianat)-sum(M.perdidasnat) ELSE 0 END as ganancianat,
+CASE WHEN sum(M.perdidasfun)-sum(M.gananciafun) >0 THEN sum(M.perdidasfun)-sum(M.gananciafun) ELSE 0 END as perdidasfun,
+CASE WHEN sum(M.gananciafun)-sum(M.perdidasfun) >0 THEN sum(M.gananciafun)-sum(M.perdidasfun) ELSE 0 END as gananciafun
+from get_hoja_trabajo_detalle($1,$2,$3) as M
+inner join account_account aa ON aa.code = cuentaactual
+group by M.cuentaactual,aa.name) AS T;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_hoja_trabajo_detalle_registro(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_hoja_trabajo_simple(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_hoja_trabajo_simple(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_hoja_trabajo_simple(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, clasificationactual character varying, levelactual character varying, clasification character varying, level character varying, periodo character varying, cuenta character varying, cuentaactual character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,
+    t.clasificationactual,
+    t.levelactual,
+    t.clasification,
+    t.level,
+    t.periodo,
+    t.cuenta,
+    t.cuentaactual,
+    t.descripcion,
+    t.debe,
+    t.haber,
+    t.saldodeudor,
+    t.saldoacredor
+   FROM ( SELECT aa.clasification_sheet AS clasificationactual,
+            aa.level_sheet AS levelactual,
+            aapadre.clasification_sheet AS clasification,
+            aapadre.level_sheet AS level,
+            ap.name AS periodo,
+            aapadre.code AS cuenta,
+            aa.code AS cuentaactual,
+            aapadre.name AS descripcion,
+            CASE WHEN $1 THEN sum(aml.debit) ELSE sum(aml.debit) END AS debe,
+            CASE WHEN $1 THEN sum(aml.credit) ELSE sum(aml.credit) END AS haber,
+            CASE WHEN $1 THEN (CASE
+                    WHEN sum(aml.debit) > sum(aml.credit) THEN sum(aml.debit) - sum(aml.credit)
+                    ELSE 0::numeric
+                END)
+            ELSE
+                (CASE
+                    WHEN sum(aml.debit) > sum(aml.credit) THEN sum(aml.debit) - sum(aml.credit)
+                    ELSE 0::numeric
+                END) END AS saldodeudor,
+             CASE WHEN $1 THEN
+             (CASE
+                    WHEN sum(aml.debit) < sum(aml.credit) THEN sum(aml.credit) - sum(aml.debit)
+                    ELSE 0::numeric
+                END)
+             ELSE
+                (CASE
+                    WHEN sum(aml.debit) < sum(aml.credit) THEN sum(aml.credit) - sum(aml.debit)
+                    ELSE 0::numeric
+                END) END AS saldoacredor
+           FROM account_move_line aml
+             JOIN account_move am ON am.id = aml.move_id
+             JOIN account_journal aj ON aj.id = am.journal_id
+             JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+             JOIN account_account aa ON aa.id = aml.account_id
+             LEFT JOIN account_account aapadre ON aapadre.code::text = "substring"(''::text || aa.code::text, 0, 3)
+             LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+             LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+             LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+             LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+             where periodo_num(ap.name) >=$2 and  periodo_num(ap.name) <=$3
+             and am.state != 'draft'
+          GROUP BY aa.code, aa.level_sheet, aa.clasification_sheet, ap.name, aapadre.code, aapadre.level_sheet, aapadre.clasification_sheet, aapadre.name
+          ORDER BY ap.name, aapadre.code) t;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_hoja_trabajo_simple(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_hoja_trabajo_simple_balance(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_hoja_trabajo_simple_balance(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_hoja_trabajo_simple_balance(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+   select row_number() OVER () AS id,* from (
+select M.cuenta,M.descripcion, sum(M.debe) as debe,sum(M.haber) as haber ,
+CASE WHEN sum(M.saldodeudor) - sum(M.saldoacredor) >0 THEN sum(M.saldodeudor) - sum(M.saldoacredor) ELSE 0 END  as saldodeudor,
+CASE WHEN sum(M.saldodeudor) - sum(M.saldoacredor) <0 THEN sum(M.saldoacredor) - sum(M.saldodeudor) ELSE 0 END  as saldoacredor
+from get_hoja_trabajo_simple($1,$2,$3) as M
+where M.cuenta is not null
+group by M.cuenta,M.descripcion
+order by M.cuenta) AS T;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_hoja_trabajo_simple_balance(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_hoja_trabajo_simple_registro(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_hoja_trabajo_simple_registro(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_hoja_trabajo_simple_registro(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+   select row_number() OVER () AS id,* from (
+select hoja.cuentaactual as cuenta,aa.name as descripcion, sum(hoja.debe) as debe,sum(hoja.haber) as haber ,
+CASE WHEN sum(hoja.saldodeudor) - sum(hoja.saldoacredor) >0 THEN sum(hoja.saldodeudor) - sum(hoja.saldoacredor) ELSE 0 END  as saldodeudor,
+CASE WHEN sum(hoja.saldodeudor) - sum(hoja.saldoacredor) <0 THEN sum(hoja.saldoacredor) - sum(hoja.saldodeudor) ELSE 0 END  as saldoacredor
+from get_hoja_trabajo_simple($1,$2,$3) as hoja
+inner join account_account aa on aa.code= hoja.cuentaactual 
+group by hoja.cuentaactual,aa.name
+order by hoja.cuentaactual) AS T;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_hoja_trabajo_simple_registro(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_honorarios_1(integer, integer)
+
+-- DROP FUNCTION public.get_honorarios_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_honorarios_1(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(comprobante character varying, am_id integer, clasifica character varying, base_impuesto numeric, monto numeric, record_fees character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+SELECT account_move_line.nro_comprobante AS comprobante,
+    account_move.id AS am_id,
+    account_tax_code.name AS clasifica,
+    account_move_line.tax_amount AS base_impuesto,
+    account_move_line.tax_amount AS monto,
+    account_tax_code.record_fees
+   FROM account_move
+   LEFT JOIN account_invoice on account_invoice.move_id = account_move.id
+     JOIN account_move_line ON account_move.id = account_move_line.move_id
+     JOIN account_journal ON account_move_line.journal_id = account_journal.id AND account_move.journal_id = account_journal.id  
+     JOIN account_period ON account_period.date_start <= account_move.fecha_contable and account_period.date_stop >= account_move.fecha_contable  and account_period.special = account_move.fecha_special
+     JOIN account_tax_code ON account_move_line.tax_code_id = account_tax_code.id
+  WHERE account_tax_code.record_fees IS NOT NULL and periodo_num(account_period.name) >= $1 and periodo_num(account_period.name) <= $2
+  and account_move.state != 'draft'
+  ORDER BY account_invoice.reference;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_honorarios_1(integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_honorarios_1_1(integer, integer)
+
+-- DROP FUNCTION public.get_honorarios_1_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_honorarios_1_1(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(am_id integer, "1" numeric, "2" numeric) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+ SELECT crosstab.am_id,
+    crosstab."1",
+    crosstab."2"
+   FROM crosstab('SELECT h1.am_id ,h1.record_fees,
+  sum(h1.monto) as monto FROM get_honorarios_1(' || $1 || ',' || $2 || ') as h1
+  GROUP BY h1.am_id, h1.record_fees
+  ORDER BY 1,2,3'::text, '  select m from generate_series(1,2) m'::text) crosstab(am_id integer, "1" numeric, "2" numeric);
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_honorarios_1_1(integer, integer)
+  OWNER TO openpg;
+
+
+-- Function: public.get_honorarios_1_1_1(integer, integer)
+
+-- DROP FUNCTION public.get_honorarios_1_1_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_honorarios_1_1_1(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, periodo character varying, libro character varying, voucher character varying, fechaemision date, fechapago date, tipodocumento character varying, serie text, numero text, tipodoc character varying, numdoc character varying, partner character varying, divisa character varying, tipodecambio numeric, monto numeric, retencion numeric, neto numeric, state character varying, periodopago character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+  SELECT row_number() OVER () AS id,*
+   FROM ( SELECT DISTINCT ap.name AS periodo,
+            aj.code AS libro,
+            am.name AS voucher,
+            ai.date_invoice AS fechaemision,
+                CASE
+                    WHEN ai.state::text = 'paid'::text THEN pago.date::date
+                    ELSE ai.date_due::date
+                END AS fechapago,
+            itd.code AS tipodocumento,
+                CASE
+                    WHEN "position"(ai.reference::text, '-'::text) = 0 THEN NULL::text
+                    ELSE "substring"(ai.reference::text, 0, "position"(ai.reference::text, '-'::text))
+                END AS serie,
+                CASE
+                    WHEN "position"(ai.reference::text, '-'::text) = 0 THEN ai.reference::text
+                    ELSE "substring"(ai.reference::text, "position"(ai.reference::text, '-'::text) + 1)
+                END AS numero,
+            itdp.code AS tipodoc,
+            rp.nro_documento AS numdoc,
+            rp.name AS partner,
+            rc.name AS divisa,
+
+    CASE WHEN rc.name = 'USD' THEN ai.currency_rate_auto ELSE Null::numeric END AS tipodecambio,
+            pr.monto,
+            pr.retencion,
+            pr.total AS neto,
+            ai.state,
+                CASE
+                    WHEN ai.state::text = 'paid'::text THEN ap_pago.name
+                    ELSE NULL::character varying
+                END AS periodopago
+           FROM ( SELECT vst_reg_forth_1_1.am_id,
+                    sum(vst_reg_forth_1_1."1") AS monto,
+                    sum(vst_reg_forth_1_1."2") AS retencion,
+                    COALESCE(sum(vst_reg_forth_1_1."1"), 0::numeric) - abs(COALESCE(sum(vst_reg_forth_1_1."2"), 0::numeric)) AS total
+                   FROM get_honorarios_1_1($1,$2) as vst_reg_forth_1_1
+                  GROUP BY vst_reg_forth_1_1.am_id) pr
+             JOIN account_move am ON am.id = pr.am_id
+             JOIN account_invoice ai ON ai.move_id = am.id
+             JOIN account_journal aj ON aj.id = am.journal_id
+             JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+             LEFT JOIN einvoice_catalog_01 itd ON itd.id = ai.it_type_document
+             LEFT JOIN res_partner rp ON rp.id = am.partner_id
+             LEFT JOIN einvoice_catalog_06 itdp ON itdp.id = rp.type_document_partner_it
+             LEFT JOIN res_currency rc ON rc.id = ai.currency_id
+              LEFT JOIN account_perception apercep ON apercep.father_invoice_id = ai.id
+             LEFT JOIN einvoice_catalog_06 itd2 ON itd2.id = apercep.tipo_doc
+             LEFT JOIN account_move_line pago ON pago.id = (( SELECT max(pagoc.id) AS max
+                   FROM account_move amc
+                     JOIN account_move_line amlc ON amlc.move_id = amc.id
+                     JOIN account_move_line pagoc ON amlc.full_reconcile_id = pagoc.full_reconcile_id
+                  WHERE amc.id = am.id AND amlc.id <> pagoc.id
+                  GROUP BY am.id))
+             LEFT JOIN account_move pago_cab on pago_cab.id = pago.move_id
+             LEFT JOIN account_period ap_pago ON ap_pago.date_start <= pago_cab.fecha_contable and ap_pago.date_stop >= pago_cab.fecha_contable  and ap_pago.special = pago_cab.fecha_special
+             CROSS JOIN main_parameter mp
+             where am.state != 'draft' and (apercep.id IN ( SELECT min(adr_1.id) AS min
+                   FROM account_move am_1
+                     JOIN account_invoice ai_1 ON ai_1.move_id = am_1.id
+                     JOIN account_perception adr_1 ON adr_1.father_invoice_id = ai_1.id
+                  GROUP BY ai_1.id)) OR apercep.* IS NULL
+          ORDER BY ap.name, aj.code, am.name) t;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_honorarios_1_1_1(integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_kardex_v(integer, integer, integer[], integer[])
+
+-- DROP FUNCTION public.get_kardex_v(integer, integer, integer[], integer[]);
+
+CREATE OR REPLACE FUNCTION public.get_kardex_v(
+    IN date_ini integer,
+    IN date_end integer,
+    IN productos integer[],
+    IN almacenes integer[],
+    OUT almacen character varying,
+    OUT categoria character varying,
+    OUT name_template character varying,
+    OUT fecha date,
+    OUT periodo character varying,
+    OUT ctanalitica character varying,
+    OUT serial character varying,
+    OUT nro character varying,
+    OUT operation_type character varying,
+    OUT name character varying,
+    OUT ingreso numeric,
+    OUT salida numeric,
+    OUT saldof numeric,
+    OUT debit numeric,
+    OUT credit numeric,
+    OUT cadquiere numeric,
+    OUT saldov numeric,
+    OUT cprom numeric,
+    OUT type character varying,
+    OUT esingreso text,
+    OUT product_id integer,
+    OUT location_id integer,
+    OUT doc_type_ope character varying,
+    OUT ubicacion_origen integer,
+    OUT ubicacion_destino integer,
+    OUT stock_moveid integer,
+    OUT account_invoice character varying,
+    OUT product_account character varying,
+    OUT default_code character varying,
+    OUT unidad character varying,
+    OUT mrpname character varying,
+    OUT ruc character varying,
+    OUT comapnyname character varying,
+    OUT cod_sunat character varying,
+    OUT tipoprod character varying,
+    OUT coduni character varying,
+    OUT metodo character varying,
+    OUT cu_entrada numeric,
+    OUT cu_salida numeric,
+    OUT period_name character varying,
+    OUT stock_doc character varying,
+    OUT origen character varying,
+    OUT destino character varying,
+    OUT type_doc character varying,
+    OUT numdoc_cuadre character varying,
+    OUT doc_partner character varying,
+    OUT fecha_albaran date,
+    OUT pedido_compra character varying,
+    OUT licitacion character varying,
+    OUT doc_almac character varying,
+    OUT lote character varying)
+  RETURNS SETOF record AS
+$BODY$  
+DECLARE 
+  location integer;
+  product integer;
+  precprom numeric;
+  h record;
+  h1 record;
+  h2 record;
+  dr record;
+  pt record;
+  il record;
+  loc_id integer;
+  prod_id integer;
+  contador integer;
+  lote_idmp varchar;
+  
+BEGIN
+
+  select res_partner.name,res_partner.nro_documento from res_company 
+  inner join res_partner on res_company.partner_id = res_partner.id
+  into h;
+
+  -- foreach product in array $3 loop
+    
+            loc_id = -1;
+            prod_id = -1;
+            lote_idmp = -1;
+--    foreach location in array $4  loop
+--      for dr in cursor_final loop
+      saldof =0;
+      saldov =0;
+      cprom =0;
+      cadquiere =0;
+      ingreso =0;
+      salida =0;
+      debit =0;
+      credit =0;
+           contador = 2;
+      
+      
+      for dr in 
+      select *,sp.name as doc_almac,sp.date::date as fecha_albaran, po.name as pedido_compra, pr.name as licitacion,spl.name as lote,
+      ''::character varying as ruc,''::character varying as comapnyname, ''::character varying as cod_sunat,''::character varying as default_code,ipx.value_text as ipxvalue,
+      ''::character varying as tipoprod ,''::character varying as coduni ,''::character varying as metodo, 0::numeric as cu_entrada , 0::numeric as cu_salida, ''::character varying as period_name  
+      from vst_kardex_sunat_final as vst_kardex_sunat
+left join stock_move sm on sm.id = vst_kardex_sunat.stock_moveid
+left join stock_production_lot spl on spl.id = sm.restrict_lot_id
+left join stock_picking sp on sp.id = sm.picking_id
+left join purchase_order po on po.id = sp.po_id
+left join purchase_requisition pr on pr.id = po.requisition_id
+left join account_invoice_line ail on ail.id = vst_kardex_sunat.invoicelineid
+left join product_product pp on pp.id = vst_kardex_sunat.product_id
+left join product_template ptp on ptp.id = pp.product_tmpl_id
+LEFT JOIN ir_property ipx ON ipx.res_id::text = ('product.template,'::text || ptp.id) AND ipx.name::text = 'cost_method'::text 
+          
+       where fecha_num(vst_kardex_sunat.fecha::date) between $1 and $2  
+      order by vst_kardex_sunat.location_id,vst_kardex_sunat.product_id,vst_kardex_sunat.fecha,vst_kardex_sunat.esingreso,vst_kardex_sunat.nro
+        loop
+        if dr.location_id = ANY ($4) and dr.product_id = ANY ($3) then
+          if dr.ipxvalue = 'specific' then
+                    if loc_id = dr.location_id then
+              contador = 1;
+              else
+              
+              loc_id = dr.location_id;
+              prod_id = dr.product_id;
+          --    foreach location in array $4  loop
+              
+          --      for dr in cursor_final loop
+              saldof =0;
+              saldov =0;
+              cprom =0;
+              cadquiere =0;
+              ingreso =0;
+              salida =0;
+              debit =0;
+              credit =0;
+            end if;
+              else
+            
+
+                if prod_id = dr.product_id and loc_id = dr.location_id then
+                contador =1;
+                else
+
+              loc_id = dr.location_id;
+              prod_id = dr.product_id;
+          --    foreach location in array $4  loop
+          --      for dr in cursor_final loop
+                saldof =0;
+                saldov =0;
+                cprom =0;
+                cadquiere =0;
+                ingreso =0;
+                salida =0;
+                debit =0;
+                credit =0;
+                end if;
+           end if;
+
+            select '' as category_sunat_code, '' as uom_sunat_code
+            from product_product
+            inner join product_template on product_product.product_tmpl_id = product_template.id
+            inner join product_category on product_template.categ_id = product_category.id
+            inner join product_uom on product_template.uom_id = product_uom.id
+            --left join category_product_sunat on product_category.cod_sunat = category_product_sunat.id
+            --left join category_uom_sunat on product_uom.cod_sunat = category_uom_sunat.id
+            where product_product.id = dr.product_id into h1;
+
+                              select * from stock_location where id = dr.location_id into h2;
+        
+          ---- esto es para las variables que estan en el crusor y pasarlas a las variables output
+          
+          almacen=dr.almacen;
+          categoria=dr.categoria;
+          name_template=dr.producto;
+          fecha=dr.fecha;
+          periodo=dr.periodo;
+          ctanalitica=dr.ctanalitica;
+          serial=dr.serial;
+          nro=dr.nro;
+          operation_type=dr.operation_type;
+          name=dr.name;
+          type=dr.type;
+          esingreso=dr.esingreso;
+          product_id=dr.product_id;
+
+          location_id=dr.location_id;
+          doc_type_ope=dr.doc_type_ope;
+          ubicacion_origen=dr.ubicacion_origen;
+          ubicacion_destino=dr.ubicacion_destino;
+          stock_moveid=dr.stock_moveid;
+          account_invoice=dr.account_invoice;
+          product_account=dr.product_account;
+          default_code=dr.default_code;
+          unidad=dr.unidad;
+          mrpname=dr.mrpname;
+          stock_doc=dr.stock_doc;
+          origen=dr.origen;
+          destino=dr.destino;
+          type_doc=dr.type_doc;
+                numdoc_cuadre=dr.numdoc_cuadre;
+                doc_partner=dr.doc_partner;
+                lote= dr.lote;
+
+
+        
+
+           ruc = h.nro_documento;
+           comapnyname = h.name;
+           cod_sunat = ''; 
+           default_code = dr.default_code;
+           tipoprod = h1.category_sunat_code; 
+           coduni = h1.uom_sunat_code;
+           metodo = 'Costo promedio';
+           
+           period_name = dr.period_name;
+          
+           fecha_albaran = dr.fecha_albaran;
+           pedido_compra = dr.pedido_compra;
+           licitacion = dr.licitacion;
+           doc_almac = dr.doc_almac;
+
+
+          --- final de proceso de variables output
+
+        
+          ingreso =coalesce(dr.ingreso,0);
+          salida =coalesce(dr.salida,0);
+          --if dr.serial is not null then 
+            debit=coalesce(dr.debit,0);
+          --else
+            --if dr.ubicacion_origen=8 then
+              --debit =0;
+            --else
+              ---debit = coalesce(dr.debit,0);
+            --end if;
+          --end if;
+          
+
+          
+            credit =coalesce(dr.credit,0);
+          
+          cadquiere =coalesce(dr.cadquiere,0);
+          precprom = cprom;
+          if cadquiere <=0::numeric then
+            cadquiere=cprom;
+          end if;
+          if salida>0::numeric then
+            credit = cadquiere * salida;
+          end if;
+          saldov = saldov + (debit - credit);
+          saldof = saldof + (ingreso - salida);
+          if saldof > 0::numeric then
+            if esingreso= 'ingreso' or ingreso > 0::numeric then
+              if saldof != 0 then
+                cprom = saldov/saldof;
+              else
+                      cprom = saldov;
+                 end if;
+              if ingreso = 0 then
+                      cadquiere = cprom;
+              else
+                  cadquiere =debit/ingreso;
+              end if;
+              --cprom = saldov / saldof;
+              --cadquiere = debit / ingreso;
+            else
+              if salida = 0::numeric then
+                if debit + credit > 0::numeric then
+                  cprom = saldov / saldof;
+                  cadquiere=cprom;
+                end if;
+              else
+                credit = salida * cprom;
+              end if;
+            end if;
+          else
+            cprom = 0;
+          end if;
+            
+
+          if saldov <= 0::numeric and saldof <= 0::numeric then
+            dr.cprom = 0;
+            cprom = 0;
+          end if;
+          --if cadquiere=0 then
+          --  if trim(dr.operation_type) != '05' and trim(dr.operation_type) != '' and dr.operation_type is not null then
+          --    cadquiere=precprom;
+          --    debit = ingreso*cadquiere;
+          --    credit=salida*cadquiere;
+          --  end if;
+          --end if;
+          dr.debit = round(debit,2);
+          dr.credit = round(credit,2);
+          dr.cprom = round(cprom,8);
+          dr.cadquiere = round(cadquiere,8);
+          dr.credit = round(credit,2);
+          dr.saldof = round(saldof,2);
+          dr.saldov = round(saldov,8);
+          if ingreso>0 then
+            cu_entrada =debit/ingreso;
+          else
+            cu_entrada =debit;
+          end if;
+
+          if salida>0 then
+            cu_salida =credit/salida;
+          else
+          cu_salida =credit;
+          end if;
+
+          RETURN NEXT;
+        end if;
+  end loop;
+  --return query select * from vst_kardex_sunat where fecha_num(vst_kardex_sunat.fecha) between $1 and $2 and vst_kardex_sunat.product_id = ANY($3) and vst_kardex_sunat.location_id = ANY($4) order by location_id,product_id,fecha;
+END
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_kardex_v(integer, integer, integer[], integer[])
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_libro_diario(integer, integer)
+
+-- DROP FUNCTION public.get_libro_diario(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_libro_diario(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, periodo character varying, libro character varying, voucher character varying, cuenta character varying, descripcion character varying, debe numeric, haber numeric, divisa character varying, tipodecambio numeric, importedivisa numeric, codigo character varying, partner character varying, tipodocumento character varying, numero character varying, fechaemision date, fechavencimiento date, glosa character varying, ctaanalitica character varying, refconcil character varying, statefiltro character varying, aml_id integer, aj_id integer, ap_id integer, am_id integer, aa_id integer, rc_id integer, rp_id integer, itd_id integer, aaa_id integer, state character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,*
+   FROM ( SELECT ap.name AS periodo,
+            aj.code AS libro,
+            am.name AS voucher,
+            aa.code AS cuenta,
+            aa.name AS descripcion,
+            aml.debit  AS debe,
+            aml.credit  AS haber,
+            rc.name AS divisa,            
+            CASE WHEN rc.name ='USD' THEN ai.currency_rate_auto ELSE Null::numeric END AS tipodecambio,
+            aml.amount_currency AS importedivisa,
+            rp.nro_documento AS codigo,
+            rp.name AS partner,
+            itd.code AS tipodocumento,
+            aml.nro_comprobante AS numero,
+            aml.date AS fechaemision,
+            aml.date_maturity AS fechavencimiento,
+            aml.name AS glosa,
+            aaa.name AS ctaanalitica,
+            afr.name AS refconcil,
+            am.state AS statefiltro,
+            aml.id AS aml_id,
+            aj.id AS aj_id,
+            ap.id AS ap_id,
+            am.id AS am_id,
+            aa.id AS aa_id,
+            rc.id AS rc_id,
+            rp.id AS rp_id,
+            itd.id AS itd_id,
+            aaa.id AS aaa_id,
+            case when am.state = 'posted'::varchar then 'Asentado'::varchar ELSE 'Borrador'::varchar END as state
+           FROM account_move_line aml
+             JOIN account_move am ON am.id = aml.move_id
+             JOIN account_journal aj ON aj.id = am.journal_id
+             LEFT JOIN account_invoice ai on ai.move_id = am.id
+             JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+             JOIN account_account aa ON aa.id = aml.account_id
+             LEFT JOIN account_full_reconcile afr on afr.id = aml.full_reconcile_id
+             LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+             LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+             LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+             LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+             where am.state != 'draft'
+          ORDER BY ap.id, aj.code, am.name) t
+          where periodo_num(t.periodo) >= $1 and periodo_num(t.periodo)<=$2;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_libro_diario(integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_libro_mayor(integer, integer)
+
+-- DROP FUNCTION public.get_libro_mayor(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_libro_mayor(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, periodo character varying, libro character varying, voucher character varying, cuenta character varying, descripcion character varying, debe numeric, haber numeric, divisa character varying, tipocambio numeric, importedivisa numeric, conciliacion character varying, fechaemision date, fechavencimiento date, tipodocumento character varying, numero character varying, ruc character varying, partner character varying, glosa character varying, analitica character varying, ordenamiento integer, cuentaname character varying, aml_id integer, state character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,* from ( (SELECT ap.name AS periodo,
+                    aj.code AS libro,
+                    am.name AS voucher,
+                    aa.code AS cuenta,
+                    aa.name AS descripcion,
+                    aml.debit AS debe,
+                    aml.credit AS haber,
+                    rc.name AS divisa,
+                   CASE WHEN rc.name = 'USD' THEN ai.currency_rate_auto ELSE Null::numeric END AS tipocambio,
+                    aml.amount_currency AS importedivisa,
+                    afr.name AS conciliacion,
+                    aml.date AS fechaemision,
+                    aml.date_maturity AS fechavencimiento,
+                    itd.code AS tipodocumento,
+                    aml.nro_comprobante AS numero,
+                    rp.nro_documento AS ruc,
+                    rp.name AS partner,
+                    aml.name AS glosa,
+                    aaa.code AS analitica,
+                    1 AS ordenamiento,
+                        CASE
+                            WHEN "position"(aa.name::varchar, '-'::varchar) = 0 THEN aa.name::varchar
+                            ELSE "substring"(aa.name::varchar, 0, "position"(aa.name::varchar, '-'::varchar))::varchar
+                        END AS cuentaname,
+                    aml.id as aml_id,
+                    case when am.state = 'draft' then 'Borrador'::varchar else 'Asentado'::varchar END as state
+                   FROM account_move_line aml
+                     JOIN account_move am ON aml.move_id = am.id
+                     LEFT JOIN account_invoice ai on ai.move_id = am.id
+                     JOIN account_journal aj ON am.journal_id = aj.id
+                     JOIN account_account aa ON aml.account_id = aa.id
+                     JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+             LEFT JOIN account_full_reconcile afr on afr.id = aml.full_reconcile_id
+                     LEFT JOIN res_currency rc ON aml.currency_id = rc.id
+         LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+                     LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+                     LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+                   WHERE periodo_num(ap.name) >= $1 and periodo_num(ap.name) <= $2
+                   and am.state != 'draft')
+  
+                  UNION ALL
+                  (
+    SELECT  
+      periodo_string($1) as periodo,  
+      Null::varchar as libro,
+      Null::varchar as voucher, 
+      aa.code as Cuenta, 
+      aa.name as descripcion,
+      CASE WHEN sum(aml.debit) - sum(aml.credit) >0 THEN sum(aml.debit) - sum(aml.credit) ELSE 0 END AS debe,
+      CASE WHEN sum(aml.credit) - sum(aml.debit) >0 THEN sum(aml.credit) - sum(aml.debit) ELSE 0 END AS haber,
+    
+       Null::varchar as divisa,
+       Null::numeric as tipocambio,
+       Null::numeric as importedivisa,
+       Null::varchar as conciliacion,
+       Null::date as fechaemision,
+       Null::date as fechavencimiento,
+       Null::varchar as tipodocumento,
+       Null::varchar as numero,
+       Null::varchar as ruc,
+       Null::varchar as partner,
+       'Saldo Inicial'::varchar as glosa,
+       Null::varchar as analitica,
+       0 as ordenamiento,
+       Null::varchar as cuentaname,
+       Null::integer as aml_id,
+       'Asentado'::varchar as state
+    FROM
+      account_move_line aml
+      INNER JOIN account_move am ON (aml.move_id = am.id)
+      INNER JOIN account_journal aj ON (am.journal_id = aj.id)
+      INNER JOIN account_account aa ON (aml.account_id = aa.id)
+      INNER JOIN account_period ap_1 ON ap_1.date_start <= am.fecha_contable and ap_1.date_stop >= am.fecha_contable  and ap_1.special = am.fecha_special
+      LEFT OUTER JOIN res_currency rc ON (aml.currency_id = rc.id)
+      LEFT OUTER JOIN res_partner rp ON (rp.id = aml.partner_id)
+      LEFT OUTER JOIN account_analytic_account aaa ON (aaa.id = aml.analytic_account_id)
+    WHERE periodo_num(ap_1.code) < $1 
+    and am.state != 'draft'
+    group by aa.code, aa.name) 
+    order by cuenta,ordenamiento,periodo,fechaemision) AS T; 
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_libro_mayor(integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_report_bank_with_saldoinicial(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_report_bank_with_saldoinicial(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_report_bank_with_saldoinicial(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, fecha date, cheque character varying, nombre character varying, documento character varying, glosa character varying, cargo_mn numeric, abono_mn numeric, tipo_cambio numeric, cargo_me numeric, abono_me numeric, nro_asiento integer, aa_id integer, ordenamiento integer, diario_id integer) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,*
+   FROM ( SELECT * from(
+    SELECT 
+    aml.date AS fecha,
+    aml.nro_comprobante AS cheque,
+    rp.name as nombre,
+
+    am.name as documento,
+    
+    aml.name as glosa,
+    aml.debit as cargo_mn,
+    aml.credit as abono_mn,
+    aml.tc as tipo_cambio,
+    CASE WHEN aml.amount_currency>0 THEN aml.amount_currency ELSE 0 END as cargo_me,
+    CASE WHEN aml.amount_currency<0 THEN -1*aml.amount_currency ELSE 0 END as abono_me,
+    am.id as nro_asiento,
+    aa.id as aa_id,
+    1 as ordenamiento,
+    aj.id as diario_id
+
+
+    FROM account_move_line aml
+     JOIN account_journal aj ON aj.id = aml.journal_id
+     JOIN account_move am ON am.id = aml.move_id
+     JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+     JOIN account_account aa ON aa.id = aml.account_id
+     LEFT JOIN einvoice_means_payment mp ON mp.id = am.means_payment_it
+     LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+     LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+     LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+     LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+  WHERE periodo_num(ap.name) >= $2 and periodo_num(ap.name) <= $3
+  and am.state != 'draft'
+  
+UNION ALL
+
+SELECT 
+    Null::date AS fecha,
+    Null::varchar AS cheque,
+    Null::varchar AS nombre,
+    Null::varchar as documento,
+    'Saldo Inicial' as glosa,
+    sum(aml.debit) as cargo_mn,   
+    sum(aml.credit) as abono_mn,
+    Null::numeric as tipo_cambio,
+    
+    sum( CASE WHEN aml.amount_currency>0 THEN aml.amount_currency else 0 END ) as cargo_me,
+    sum( CASE WHEN aml.amount_currency<0 THEN -1* aml.amount_currency ELSE 0 END) as abono_me,
+    Null::integer as nro_asiento,
+    aa.id as aa_id,
+    0 as ordenamiento,
+    0 as diario_id
+
+    FROM account_move_line aml
+     JOIN account_journal aj ON aj.id = aml.journal_id
+     JOIN account_move am ON am.id = aml.move_id
+     JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+     JOIN account_account aa ON aa.id = aml.account_id
+     LEFT JOIN einvoice_means_payment mp ON mp.id = am.means_payment_it
+     LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+     LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+     LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+     LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+  WHERE periodo_num(ap.name) >= (substring($2::varchar,0,5)||'0')::integer  and periodo_num(ap.name) < $2
+  and am.state != 'draft'
+  group by aa.id
+
+
+  ) AS T
+  order by ordenamiento,fecha,cheque,documento
+  
+  ) AS M;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_report_bank_with_saldoinicial(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_reporte_hoja_balance(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_reporte_hoja_balance(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_reporte_hoja_balance(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric, activo numeric, pasivo numeric, perdidasnat numeric, ganancianat numeric, perdidasfun numeric, gananciafun numeric, cuentaf character varying, totaldebe numeric, totalhaber numeric, finaldeudor numeric, finalacreedor numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+select X.id,X.cuenta,X.descripcion,X.debe,X.haber,X.saldodeudor,X.saldoacredor,
+CASE WHEN ((X.activo >0 or X.pasivo >0) or (X.ver_pas=1) ) and X.finaldeudor>0 THEN X.finaldeudor ELSE 0 end activo,
+CASE WHEN ((X.pasivo >0 or X.activo >0) or (X.ver_pas=1) ) and X.finalacreedor>0 THEN X.finalacreedor ELSE 0 end pasivo,
+CASE WHEN ((X.perdidasnat >0 or X.ganancianat >0) or (X.ver_nat=1) ) and X.finaldeudor>0 THEN X.finaldeudor  ELSE 0 end perdidasnat,
+CASE WHEN ((X.ganancianat >0 or X.perdidasnat >0) or (X.ver_nat=1) ) and X.finalacreedor>0 THEN X.finalacreedor ELSE 0 end ganancianat,
+CASE WHEN ((X.perdidasfun >0 or X.gananciafun >0) or (X.ver_fun=1) ) and X.finaldeudor >0 THEN X.finaldeudor ELSE 0 end perdidasfun,
+CASE WHEN ((X.gananciafun >0 or X.perdidasfun >0) or (X.ver_fun=1) ) and X.finalacreedor>0 THEN X.finalacreedor ELSE 0 end gananciafun,
+X.cuentaf,X.totaldebe,X.totalhaber,X.finaldeudor,X.finalacreedor
+
+ from (select row_number() OVER () AS id,RES.* from 
+  (select  CASE WHEN M.cuenta IS NOT NULL THEN M.cuenta ELSE aa_f.code END as cuenta, CASE WHEN M.descripcion IS NOT NULL THEN M.descripcion ELSE aa_f.name END as descripcion, M.debe, M.haber, M.saldodeudor, M.saldoacredor, M.activo, M.pasivo, M.perdidasnat, M.ganancianat, M.perdidasfun, M.gananciafun,T.cuentaF, T.totaldebe,T.totalhaber ,
+CASE WHEN coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0) >0 THEN coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0) ELSE 0 END as finaldeudor,
+CASE WHEN coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0) <0 THEN -1 * (coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0)) ELSE 0 END as finalacreedor,
+T.ver_pas, T.ver_nat, T.ver_fun
+from get_hoja_trabajo_detalle_balance($1,(substring($2::varchar,0,5)||'01')::integer,$3) AS M 
+FULL JOIN (select O1.cuenta as cuentaF,
+--sum(O1.saldodeudor) as totaldebe,
+--sum(O1.saldoacredor) as totalhaber   from get_hoja_trabajo_detalle_balance($1,(substring($2::varchar,0,5)||'00')::integer,(substring($2::varchar,0,5)||'00')::integer ) as O1
+sum(O1.debe) as totaldebe,
+sum(O1.haber) as totalhaber,
+CASE WHEN sum(O1.activo)> 0 or sum(O1.pasivo) >0 THEN 1 ELSE 0 END as ver_pas,
+CASE WHEN sum(O1.perdidasnat)> 0 or sum(O1.ganancianat) >0 THEN 1 ELSE 0 END as ver_nat,
+CASE WHEN sum(O1.perdidasfun)> 0 or sum(O1.gananciafun) >0 THEN 1 ELSE 0 END as ver_fun
+   from get_hoja_trabajo_detalle_balance($1,(substring($2::varchar,0,5)||'00')::integer,(substring($2::varchar,0,5)||'00')::integer ) as O1
+group by O1.cuenta) AS T on T.cuentaF = M.cuenta
+left join account_account aa_f on aa_f.code = T.cuentaF order by cuenta) RES ) AS X;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_reporte_hoja_balance(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_reporte_hoja_registro(boolean, integer, integer)
+
+-- DROP FUNCTION public.get_reporte_hoja_registro(boolean, integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_reporte_hoja_registro(
+    IN has_currency boolean,
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, cuenta character varying, descripcion character varying, debe numeric, haber numeric, saldodeudor numeric, saldoacredor numeric, activo numeric, pasivo numeric, perdidasnat numeric, ganancianat numeric, perdidasfun numeric, gananciafun numeric, cuentaf character varying, totaldebe numeric, totalhaber numeric, finaldeudor numeric, finalacreedor numeric) AS
+$BODY$
+BEGIN
+
+IF $3 is Null THEN
+    $3 := $2;
+END IF;
+
+RETURN QUERY 
+select X.id,X.cuenta,X.descripcion,X.debe,X.haber,X.saldodeudor,X.saldoacredor,
+CASE WHEN ((X.activo >0 or X.pasivo >0) or (X.ver_pas=1) ) and X.finaldeudor>0 THEN X.finaldeudor ELSE 0 end activo,
+CASE WHEN ((X.pasivo >0 or X.activo >0) or (X.ver_pas=1) ) and X.finalacreedor>0 THEN X.finalacreedor ELSE 0 end pasivo,
+CASE WHEN ((X.perdidasnat >0 or X.ganancianat >0) or (X.ver_nat=1) ) and X.finaldeudor>0 THEN X.finaldeudor  ELSE 0 end perdidasnat,
+CASE WHEN ((X.ganancianat >0 or X.perdidasnat >0) or (X.ver_nat=1) ) and X.finalacreedor>0 THEN X.finalacreedor ELSE 0 end ganancianat,
+CASE WHEN ((X.perdidasfun >0 or X.gananciafun >0) or (X.ver_fun=1) ) and X.finaldeudor >0 THEN X.finaldeudor ELSE 0 end perdidasfun,
+CASE WHEN ((X.gananciafun >0 or X.perdidasfun >0) or (X.ver_fun=1) ) and X.finalacreedor>0 THEN X.finalacreedor ELSE 0 end gananciafun,
+X.cuentaf,X.totaldebe,X.totalhaber,X.finaldeudor,X.finalacreedor
+
+ from (select row_number() OVER () AS id,RES.* from 
+  (select  CASE WHEN M.cuenta IS NOT NULL THEN M.cuenta ELSE aa_f.code END as cuenta, CASE WHEN M.descripcion IS NOT NULL THEN M.descripcion ELSE aa_f.name END as descripcion, M.debe, M.haber, M.saldodeudor, M.saldoacredor, M.activo, M.pasivo, M.perdidasnat, M.ganancianat, M.perdidasfun, M.gananciafun,T.cuentaF, T.totaldebe,T.totalhaber ,
+CASE WHEN coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0) >0 THEN coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0) ELSE 0 END as finaldeudor,
+CASE WHEN coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0) <0 THEN -1 * (coalesce(T.totaldebe,0) - coalesce(T.totalhaber,0) + coalesce(M.debe,0) - coalesce(M.haber,0)) ELSE 0 END as finalacreedor,
+T.ver_pas, T.ver_nat, T.ver_fun
+from get_hoja_trabajo_detalle_registro($1,(substring($2::varchar,0,5)||'01')::integer,$3) AS M 
+FULL JOIN (select O1.cuenta as cuentaF,
+--sum(O1.saldodeudor) as totaldebe,
+--sum(O1.saldoacredor) as totalhaber   from get_hoja_trabajo_detalle_registro($1,(substring($2::varchar,0,5)||'00')::integer,(substring($2::varchar,0,5)||'00')::integer ) as O1
+sum(O1.debe) as totaldebe,
+sum(O1.haber) as totalhaber,
+CASE WHEN sum(O1.activo)> 0 or sum(O1.pasivo) >0 THEN 1 ELSE 0 END as ver_pas,
+CASE WHEN sum(O1.perdidasnat)> 0 or sum(O1.ganancianat) >0 THEN 1 ELSE 0 END as ver_nat,
+CASE WHEN sum(O1.perdidasfun)> 0 or sum(O1.gananciafun) >0 THEN 1 ELSE 0 END as ver_fun
+
+   from get_hoja_trabajo_detalle_registro($1,(substring($2::varchar,0,5)||'00')::integer,(substring($2::varchar,0,5)||'00')::integer ) as O1
+group by O1.cuenta) AS T on T.cuentaF = M.cuenta 
+left join account_account aa_f on aa_f.code = T.cuentaF order by cuenta) RES) AS X;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_reporte_hoja_registro(boolean, integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_venta_1(integer, integer)
+
+-- DROP FUNCTION public.get_venta_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_venta_1(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(comprobante character varying, am_id integer, clasifica character varying, base_impuesto numeric, monto numeric, record_sale character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+ SELECT account_invoice.reference AS comprobante,
+    account_move.id AS am_id,
+    account_tax_code.name AS clasifica,
+    account_move_line.tax_amount AS base_impuesto,
+    
+        CASE
+            WHEN account_journal.type::text = 'sale'::text and account_invoice.type = 'out_refund' THEN account_move_line.tax_amount * (-1)::numeric
+            ELSE account_move_line.tax_amount        
+       END AS monto,
+       
+    account_tax_code.record_sale
+   FROM account_move
+     JOIN account_invoice on account_invoice.move_id = account_move.id
+     JOIN account_move_line ON account_move.id = account_move_line.move_id
+     JOIN account_journal ON account_move_line.journal_id = account_journal.id AND account_move.journal_id = account_journal.id
+     JOIN account_period ON account_period.date_start <= account_move.fecha_contable  AND account_period.date_stop >= account_move.fecha_contable  and account_period.special = account_move.fecha_special
+     JOIN account_tax_code ON account_move_line.tax_code_id = account_tax_code.id
+  WHERE account_journal.register_sunat::text = '2'::text and periodo_num(account_period.name) >= $1 and periodo_num(account_period.name) <= $2
+  and account_move.state != 'draft'
+  ORDER BY account_invoice.reference;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_venta_1(integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_venta_1_1(integer, integer)
+
+-- DROP FUNCTION public.get_venta_1_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_venta_1_1(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(am_id integer, "1" numeric, "2" numeric, "3" numeric, "4" numeric, "5" numeric, "6" numeric, "7" numeric) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+ SELECT crosstab.am_id,
+    crosstab."1",
+    crosstab."2",
+    crosstab."3",
+    crosstab."4",
+    crosstab."5",
+    crosstab."6",
+    crosstab."7"
+   FROM crosstab('SELECT v1.am_id ,v1.record_sale,
+  sum(v1.monto) as monto FROM get_venta_1(' || $1 || ',' || $2 || ') as v1
+  GROUP BY v1.am_id, v1.record_sale
+  ORDER BY 1,2,3'::text, '  select m from generate_series(1,7) m'::text) crosstab(am_id integer, "1" numeric, "2" numeric, "3" numeric, "4" numeric, "5" numeric, "6" numeric, "7" numeric);
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_venta_1_1(integer, integer)
+  OWNER TO openpg;
+
+
+
+-- Function: public.get_venta_1_1_1(integer, integer)
+
+-- DROP FUNCTION public.get_venta_1_1_1(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.get_venta_1_1_1(
+    IN periodo_ini integer,
+    IN periodo_fin integer)
+  RETURNS TABLE(id bigint, am_id integer, periodo character varying, libro character varying, voucher character varying, fechaemision date, fechavencimiento date, tipodocumento character varying, serie text, numero text, tipodoc character varying, numdoc character varying, partner character varying, valorexp numeric, baseimp numeric, inafecto numeric, exonerado numeric, isc numeric, igv numeric, otros numeric, total numeric, divisa character varying, tipodecambio numeric, fechad date, numeromodd character varying, fechadm date, tipodocmod character varying, anio character varying, seriemod text, numeromod text, glosa character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,
+    t.am_id,
+    t.periodo,
+    t.libro,
+    t.voucher,
+    t.fechaemision,
+    t.fechavencimiento,
+    t.tipodocumento,
+    t.serie,
+    t.numero,
+    t.tipodoc,
+    t.numdoc,
+    t.partner,
+    t.valorexp,
+    t.baseimp,
+    t.inafecto,
+    t.exonerado,
+    t.isc,
+    t.igv,
+    t.otros,
+    t.total,
+    t.divisa,
+    t.tipodecambio,
+    t.fechad,
+    t.numeromodd,
+    t.fechadm,
+    t.tipodocmod,
+    t.anio,
+    t.seriemod,
+    t.numeromod,
+    t.glosa
+   FROM ( SELECT pr.am_id,
+            ap.name AS periodo,
+            aj.code AS libro,
+            am.name AS voucher,
+            ai.date_invoice AS fechaemision,
+            ai.date_due AS fechavencimiento,
+            itd.code AS tipodocumento,
+                CASE
+                    WHEN "position"(ai.reference::text, '-'::text) = 0 THEN ''::text
+                    ELSE "substring"(ai.reference::text, 0, "position"(ai.reference::text, '-'::text))
+                END AS serie,
+                CASE
+                    WHEN "position"(ai.reference::text, '-'::text) = 0 THEN ai.reference::text
+                    ELSE "substring"(ai.reference::text, "position"(ai.reference::text, '-'::text) + 1)
+                END AS numero,
+            itdp.code AS tipodoc,
+            rp.nro_documento AS numdoc,
+            rp.name AS partner,
+            pr.valorexp,
+            pr.baseimp,
+            pr.inafecto,
+            pr.exonerado,
+            pr.isc,
+            pr.igv,
+            pr.otros,
+            pr.total,
+            rc.name AS divisa,
+
+            CASE WHEN rc.name = 'USD' THEN ai.currency_rate_auto ELSE Null::numeric END AS tipodecambio,
+            ai.date_detraccion AS fechad,
+            ai.voucher_number AS numeromodd,
+            apercep.fecha AS fechadm,
+            itd2.code AS tipodocmod,
+                CASE
+                    WHEN itd.id = mp.export_document_id THEN date_part('year'::text, am.date)::character varying(50)
+                    ELSE ''::character varying(50)
+                END AS anio,
+                CASE
+                    WHEN "position"(apercep.comprobante::text, '-'::text) = 0 THEN ''::text
+                    ELSE "substring"(apercep.comprobante::text, 0, "position"(apercep.comprobante::text, '-'::text))
+                END AS seriemod,
+                CASE
+                    WHEN "position"(apercep.comprobante::text, '-'::text) = 0 THEN apercep.comprobante::text
+                    ELSE "substring"(apercep.comprobante::text, "position"(apercep.comprobante::text, '-'::text) + 1)
+                END AS numeromod,
+           ai.name as glosa
+           FROM ( SELECT vst_reg_ventas_1_1.am_id,
+                    sum(vst_reg_ventas_1_1."1") AS valorexp,
+                    sum(vst_reg_ventas_1_1."2") AS baseimp,
+                    sum(vst_reg_ventas_1_1."3") AS inafecto,
+                    sum(vst_reg_ventas_1_1."4") AS exonerado,
+                    sum(vst_reg_ventas_1_1."5") AS isc,
+                    sum(vst_reg_ventas_1_1."6") AS otros,
+                    sum(vst_reg_ventas_1_1."7") AS igv,
+                    COALESCE(sum(vst_reg_ventas_1_1."1"), 0::numeric) + COALESCE(sum(vst_reg_ventas_1_1."2"), 0::numeric) + COALESCE(sum(vst_reg_ventas_1_1."3"), 0::numeric) + COALESCE(sum(vst_reg_ventas_1_1."4"), 0::numeric) + COALESCE(sum(vst_reg_ventas_1_1."5"), 0::numeric) + COALESCE(sum(vst_reg_ventas_1_1."6"), 0::numeric) + COALESCE(sum(vst_reg_ventas_1_1."7"), 0::numeric) AS total
+                   FROM get_venta_1_1($1,$2) as vst_reg_ventas_1_1
+                  GROUP BY vst_reg_ventas_1_1.am_id) pr
+             JOIN account_move am ON am.id = pr.am_id
+             LEFT JOIN account_invoice ai ON ai.move_id = am.id
+             JOIN account_journal aj ON aj.id = am.journal_id
+             JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+             LEFT JOIN einvoice_catalog_01 itd ON itd.id = ai.it_type_document
+             LEFT JOIN res_partner rp ON rp.id = am.partner_id
+             LEFT JOIN einvoice_catalog_06 itdp ON itdp.id = rp.type_document_partner_it
+             LEFT JOIN res_currency rc ON rc.id = ai.currency_id
+             LEFT JOIN account_perception apercep ON apercep.father_invoice_id = ai.id
+             LEFT JOIN einvoice_catalog_01 itd2 ON itd2.id = apercep.tipo_doc
+             CROSS JOIN main_parameter mp
+          WHERE (apercep.id IN ( SELECT min(adr_1.id) AS min
+                   FROM account_move am_1
+                     JOIN account_invoice ai_1 ON ai_1.move_id = am_1.id
+                     JOIN account_perception adr_1 ON adr_1.father_invoice_id = ai_1.id
+                  GROUP BY ai_1.id)) OR apercep.* IS NULL
+          ORDER BY ap.name, aj.code, am.name) t;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION public.get_venta_1_1_1(integer, integer)
+  OWNER TO openpg;
+
+
+
+
+
+
+
+
+
+
+
+
+-- Function: get_kardex_v_actualizar(integer, integer, integer[], integer[], integer)
+
+-- DROP FUNCTION get_kardex_v_actualizar(integer, integer, integer[], integer[], integer);
+
+CREATE OR REPLACE FUNCTION get_kardex_v_actualizar(IN date_ini integer, IN date_end integer, IN productos integer[], IN almacenes integer[], IN date_newini integer, OUT almacen character varying, OUT categoria character varying, OUT name_template character varying, OUT fecha date, OUT periodo character varying, OUT ctanalitica character varying, OUT serial character varying, OUT nro character varying, OUT operation_type character varying, OUT name character varying, OUT ingreso numeric, OUT salida numeric, OUT saldof numeric, OUT debit numeric, OUT credit numeric, OUT cadquiere numeric, OUT saldov numeric, OUT cprom numeric, OUT type character varying, OUT esingreso text, OUT product_id integer, OUT location_id integer, OUT doc_type_ope character varying, OUT ubicacion_origen integer, OUT ubicacion_destino integer, OUT stock_moveid integer, OUT account_invoice character varying, OUT product_account character varying, OUT default_code character varying, OUT unidad character varying, OUT mrpname character varying, OUT ruc character varying, OUT comapnyname character varying, OUT cod_sunat character varying, OUT tipoprod character varying, OUT coduni character varying, OUT metodo character varying, OUT cu_entrada numeric, OUT cu_salida numeric, OUT period_name character varying, OUT stock_doc character varying, OUT origen character varying, OUT destino character varying, OUT type_doc character varying, OUT numdoc_cuadre character varying, OUT doc_partner character varying, OUT fecha_albaran date, OUT pedido_compra character varying, OUT licitacion character varying, OUT doc_almac character varying, OUT lote character varying)
+  RETURNS SETOF record AS
+$BODY$  
+DECLARE 
+  location integer;
+  product integer;
+  precprom numeric;
+  h record;
+  h1 record;
+  h2 record;
+  dr record;
+  pt record;
+  il record;
+  rf record;
+  loc_id integer;
+  prod_id integer;
+  contador integer;
+  lote_idmp varchar;
+
+
+  
+        loc_1 record;
+  loc_2 record;
+
+  
+  pp_1 record;
+  pp_2 record;
+  
+BEGIN
+
+  select res_partner.name,res_partner.nro_documento from res_company 
+  inner join res_partner on res_company.partner_id = res_partner.id
+  into h;
+
+  -- foreach product in array $3 loop
+    
+            loc_id = -1;
+            prod_id = -1;
+            lote_idmp = -1;
+--    foreach location in array $4  loop
+--      for dr in cursor_final loop
+      saldof =0;
+      saldov =0;
+      cprom =0;
+      cadquiere =0;
+      ingreso =0;
+      salida =0;
+      debit =0;
+      credit =0;
+           contador = 2;
+      
+      for dr in 
+      select *,sp.name as doc_almac,sp.fecha_kardex::date as fecha_albaran, po.name as pedido_compra, pr.name as licitacion,spl.name as lote,
+      ''::character varying as ruc,''::character varying as comapnyname, ''::character varying as cod_sunat,''::character varying as default_code,ipx.value_text as ipxvalue,
+      ''::character varying as tipoprod ,''::character varying as coduni ,''::character varying as metodo, 0::numeric as cu_entrada , 0::numeric as cu_salida, ''::character varying as period_name  
+      from vst_kardex_fisico_valorado as vst_kardex_sunat
+left join stock_move sm on sm.id = vst_kardex_sunat.stock_moveid
+left join stock_production_lot spl on spl.id = sm.restrict_lot_id
+left join stock_picking sp on sp.id = sm.picking_id
+left join purchase_order po on po.id = sp.po_id
+left join purchase_requisition pr on pr.id = po.requisition_id
+left join account_invoice_line ail on ail.id = vst_kardex_sunat.invoicelineid
+left join product_product pp on pp.id = vst_kardex_sunat.product_id
+left join product_template ptp on ptp.id = pp.product_tmpl_id
+LEFT JOIN ir_property ipx ON ipx.res_id::text = ('product.template,'::text || ptp.id) AND ipx.name::text = 'cost_method'::text 
+          
+       where fecha_num(vst_kardex_sunat.fecha::date) between $1 and $2  
+      order by vst_kardex_sunat.location_id,vst_kardex_sunat.product_id,vst_kardex_sunat.fecha,vst_kardex_sunat.esingreso,vst_kardex_sunat.stock_moveid,vst_kardex_sunat.nro
+        loop
+        if dr.location_id = ANY ($4) and dr.product_id = ANY ($3) then
+          if dr.ipxvalue = 'specific' then
+                    if loc_id = dr.location_id then
+              contador = 1;
+              else
+              
+              loc_id = dr.location_id;
+              prod_id = dr.product_id;
+          --    foreach location in array $4  loop
+              
+          --      for dr in cursor_final loop
+              saldof =0;
+              saldov =0;
+              cprom =0;
+              cadquiere =0;
+              ingreso =0;
+              salida =0;
+              debit =0;
+              credit =0;
+            end if;
+              else
+            
+
+                if prod_id = dr.product_id and loc_id = dr.location_id then
+                contador =1;
+                else
+
+              loc_id = dr.location_id;
+              prod_id = dr.product_id;
+          --    foreach location in array $4  loop
+          --      for dr in cursor_final loop
+                saldof =0;
+                saldov =0;
+                cprom =0;
+                cadquiere =0;
+                ingreso =0;
+                salida =0;
+                debit =0;
+                credit =0;
+                end if;
+           end if;
+
+            select '' as category_sunat_code, '' as uom_sunat_code
+            from product_product
+            inner join product_template on product_product.product_tmpl_id = product_template.id
+            inner join product_category on product_template.categ_id = product_category.id
+            inner join product_uom on product_template.uom_id = product_uom.id
+            --left join category_product_sunat on product_category.cod_sunat = category_product_sunat.id
+            --left join category_uom_sunat on product_uom.cod_sunat = category_uom_sunat.id
+            where product_product.id = dr.product_id into h1;
+
+                              select * from stock_location where id = dr.location_id into h2;
+            select * from stock_location where id = dr.id_origen into loc_1;
+            select * from stock_location where id = dr.id_destino into loc_2;
+ 
+            select put.factor as f1 , pu.factor as f2 from stock_move sm 
+            inner join product_product pp on pp.id = sm.product_id
+            inner join product_template pt2 on pt2.id = pp.product_tmpl_id
+            inner join product_uom pu on pu.id = (CASE WHEN pt2.unidad_kardex is not null then pt2.unidad_kardex else pt2.uom_id end)
+            inner join product_uom put on put.id = sm.product_uom           
+            where sm.id = dr.stock_moveid  into pp_1;
+        
+          ---- esto es para las variables que estan en el crusor y pasarlas a las variables output
+          select * from stock_move where id = dr.stock_moveid into rf;
+          if loc_1.usage = 'internal' and loc_2.usage='internal' and fecha_num(dr.fecha) >= $5 and coalesce(rf.price_unit,0) =0 then
+            UPDATE stock_move set price_unit = (cprom/ pp_1.f2) * pp_1.f1  where id = dr.stock_moveid;
+          end if;
+          
+          almacen=dr.almacen;
+          categoria=dr.categoria;
+          name_template=dr.producto;
+          fecha=dr.fecha;
+          periodo=dr.periodo;
+          ctanalitica=dr.ctanalitica;
+          serial=dr.serial;
+          nro=dr.nro;
+          operation_type=dr.operation_type;
+          name=dr.name;
+          type=dr.type;
+          esingreso=dr.esingreso;
+          product_id=dr.product_id;
+
+          location_id=dr.location_id;
+          doc_type_ope=dr.doc_type_ope;
+          ubicacion_origen=dr.id_origen;
+          ubicacion_destino=dr.id_destino;
+          stock_moveid=dr.stock_moveid;
+          account_invoice=0;
+          product_account=dr.product_account;
+          default_code=dr.default_code;
+          unidad=dr.unidad;
+          mrpname='';
+          stock_doc=dr.stock_doc;
+          origen=dr.origen;
+          destino=dr.destino;
+          type_doc=dr.type_doc;
+                numdoc_cuadre=dr.numdoc_cuadre;
+                doc_partner=dr.nro_documento;
+                lote= dr.lote;
+
+
+        
+
+           ruc = h.nro_documento;
+           comapnyname = h.name;
+           cod_sunat = ''; 
+           default_code = dr.default_code;
+           tipoprod = h1.category_sunat_code; 
+           coduni = h1.uom_sunat_code;
+           metodo = 'Costo promedio';
+           
+           period_name = dr.period_name;
+          
+           fecha_albaran = dr.fecha_albaran;
+           pedido_compra = dr.pedido_compra;
+           licitacion = dr.licitacion;
+           doc_almac = dr.doc_almac;
+
+
+          --- final de proceso de variables output
+
+        
+          ingreso =coalesce(dr.ingreso,0);
+          salida =coalesce(dr.salida,0);
+          --if dr.serial is not null then 
+            debit=coalesce(dr.debit,0);
+          --else
+            --if dr.ubicacion_origen=8 then
+              --debit =0;
+            --else
+              ---debit = coalesce(dr.debit,0);
+            --end if;
+          --end if;
+          
+
+          
+            credit =coalesce(dr.credit,0);
+          
+          cadquiere =coalesce(dr.cadquiere,0);
+          precprom = cprom;
+          if cadquiere <=0::numeric then
+            cadquiere=cprom;
+          end if;
+          if salida>0::numeric then
+            credit = cadquiere * salida;
+          end if;
+          saldov = saldov + (debit - credit);
+          saldof = saldof + (ingreso - salida);
+          if saldof > 0::numeric then
+            if esingreso= 'ingreso' or ingreso > 0::numeric then
+              if saldof != 0 then
+                cprom = saldov/saldof;
+              else
+                      cprom = saldov;
+                 end if;
+              if ingreso = 0 then
+                      cadquiere = cprom;
+              else
+                  cadquiere =debit/ingreso;
+              end if;
+              --cprom = saldov / saldof;
+              --cadquiere = debit / ingreso;
+            else
+              if salida = 0::numeric then
+                if debit + credit > 0::numeric then
+                  cprom = saldov / saldof;
+                  cadquiere=cprom;
+                end if;
+              else
+                credit = salida * cprom;
+              end if;
+            end if;
+          else
+            cprom = 0;
+          end if;
+            
+
+          if saldov <= 0::numeric and saldof <= 0::numeric then
+            dr.cprom = 0;
+            cprom = 0;
+          end if;
+          --if cadquiere=0 then
+          --  if trim(dr.operation_type) != '05' and trim(dr.operation_type) != '' and dr.operation_type is not null then
+          --    cadquiere=precprom;
+          --    debit = ingreso*cadquiere;
+          --    credit=salida*cadquiere;
+          --  end if;
+          --end if;
+          dr.debit = round(debit,2);
+          dr.credit = round(credit,2);
+          dr.cprom = round(cprom,8);
+          dr.cadquiere = round(cadquiere,8);
+          dr.credit = round(credit,2);
+          dr.saldof = round(saldof,2);
+          dr.saldov = round(saldov,8);
+          if ingreso>0 then
+            cu_entrada =debit/ingreso;
+          else
+            cu_entrada =debit;
+          end if;
+
+          if salida>0 then
+            cu_salida =credit/salida;
+          else
+          cu_salida =credit;
+          end if;
+
+          RETURN NEXT;
+        end if;
+  end loop;
+  --return query select * from vst_kardex_sunat where fecha_num(vst_kardex_sunat.fecha) between $1 and $2 and vst_kardex_sunat.product_id = ANY($3) and vst_kardex_sunat.location_id = ANY($4) order by location_id,product_id,fecha;
+END
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_kardex_v_actualizar(integer, integer, integer[], integer[], integer)
+  OWNER TO openpg;
+
+
+
+
+
+-- Function: get_kardex_v(integer, integer, integer[], integer[])
+
+-- DROP FUNCTION get_kardex_v(integer, integer, integer[], integer[]);
+
+CREATE OR REPLACE FUNCTION get_kardex_v(IN date_ini integer, IN date_end integer, IN productos integer[], IN almacenes integer[], OUT almacen character varying, OUT categoria character varying, OUT name_template character varying, OUT fecha date, OUT periodo character varying, OUT ctanalitica character varying, OUT serial character varying, OUT nro character varying, OUT operation_type character varying, OUT name character varying, OUT ingreso numeric, OUT salida numeric, OUT saldof numeric, OUT debit numeric, OUT credit numeric, OUT cadquiere numeric, OUT saldov numeric, OUT cprom numeric, OUT type character varying, OUT esingreso text, OUT product_id integer, OUT location_id integer, OUT doc_type_ope character varying, OUT ubicacion_origen integer, OUT ubicacion_destino integer, OUT stock_moveid integer, OUT account_invoice character varying, OUT product_account character varying, OUT default_code character varying, OUT unidad character varying, OUT mrpname character varying, OUT ruc character varying, OUT comapnyname character varying, OUT cod_sunat character varying, OUT tipoprod character varying, OUT coduni character varying, OUT metodo character varying, OUT cu_entrada numeric, OUT cu_salida numeric, OUT period_name character varying, OUT stock_doc character varying, OUT origen character varying, OUT destino character varying, OUT type_doc character varying, OUT numdoc_cuadre character varying, OUT doc_partner character varying, OUT fecha_albaran date, OUT pedido_compra character varying, OUT licitacion character varying, OUT doc_almac character varying, OUT lote character varying)
+  RETURNS SETOF record AS
+$BODY$  
+DECLARE 
+  location integer;
+  product integer;
+  precprom numeric;
+  h record;
+  h1 record;
+  h2 record;
+  dr record;
+  pt record;
+  il record;
+  loc_id integer;
+  prod_id integer;
+  contador integer;
+  lote_idmp varchar;
+  
+BEGIN
+
+  select res_partner.name,res_partner.nro_documento from res_company 
+  inner join res_partner on res_company.partner_id = res_partner.id
+  into h;
+
+  -- foreach product in array $3 loop
+    
+            loc_id = -1;
+            prod_id = -1;
+            lote_idmp = -1;
+--    foreach location in array $4  loop
+--      for dr in cursor_final loop
+      saldof =0;
+      saldov =0;
+      cprom =0;
+      cadquiere =0;
+      ingreso =0;
+      salida =0;
+      debit =0;
+      credit =0;
+           contador = 2;
+      
+      
+      for dr in 
+      select *,sp.name as doc_almac,sp.fecha_kardex::date as fecha_albaran, po.name as pedido_compra, pr.name as licitacion,spl.name as lote,
+      ''::character varying as ruc,''::character varying as comapnyname, ''::character varying as cod_sunat,''::character varying as default_code,ipx.value_text as ipxvalue,
+      ''::character varying as tipoprod ,''::character varying as coduni ,''::character varying as metodo, 0::numeric as cu_entrada , 0::numeric as cu_salida, ''::character varying as period_name  
+      from vst_kardex_fisico_valorado as vst_kardex_sunat
+left join stock_move sm on sm.id = vst_kardex_sunat.stock_moveid
+left join stock_production_lot spl on spl.id = sm.restrict_lot_id
+left join stock_picking sp on sp.id = sm.picking_id
+left join purchase_order po on po.id = sp.po_id
+left join purchase_requisition pr on pr.id = po.requisition_id
+left join account_invoice_line ail on ail.id = vst_kardex_sunat.invoicelineid
+left join product_product pp on pp.id = vst_kardex_sunat.product_id
+left join product_template ptp on ptp.id = pp.product_tmpl_id
+LEFT JOIN ir_property ipx ON ipx.res_id::text = ('product.template,'::text || ptp.id) AND ipx.name::text = 'cost_method'::text 
+          
+       where fecha_num(vst_kardex_sunat.fecha::date) between $1 and $2  
+      order by vst_kardex_sunat.location_id,vst_kardex_sunat.product_id,vst_kardex_sunat.fecha,vst_kardex_sunat.esingreso,vst_kardex_sunat.stock_moveid,vst_kardex_sunat.nro
+        loop
+        if dr.location_id = ANY ($4) and dr.product_id = ANY ($3) then
+          if dr.ipxvalue = 'specific' then
+                    if loc_id = dr.location_id then
+              contador = 1;
+              else
+              
+              loc_id = dr.location_id;
+              prod_id = dr.product_id;
+          --    foreach location in array $4  loop
+              
+          --      for dr in cursor_final loop
+              saldof =0;
+              saldov =0;
+              cprom =0;
+              cadquiere =0;
+              ingreso =0;
+              salida =0;
+              debit =0;
+              credit =0;
+            end if;
+              else
+            
+
+                if prod_id = dr.product_id and loc_id = dr.location_id then
+                contador =1;
+                else
+
+              loc_id = dr.location_id;
+              prod_id = dr.product_id;
+          --    foreach location in array $4  loop
+          --      for dr in cursor_final loop
+                saldof =0;
+                saldov =0;
+                cprom =0;
+                cadquiere =0;
+                ingreso =0;
+                salida =0;
+                debit =0;
+                credit =0;
+                end if;
+           end if;
+
+            select '' as category_sunat_code, '' as uom_sunat_code
+            from product_product
+            inner join product_template on product_product.product_tmpl_id = product_template.id
+            inner join product_category on product_template.categ_id = product_category.id
+            inner join product_uom on product_template.uom_id = product_uom.id
+            --left join category_product_sunat on product_category.cod_sunat = category_product_sunat.id
+            --left join category_uom_sunat on product_uom.cod_sunat = category_uom_sunat.id
+            where product_product.id = dr.product_id into h1;
+
+                              select * from stock_location where id = dr.location_id into h2;
+        
+          ---- esto es para las variables que estan en el crusor y pasarlas a las variables output
+          
+          almacen=dr.almacen;
+          categoria=dr.categoria;
+          name_template=dr.producto;
+          fecha=dr.fecha;
+          periodo=dr.periodo;
+          ctanalitica=dr.ctanalitica;
+          serial=dr.serial;
+          nro=dr.nro;
+          operation_type=dr.operation_type;
+          name=dr.name;
+          type=dr.type;
+          esingreso=dr.esingreso;
+          product_id=dr.product_id;
+
+          location_id=dr.location_id;
+          doc_type_ope=dr.doc_type_ope;
+          ubicacion_origen=dr.id_origen;
+          ubicacion_destino=dr.id_destino;
+          stock_moveid=dr.stock_moveid;
+          account_invoice=0;
+          product_account=dr.product_account;
+          default_code=dr.default_code;
+          unidad=dr.unidad;
+          mrpname='';
+          stock_doc=dr.stock_doc;
+          origen=dr.origen;
+          destino=dr.destino;
+          type_doc=dr.type_doc;
+                numdoc_cuadre=dr.numdoc_cuadre;
+                doc_partner=dr.nro_documento;
+                lote= dr.lote;
+
+
+        
+
+           ruc = h.nro_documento;
+           comapnyname = h.name;
+           cod_sunat = ''; 
+           default_code = dr.default_code;
+           tipoprod = h1.category_sunat_code; 
+           coduni = h1.uom_sunat_code;
+           metodo = 'Costo promedio';
+           
+           period_name = dr.period_name;
+          
+           fecha_albaran = dr.fecha_albaran;
+           pedido_compra = dr.pedido_compra;
+           licitacion = dr.licitacion;
+           doc_almac = dr.doc_almac;
+
+
+          --- final de proceso de variables output
+
+        
+          ingreso =coalesce(dr.ingreso,0);
+          salida =coalesce(dr.salida,0);
+          --if dr.serial is not null then 
+            debit=coalesce(dr.debit,0);
+          --else
+            --if dr.ubicacion_origen=8 then
+              --debit =0;
+            --else
+              ---debit = coalesce(dr.debit,0);
+            --end if;
+          --end if;
+          
+
+          
+            credit =coalesce(dr.credit,0);
+          
+          cadquiere =coalesce(dr.cadquiere,0);
+          precprom = cprom;
+          if cadquiere <=0::numeric then
+            cadquiere=cprom;
+          end if;
+          if salida>0::numeric then
+            credit = cadquiere * salida;
+          end if;
+          saldov = saldov + (debit - credit);
+          saldof = saldof + (ingreso - salida);
+          if saldof > 0::numeric then
+            if esingreso= 'ingreso' or ingreso > 0::numeric then
+              if saldof != 0 then
+                cprom = saldov/saldof;
+              else
+                      cprom = saldov;
+                 end if;
+              if ingreso = 0 then
+                      cadquiere = cprom;
+              else
+                  cadquiere =debit/ingreso;
+              end if;
+              --cprom = saldov / saldof;
+              --cadquiere = debit / ingreso;
+            else
+              if salida = 0::numeric then
+                if debit + credit > 0::numeric then
+                  cprom = saldov / saldof;
+                  cadquiere=cprom;
+                end if;
+              else
+                credit = salida * cprom;
+              end if;
+            end if;
+          else
+            cprom = 0;
+          end if;
+            
+
+          if saldov <= 0::numeric and saldof <= 0::numeric then
+            dr.cprom = 0;
+            cprom = 0;
+          end if;
+          --if cadquiere=0 then
+          --  if trim(dr.operation_type) != '05' and trim(dr.operation_type) != '' and dr.operation_type is not null then
+          --    cadquiere=precprom;
+          --    debit = ingreso*cadquiere;
+          --    credit=salida*cadquiere;
+          --  end if;
+          --end if;
+          dr.debit = round(debit,2);
+          dr.credit = round(credit,2);
+          dr.cprom = round(cprom,8);
+          dr.cadquiere = round(cadquiere,8);
+          dr.credit = round(credit,2);
+          dr.saldof = round(saldof,2);
+          dr.saldov = round(saldov,8);
+          if ingreso>0 then
+            cu_entrada =debit/ingreso;
+          else
+            cu_entrada =debit;
+          end if;
+
+          if salida>0 then
+            cu_salida =credit/salida;
+          else
+          cu_salida =credit;
+          end if;
+
+          RETURN NEXT;
+        end if;
+  end loop;
+  --return query select * from vst_kardex_sunat where fecha_num(vst_kardex_sunat.fecha) between $1 and $2 and vst_kardex_sunat.product_id = ANY($3) and vst_kardex_sunat.location_id = ANY($4) order by location_id,product_id,fecha;
+END
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_kardex_v(integer, integer, integer[], integer[])
+  OWNER TO openpg;
+
+
+
+
+
+-- Function: get_cajabanco_with_saldoinicial(integer, integer)
+
+-- DROP FUNCTION get_cajabanco_with_saldoinicial(integer, integer);
+
+CREATE OR REPLACE FUNCTION get_cajabanco_with_saldoinicial(IN periodo_ini integer, IN periodo_fin integer)
+  RETURNS TABLE(id bigint, periodo character varying, libro character varying, voucher character varying, cuentacode character varying, cuentaname character varying, debe numeric, haber numeric, divisa character varying, tipodecambio numeric, importedivisa numeric, codigo character varying, partner character varying, tipodocumento character varying, numero character varying, fechaemision date, fechavencimiento date, glosa character varying, ctaanalitica character varying, refconcil character varying, statefiltro character varying, mediopago character varying, ordenamiento integer, entfinan character varying, nrocta character varying, moneda character varying) AS
+$BODY$
+BEGIN
+
+IF $2 is Null THEN
+    $2 := $1;
+END IF;
+
+RETURN QUERY 
+SELECT row_number() OVER () AS id,*
+   FROM ( SELECT * from(
+    SELECT ap.name AS periodo,
+    aj.code AS libro,
+    am.name AS voucher,
+    aa.code AS cuentacode,
+    aa.name AS cuentaname,
+    aml.debit AS debe,
+    aml.credit AS haber,
+    rc.name AS divisa,
+
+            
+    CASE WHEN rc.name ='USD' THEN ai.currency_rate_auto ELSE Null::numeric END AS tipodecambio,
+    aml.amount_currency AS importedivisa,
+    rp.nro_documento AS codigo,
+    rp.name AS partner,
+    itd.code AS tipodocumento,
+    aml.nro_comprobante AS numero,
+    aml.date AS fechaemision,
+    aml.date_maturity AS fechavencimiento,
+    aml.name AS glosa,
+    aaa.name AS ctaanalitica,
+    afr.name AS refconcil,
+    am.state AS statefiltro,
+    mp.code AS mediopago,
+    1 AS ordenamiento,
+    aa.cashbank_financy AS entfinan,
+    aa.cashbank_number AS nrocta,
+    COALESCE(rc.name, ( SELECT rc_1.name
+     FROM res_company
+       JOIN res_currency rc_1 ON rc_1.id = res_company.currency_id)) AS moneda
+FROM account_move_line aml
+     JOIN account_move am ON am.id = aml.move_id
+     LEFT JOIN account_invoice ai on ai.move_id = am.id
+     JOIN account_journal aj ON aj.id = am.journal_id
+     JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable and ap.special = am.fecha_special
+  JOIN account_account aa ON aa.id = aml.account_id
+  
+     JOIN account_account_type aat on aat.id = aa.user_type_id
+         LEFT JOIN einvoice_means_payment mp ON mp.id = am.means_payment_it
+     LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+     LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+     LEFT JOIN account_full_reconcile afr on afr.id = aml.full_reconcile_id
+                     LEFT JOIN einvoice_catalog_01 itd ON itd.id = aml.type_document_it
+     LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+  WHERE aat.type::text = 'liquidity'::text and periodo_num(ap.name) >= $1 and periodo_num(ap.name) <= $2
+  and am.state != 'draft'
+  
+UNION ALL
+
+SELECT periodo_string($1) AS periodo,
+    Null::varchar AS libro,
+    Null::varchar AS voucher,
+    aa.code AS cuentacode,
+    aa.name AS cuentaname,
+    CASE WHEN sum(aml.debit) - sum(aml.credit) >0 THEN sum(aml.debit) - sum(aml.credit) ELSE 0 END AS debe,
+    CASE WHEN sum(aml.credit) - sum(aml.debit) >0 THEN sum(aml.credit) - sum(aml.debit) ELSE 0 END AS haber,
+    Null::varchar AS divisa,
+    Null::numeric AS tipodecambio,
+    Null::numeric AS importedivisa,
+    Null::varchar AS codigo,
+    Null::varchar AS partner,
+    Null::varchar AS tipodocumento,
+    Null::varchar AS numero,
+    Null::date AS fechaemision,
+    Null::date AS fechavencimiento,
+    'Saldo Inicial'::varchar AS glosa,
+    Null::varchar AS ctaanalitica,
+    Null::varchar AS refconcil,
+    Null::varchar AS statefiltro,
+    Null::varchar AS mediopago,
+    0 AS ordenamiento,
+    Null::varchar AS entfinan,
+    Null::varchar AS nrocta,
+    Null::varchar AS moneda
+   FROM account_move_line aml
+     JOIN account_move am ON am.id = aml.move_id
+     JOIN account_invoice ai on ai.move_id = am.id
+     JOIN account_journal aj ON aj.id = am.journal_id
+     JOIN account_period ap ON ap.date_start <= am.fecha_contable and ap.date_stop >= am.fecha_contable  and ap.special = am.fecha_special
+     JOIN account_account aa ON aa.id = aml.account_id
+     JOIN account_account_type aat on aat.id = aa.user_type_id
+     LEFT JOIN res_currency rc ON rc.id = aml.currency_id
+     LEFT JOIN res_partner rp ON rp.id = aml.partner_id
+     LEFT JOIN account_analytic_account aaa ON aaa.id = aml.analytic_account_id
+  WHERE aat.type::text = 'liquidity'::text and periodo_num(ap.name) < $1
+  and am.state != 'draft'
+  group by aa.code, aa.name
+
+
+  ) AS T
+  order by cuentacode,ordenamiento, fechaemision
+  
+  ) AS M;
+
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get_cajabanco_with_saldoinicial(integer, integer)
+  OWNER TO openpg;

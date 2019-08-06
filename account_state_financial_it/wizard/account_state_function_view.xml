@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_account_estate_function_wizard_form">
+			<field name="name">account.state.function.wizard.form</field>
+			<field name="model">account.state.function.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Resultado por Función" >
+						<group>
+							<group>
+								<field name="fiscalyear_id" />
+								<field name="periodo_ini" />
+								<field name="periodo_fin" />
+							</group>
+							<group>
+								<field name="type_show" />
+							</group>
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="account_state_function" model="ir.actions.server">
+			<field name="name">Resultado por Función</field>
+			<field name="model_id" ref="model_account_state_function_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+		<menuitem id="menu_state_function" name="R. por Función" parent="account_sheet_work.account_finance_state_it" sequence="101" action="account_state_function" />
+		
+
+
+		<record id="view_account_state_function_tree" model="ir.ui.view">
+            <field name="name">account.state.function.tree</field>
+            <field name="model">account.state.function</field>
+            <field name="arch" type="xml">
+                <tree string="Situación Financiera" create="false">
+                    <field name="name" />
+                    <field name="grupo" />
+                    <field name="saldo" />
+                    <field name="orden" />
+                </tree>
+            </field>
+        </record>
+
+		
+
+		<record id="account_state_function_tree_action" model="ir.actions.act_window">
+			<field name="name">Resultado por Función</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.state.function</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+		</record>
+
+	</data>
+</openerp>

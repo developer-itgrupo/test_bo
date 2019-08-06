@@ -1,0 +1,127 @@
+<odoo>
+  <data>
+        <record model="ir.ui.view" id="letras_form_view">
+            <field name="name">letras.form</field>
+            <field name="model">letras.it</field>
+            <field name="arch" type="xml">
+                <form string="Letras por Cobrar">
+                    <header>
+                        <button name="action_cartera" type="object"
+                                string="Reiniciar a cartera"
+                                states="cobranza,descontada"/>
+                        <button name="action_cobranza" type="object"
+                                string="Pasar a cobranza" states="cartera"
+                                class="oe_highlight"/>
+                        <button name="action_descontada" type="object"
+                                string="Pasar a descuento" states="cobranza"
+                                class="oe_highlight"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+
+                    <sheet>
+                        <notebook>
+                            <page string="Datos">
+                                <group>
+                                    <group>
+                                        <field name="name" attrs="{'readonly': [('id_Pago', '!=', False)]}"/>
+                                        <field name="fch_Emision" attrs="{'readonly': [('id_Pago', '!=', False)]}"/>
+                                        <field name="id_Cliente" widget="selection" attrs="{'readonly': [('id_Pago', '!=', False)]}"/>
+                                        <field name="tp_Plazo_Pago" widget="selection" attrs="{'readonly': [('id_Pago', '!=', False)]}"/>
+                                        <field name="id_Diario" widget="selection" attrs="{'readonly': [('id_Pago', '!=', False)]}"/>
+                                        <field name="id_Cuenta" widget="selection" attrs="{'readonly': 1}"/>
+                                    </group>
+                                    <group>
+                                        <field name="id_Vendedor" widget="selection"/>
+                                        <field name="fch_Vencimiento"/>
+                                        <field name="fch_Cobranza"/>
+                                        <field name="fch_Descuento"/>
+                                        <field name="monto"/>
+                                        <field name="currency_id" widget="selection"/>
+                                        <field name="id_Pago" widget="selection" invisible="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Asientos">
+                                Coming soon ...
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+       <!-- window action -->
+        <!--
+            The following tag is an action definition for a "window action",
+            that is an action opening a view or a set of views
+        -->
+        <record model="ir.actions.act_window" id="letras_list_action">
+            <field name="name">Letras por Cobrar</field>
+            <field name="res_model">letras.it</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Crear la primera letra
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="letras_menu" name="Letras por Cobrar" parent="account.menu_finance_receivables"
+                  action="letras_list_action" sequence="20"/>
+
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="letras_it.list">
+      <field name="name">letras_it list</field>
+      <field name="model">letras_it.letras_it</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="letras_it.action_window">
+      <field name="name">letras_it window</field>
+      <field name="res_model">letras_it.letras_it</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="letras_it.action_server">
+      <field name="name">letras_it server</field>
+      <field name="model_id" ref="model_letras_it_letras_it"/>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="letras_it" id="letras_it.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="letras_it.menu_1" parent="letras_it.menu_root"/>
+    <menuitem name="Menu 2" id="letras_it.menu_2" parent="letras_it.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="letras_it.menu_1_list" parent="letras_it.menu_1"
+              action="letras_it.action_window"/>
+    <menuitem name="Server to list" id="letras_it" parent="letras_it.menu_2"
+              action="letras_it.action_server"/>
+    -->
+  </data>
+</odoo>

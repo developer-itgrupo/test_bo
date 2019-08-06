@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_account_perception_report" model="ir.ui.view">
+            <field name="name">account.perception.report.tree</field>
+            <field name="model">account.perception.report</field>
+            <field name="arch" type="xml">
+                <tree string="Percepción" create="false">
+                    <field name="libro" />
+                    <field name="voucher" />
+                    <field name="periodo" />
+                    <field name="tipo_doc" />
+                    <field name="partner" />
+                    <field name="ruc" />
+                    <field name="serie" />
+                    <field name="numero" />
+                    <field name="fecha" />
+                    <field name="percepcion" />
+                    <field name="tipo_doc_2" />
+                    <field name="serie_2" />
+                    <field name="numero_2" />
+                    <field name="fecha_2" />
+                    <field name="monto" />
+                </tree>
+            </field>
+        </record>
+
+		<record id="account_perception_report_search" model="ir.ui.view">
+	        <field name="name">account.perception.report.search</field>
+	        <field name="model">account.perception.report</field>
+	        <field name="arch" type="xml">
+	            <search string="Percepción">
+                    <!--
+	                <field name="partner"/>
+	                <field name="ruc"/>
+	                <field name="periodo"/>
+	                <field name="caja"/>
+	                <filter icon="terp-go-year" string="Partner" name="partner"/>
+	                <filter icon="terp-go-year" string="RUC" name="ruc"/>
+	                <filter icon="terp-go-year" string="Periodo" name="periodo"/>
+	                <filter icon="terp-go-year" string="Diario" name="caja"/>
+                    -->
+	                <separator/>
+	                <group expand="1" string="Group By...">
+	                    <filter string="Tipo Percepción" name="tipo_doc" icon="terp-partner" context="{'group_by':'tipo_doc'}"/>
+                        <filter string="RUC Agente" name="ruc" icon="terp-partner" context="{'group_by':'ruc'}"/>
+                        <filter string="Número" name="numero" icon="terp-partner" context="{'group_by':'numero'}"/>
+                        <filter string="Tipo Com. Pago" name="tipo_doc_2" icon="terp-partner" context="{'group_by':'tipo_doc_2'}"/>
+	                </group>
+	            </search>
+	        </field>
+	    </record>
+
+
+
+        <record id="view_account_perception_reducida_report" model="ir.ui.view">
+            <field name="name">account.perception.reducida.report.tree</field>
+            <field name="model">account.perception.reducida.report</field>
+            <field name="arch" type="xml">
+                <tree string="Percepción" create="false">
+                    <field name="libro" />
+                    <field name="voucher" />
+                    <field name="periodo" />
+                    <field name="tipo_doc" />
+                    <field name="partner" />
+                    <field name="ruc" />
+                    <field name="serie" />
+                    <field name="numero" />
+                    <field name="fecha" />
+                    <field name="percepcion" sum='percepcion'/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_perception_reducida_report_search" model="ir.ui.view">
+            <field name="name">account.perception.reducida.report.search</field>
+            <field name="model">account.perception.reducida.report</field>
+            <field name="arch" type="xml">
+                <search string="Percepción">
+                    <!--
+                    <field name="partner"/>
+                    <field name="ruc"/>
+                    <field name="periodo"/>
+                    <field name="caja"/>
+                    <filter icon="terp-go-year" string="Partner" name="partner"/>
+                    <filter icon="terp-go-year" string="RUC" name="ruc"/>
+                    <filter icon="terp-go-year" string="Periodo" name="periodo"/>
+                    <filter icon="terp-go-year" string="Diario" name="caja"/>
+                    -->
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Tipo Percepción" name="tipo_doc" icon="terp-partner" context="{'group_by':'tipo_doc'}"/>
+                        <filter string="RUC Agente" name="ruc" icon="terp-partner" context="{'group_by':'ruc'}"/>
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="account_perception_report_action" model="ir.actions.act_window">
+            <field name="name">Percepción</field>
+            <field name="res_model">account.perception.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_account_perception_report"/>
+			<field name="search_view_id" ref="account_perception_report_search"/>
+        </record>
+
+        <record model="ir.values" id="action_export_perception_p">
+            <field name="name">Generar Txt P</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' +str(ref('account_percepcion_reporte_it.account_perception_p_wizard_action'))" />
+            <field name="key">action</field>
+            <field name="model">account.perception.report</field>
+        </record>
+
+
+        <record model="ir.values" id="action_export_perception_pi">
+            <field name="name">Generar Txt PI</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('account_percepcion_reporte_it.account_perception_pi_wizard_action'))" />
+            <field name="key">action</field>
+            <field name="model">account.perception.report</field>
+        </record>
+
+
+
+
+
+    </data>
+</openerp>

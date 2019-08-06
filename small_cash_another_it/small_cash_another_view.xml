@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>	
+	<data>
+		<record model="ir.ui.view" id="view_small_cash_form">
+			<field name="name">small.cash.another.form</field>
+			<field name="model">small.cash.another</field>
+			<field name="arch" type="xml">
+				<form string="small_cash" version="7.0">
+					<header>
+						<button name="aprove" type="object" states="draft" string="Aprobar" class="oe_highlight"/>
+						<button name="checked" type="object" states="done" string="Revisar" class="oe_highlight"/>
+						<button name="action_cancel" states="done,checked" string="Cancelar" type="object" />
+						<button name="export_excel" states="done,checked" string="Exportar Excel" type="object" />
+						<button name="exportar_pdf" states="done,checked" string="Exportar PDF" type="object" />
+
+						<!-- <button name="action_cancel_draft" states="cancel,sent,confirmed" string="Set to Draft" type="object" /> -->
+						<!-- <button name="update_number" string="Actualizar Numero" type="object" /> -->
+						<field name="state" widget="statusbar" statusbar_visible="draft,done,cancel,checked" statusbar_colors='{"draft":"red","done":"blue","cancel":"blue"}' readonly="1"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<!-- <label string="Cuenta por rendir "/> -->
+								<field name="name" class="oe_inline" readonly="1"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="journal_id" domain="[('is_small_cash','=',True)]" required="1"/>
+								<field name="user_id" required="1"/>
+								<field name="period_id" required="1"/>
+								<field name="named" invisible="1"/>
+							</group>
+						</group>
+						<notebook>
+							<page string="Movimientos">
+								<field name="lines_id" >
+									<tree create="false" editable="false">
+										<field name="move_line_id" invisible="1"/>
+										<field name="voucher" />
+										<field name="nro_comprobante" />
+										<field name="doc_type"/>
+										<field name="nro_invoice" />
+										<field name="date" />
+										<field name="description" />
+										<field name="partner_id" />
+										<field name="incoming_amount" readonly="1"/>
+										<field name="outcoming_amount" readonly="1"/>
+										<field name="result_amount" readonly="1"/>
+										<field name="state" readonly="1"/>
+										<field name="line_id" string="Linea" invisible="1"/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+            </field>
+        </record>
+		
+		<record model="ir.ui.view" id="view_small_cash_tree">
+			<field name="name">small.cash.another.tree</field>
+			<field name="model">small.cash.another</field>
+			<field name="arch" type="xml">
+				<tree string="small_cash" fonts="bold:state=='checked'" colors="blue:state=='draft';red:state=='cancel';black:state=='done';">
+					<field name="name" string="Caja"/>
+                    <field name="journal_id" string="Diario"/>
+                    <field name="user_id" />
+                    <field name="period_id"/>
+                    <field name="state" string="Estado"/>
+				</tree>
+			</field>
+		</record>
+		
+		<record id='small_cash_action' model='ir.actions.act_window'>
+			<field name='name'>Caja Chica</field>
+			<field name='res_model'>small.cash.another</field>
+			<field name='view_type'>form</field>
+			<field name='view_mode'>tree,form</field>
+		</record>
+
+
+
+		<menuitem name= "Caja Chica" id='small_cash_menumenu' parent='account_bank_statement_it.menu_banco_caja'/>
+		<menuitem id='small_cash_menu' parent='small_cash_menumenu' action="small_cash_action" />
+
+	</data>
+</openerp>

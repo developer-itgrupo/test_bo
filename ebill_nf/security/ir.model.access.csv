@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+ebill_advance_payment,advance.payment;user,model_advance_payment,account.group_account_user,1,1,1,1
+
+ebill_account_invoice_ebill,account.invoice.ebill;user,model_account_invoice_ebill,account.group_account_user,1,1,1,1
+
+ebill_account_invoice_line_ebill,account.invoice.line.ebill;user,model_account_invoice_line_ebill,account.group_account_user,1,1,1,1

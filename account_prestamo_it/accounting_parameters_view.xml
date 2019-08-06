@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <record id="view_accounting_parameters_inherit" model="ir.ui.view">
+            <field name="name">accounting_paramters_inherit</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//page[1]" position="after">
+                        <page string="Prestamos">
+                            <group string="Configuración para Prestamos">
+                                <field name="account_amortizacion_capital_id"/>
+                                <field name="account_interes_id"/>
+                                <field name="account_itf_id"/>
+                                <field name="account_mora_id"/>
+                                <field name="journal_asiento_devengo_id"/>
+                                <field name="catalog_comprobante_pago_id"/>
+                                <field name="account_cargo_devengo_id"/>
+                                <field name="account_abono_devengo_id"/>
+                            </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+
+    <t t-name="reconciliation_move_line" t-extend="reconciliation_move_line" >
+    	<t t-jquery=".cell_label" t-operation="after">
+    		 <td class="cell_type_document_it"><t t-esc="line.type_document_it"/></td>
+             <td class="cell_nro_comprobante"><t t-esc="line.nro_comprobante"/></td>          
+    	</t>
+    </t>
+    
+
+
+    <t t-name="reconciliation_created_line" t-extend="reconciliation_created_line" >
+    	<t t-jquery=".cell_label" t-operation="after">
+    		 <td class="cell_type_document_it"><t t-esc="line.type_document_itvisual"/></td>
+             <td class="cell_nro_comprobante"><t t-esc="line.nro_comprobante"/></td>          
+    	</t>
+    </t>
+    
+
+    <t t-name="reconciliation_line_open_balance" t-extend="reconciliation_line_open_balance" >
+    	<t t-jquery=".cell_label" t-operation="after">
+             <td ></td>
+             <td ></td>          
+    	</t>
+    </t>
+    
+
+    <t t-name="bank_statement_reconciliation_line" t-extend="bank_statement_reconciliation_line" >
+    	<t t-jquery=".cell_label" t-operation="after">
+    		 <td ></td>
+             <td ></td>          
+    	</t>
+    </t>
+    
+
+
+</templates>

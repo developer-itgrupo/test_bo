@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+<!-- agrega botón de exportar a excel en el header de las tarifas -->
+    <record id="view_move_form" model="ir.ui.view">
+      <field name="name">sale.order.import.view</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="groups_id" eval="[(6,0, [ref('discount_view.descuento_usuario_group')])]" />
+      <field name="arch" type="xml">
+
+        <xpath expr="//sheet/notebook/page/field[@name='order_line']/form/group/group/div[@name='discount']" position="attributes">
+             
+             <attribute name="attrs">{'readonly':1}</attribute>
+             <attribute name="groups">discount_view.descuento_usuario_group</attribute>
+
+        </xpath>
+        <xpath expr="//sheet/notebook/page/field[@name='order_line']/form/group/group/div/field[@name='discount']" position="attributes">
+           
+             <attribute name="attrs">{'readonly':1}</attribute>  
+             <attribute name="groups">discount_view.descuento_usuario_group</attribute> 
+        </xpath>
+        <xpath expr="//sheet/notebook/page/field[@name='order_line']/form/group/group/label[@for='discount']" position="attributes">
+             
+             <attribute name="attrs">{'readonly':1}</attribute> 
+             <attribute name="groups">discount_view.descuento_usuario_group</attribute>  
+
+        </xpath>
+
+        <xpath expr="//sheet/notebook/page/field[@name='order_line']/tree/field[@name='discount']" position="attributes">
+             
+             <attribute name="attrs">{'readonly':1}</attribute>  
+             <attribute name="groups">discount_view.descuento_usuario_group</attribute> 
+        </xpath>
+
+      </field>
+    </record>
+
+    
+
+  </data>
+</odoo>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_account_analytic_book_major_tree" model="ir.ui.view">
+            <field name="name">account.analytic.book.major.tree</field>
+            <field name="model">account.analytic.book.major</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false">
+                    <field name="periodo" string="Periodo"/>
+                    <field name="libro" string="Libro"/>
+                    <field name="voucher" string="Voucher"/>
+                    <field name="cuenta" string="Cuenta"/>
+                    <field name="descripcion" string="Descripción"/>
+                    <field name="debe" string="Debe" sum="debe"/>
+                    <field name="haber" string="Haber" sum="haber"/>
+                    <field name="saldo" string="Saldo" />
+                    <field name="divisa" string="Divisa" />
+                    <field name="tipocambio" string="Tipo de Cambio" />
+                    <field name="importedivisa" string="Importe Divisa" sum="importedivisa"/>
+
+                    <field name="conciliacion" string="Conciliación" />
+                    <field name="analitica" string="Analítica" />
+                    <field name="fechaemision" string="Fecha Emisión" />
+                    <field name="fechavencimiento" string="Fecha Vencimiento" />
+                    <field name="tipodocumento" string="Tipo de Documento" />
+                    <field name="numero" string="Número" />
+                    <field name="ruc" string="RUC" />
+                    <field name="partner" string="Partner" />
+                    <field name="glosa" string="Glosa" />
+                    <field name="state" />
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_analytic_book_major_search" model="ir.ui.view">
+            <field name="name">account.analytic.book.major.search</field>
+            <field name="model">account.analytic.book.major</field>
+            <field name="arch" type="xml">
+                <search string="Libro Diario">
+                    <field name="libro"/>
+                    <field name="voucher"/>
+                    <field name="cuenta"/>
+                    <field name="partner"/>
+                    <field name="tipodocumento"/>
+                    <field name="numero"/>
+                    <field name="conciliacion"/>
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Libro" name="libro" icon="terp-partner" context="{'group_by':'libro'}"/>
+                        <filter string="Voucher" name="voucher" icon="terp-partner" context="{'group_by':'voucher'}"/>
+                        <filter string="Cuenta" name="cuenta" icon="terp-partner" context="{'group_by':'cuenta'}"/>
+                        <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+                        <filter string="Tipo de Documento" name="tipodocumento" icon="terp-partner" context="{'group_by':'tipodocumento'}"/>
+                        <filter string="Número" name="numero" icon="terp-partner" context="{'group_by':'numero'}"/>
+                        <filter string="Conciliación" name="conciliacion" icon="terp-partner" context="{'group_by':'conciliacion'}"/>
+                        <filter string="Estado" name="state" icon="terp-partner" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_account_analytic_book_major_it" model="ir.actions.act_window">
+            <field name="name">Libro Mayor Analítico</field>
+            <field name="res_model">account.analytic.book.major</field>
+            <field name="view_id" ref="view_account_analytic_book_major_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="account_analytic_book_major_search"/>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <odoo>
+	<data>         
+		<record id="view_account_typeit_tree" model="ir.ui.view">
+            <field name="name">account.account.type.it.tree</field>
+            <field name="model">account.account.type.it</field>
+            <field name="inherit_id" ref="account_account_it.view_account_typeit_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="code"/>      
+                </xpath>
+                
+            </field>
+        </record>
+
+
+        <!-- Add instructor field to existing view -->
+        <record model="ir.ui.view" id="view_account_type_it_form">
+            <field name="name">account.account.type.it.form</field>
+            <field name="model">account.account.type.it</field>
+            <field name="inherit_id" ref="account_account_it.view_account_type_it_form"/>
+            <field name="arch" type="xml"> 
+               <xpath expr="//field[@name='name']" position="before">
+               		<field name="code"/>                    
+               </xpath>
+            </field>
+        </record>
+
+
+         
+
+	</data>
+
+</odoo>

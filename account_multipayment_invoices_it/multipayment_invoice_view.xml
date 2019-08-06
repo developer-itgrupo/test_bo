@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+        <record id="multipayment_invoice_form_view" model="ir.ui.view">
+            <field name="name">multipayment.invoice.form</field>
+            <field name="model">multipayment.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Pagos Múltiples">
+                    <header>
+                        <button string="Asentar" type="object" name="crear_asiento" states="draft" class="oe_highlight"/>
+                        <button string="Cancelar" type="object" name="cancelar" states="done" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
+                    <!-- <group>
+                        <field name="name" readonly="1"/>
+                    </group> -->
+                    <group>
+                        <group> 
+                            <field name="type_invoices" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="partner_id" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="journal_id" required="1" attrs="{'readonly':[('state','=','done')]}" domain="['|',('type','=','cash'),('type','=','bank')]"/>
+                            <label string="Monto Total" />
+                            <div>
+                                <field name="ammount_total" nolabel="1" required="1" attrs="{'readonly':[('state','=','done')]}"/> <button string="(Actualizar)" type="object" name="actualizar" states="done" class="oe_inline oe_edit_only" attrs="{'invisible':[('state','=','done')] }"/>   
+                            </div>
+                            
+                            <field name="unbalance_ammount" readonly="1" /> 
+                            <field name="cuenta_desbalance" required="0" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="asiento" readonly="1"/>
+                        </group>
+                        <group> 
+                            <field name="payment_date" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="nro_operation" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="glosa" required="1" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="custom_exchange" attrs="{'readonly':[('state','=','done')]}"/>
+                            <field name="exchange_type" attrs="{'readonly':['|',('state','=','done'),('custom_exchange','=',False)]}" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Facturas">
+                            <field name="invoice_ids"  attrs="{'readonly':[('state','=','done')]}" context="{'get_code':'1'}">
+                                <tree editable="bottom">
+                                    <field name="tipo_documento" required="1" context="{'get_code':'1'}" />
+                                    <field name="invoice_id" required="1" domain="[('type_document_it','=',tipo_documento),('partner_id','=',parent.partner_id),('amount_residual','!=',0),('account_id.internal_type','=',parent.type_invoices)]"/>
+                                    <field name="doc_type" invisible="1"/>
+                                    <field name="partner_rel" readonly="1"/>
+                                    <field name="invoice_number" invisible="1" string="Nro Factura"/>
+                                    <field name="currency_id" required="0" invisible="1"/>
+                                    <field name="moneda_visible" readonly="1" />
+                                    <field name="account_id" invisible="1"/>
+                                    <field name="account_code" readonly="1" string="Cuenta"/>
+                                    <field name="rest" invisible="1"/>
+                                    <field name="rest_ext" invisible="1"/>
+                                    <field name="rest_saldo_mo" invisible="1"/>
+                                    <field name="rest_historico" readonly="1"/>                                    
+                                    <field name="amount_cc" required="1" sum="amount_cc"/>
+                                    <field name="amount_ci" readonly="1" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Otra Información">
+                            <group>
+                                <group>
+                                    <field name="medio_pago" />
+                                    <field name="nro_entra" attrs="{'readonly':[('state','=','done')]}"/>
+                                    <field name="caja_chica" attrs="{'readonly':[('state','=','done')]}"/>
+                                </group>
+                                <group>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- multipayment.invoice tree view -->
+        <record id="multipayment_invoice_view_tree" model="ir.ui.view">
+            <field name="name">multipayment.invoice.view.tree</field>
+            <field name="model">multipayment.invoice</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="type_invoices"/>
+                    <field name="partner_id"/>
+                    <field name="journal_id"/>
+                    <field name="payment_date"/>
+                    <field name="ammount_total"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- multipayment.invoice action window -->
+        <record id="multipayment_invoice_action" model="ir.actions.act_window">
+            <field name="name">Pagos Múltiples</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">multipayment.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+        </record>
+
+        <menuitem id="multipayment_invoice_menu" name="Pagos Múltiples"
+                  parent="account_bank_statement_it.menu_banco_caja"
+                  action="multipayment_invoice_action" sequence="15"/>
+	</data>
+</odoo>

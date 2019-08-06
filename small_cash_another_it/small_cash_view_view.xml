@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data noupdate="1">
+		
+		<record model="ir.ui.view" id="small_cash_view_tree2">
+            <field name="name">small.cass.view.tree</field>
+            <field name="model">small.cash.view</field>
+            <field name="arch" type="xml">
+                <tree string="Caja Chica" create="0" delete="0" edit="0">
+                	<field name="caja_nro" />
+                	<field name="responsable" />
+                	<field name="periodo" />
+                	<field name="libro" />
+                	<field name="voucher" />
+                	<field name="cuenta" />
+                	<field name="proveedor" />
+                	<field name="fecha" />
+                	<field name="tipo_doc" />
+                	<field name="nro_comprobante" />
+                	<field name="monto" />
+                </tree>
+            </field>
+        </record>
+
+		<record id="small_cash_search" model="ir.ui.view">
+			<field name="name">small.cash.view.search</field>
+			<field name="model">small.cash.view</field>
+			<field name="arch" type="xml">
+				<search string="buscar">
+
+                	<field name="caja_nro" />
+                	<field name="responsable" />
+                	<field name="periodo" />
+                	<field name="libro" />
+                	<field name="voucher" />
+                	<field name="cuenta" />
+                	<field name="proveedor" />
+                	<field name="fecha" />
+                	<field name="tipo_doc" />
+                	<field name="nro_comprobante" />
+
+	                <separator/>
+
+	                <group expand="1" string="Group By...">
+	                    <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+	                    <filter string="Libro" name="libro" icon="terp-partner" context="{'group_by':'libro'}"/>
+	                    <filter string="Voucher" name="voucher" icon="terp-partner" context="{'group_by':'voucher'}"/>
+	                    <filter string="Nro. Caja" name="caja_nro" icon="terp-partner" context="{'group_by':'caja_nro'}"/>
+	                    <filter string="Responsable" name="responsable" icon="terp-partner" context="{'group_by':'responsable'}"/>
+
+	                </group>
+
+				</search>
+			</field>
+		</record>
+	
+
+		<record id='small_cash_view_actionnew' model='ir.actions.act_window'>
+			<field name='name'>Compras caja Chica</field>
+			<field name='res_model'>small.cash.view</field>
+			<field name='view_type'>form</field>
+			<field name='view_mode'>tree</field>
+		</record>
+		<menuitem id='small_cash_view_newmenu' parent='small_cash_menumenu' action="small_cash_view_actionnew" />
+
+
+	</data>
+</openerp>

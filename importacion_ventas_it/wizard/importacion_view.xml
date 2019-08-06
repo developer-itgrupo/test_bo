@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+		<record model="ir.ui.view" id="view_importacion_ventas_form">
+			<field name="name">importacion.ventas.form</field>
+			<field name="model">importacion.ventas</field>
+			<field name="arch" type="xml">
+				<form string="Importacion ventas" version="7.0">
+					<header>
+		                <button string="Procesar Archivo" name="primerpaso" type="object" states="1" class="oe_highlight"/>
+		                <button string="Importar" name="segundopaso" type="object" states="2" class="oe_highlight" />
+		                <button string="Eliminar Importados" name="anular_importacion" confirm="Se eliminarán los asientos importados. ¿Desea continuar?" states="3" type="object" class="oe_highlight" />
+		                <button string="Regresar Borrador" name="regresar_borrador" states="2,4" type="object" class="oe_highlight" />
+						<field name="state" widget="statusbar" />   
+		            </header> 
+						<group>
+							<group>
+								<field name="fecha" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="period_id" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="diario" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="delimitador" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="tienda" attrs="{'readonly':[('state','!=','1')]}"/>
+								
+								<field name="file_imp_text" invisible="1"/>
+								<field name="file_head_imp_text" invisible="1"/>
+								<field name="sal_name1" invisible="1"/>
+								<field name="sal_name2" invisible="1"/>
+							</group>
+							<group>
+								<field name="file_head_imp" string="Importador Cabecera" filename="file_head_imp_text" attrs="{'readonly':[('state','!=','1')]}"/>
+								<field name="file_imp" string="Importador Detalle" filename="file_imp_text" attrs="{'readonly':[('state','!=','1')]}"/>
+
+								<field name="file_sal_error_head" string="Observaciones Cabecera" filename="sal_name1" readonly="1"/>
+								<field name="file_sal_error" string="Observaciones Detalle" filename="sal_name2" readonly="1"/>
+							</group>
+						</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="importacion_ventas_tree" model="ir.ui.view">
+            <field name="name">importacion.ventas.tree</field>
+            <field name="model">importacion.ventas</field>
+            <field name="arch" type="xml">
+                <tree string="Importacion ventas">
+                   <field name="name" />
+                   <field name="period_id"/>
+                   <field name="fecha"/>
+                   <field name="diario"/>
+                   <field name="tienda"/>
+                   <field name="state"/>
+                </tree>
+            </field>
+           </record>
+
+
+		<record id="importacion_ventas_action" model="ir.actions.act_window">
+			<field name="name">Importacion ventas</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">importacion.ventas</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+		
+
+		<menuitem name="Importacion Ventas" id="importacion_ventas_menu"  parent="importacion_extras_it.importacion_inforest_menu" sequence="7"  action="importacion_ventas_action" />
+
+
+
+
+	</data>
+</openerp>

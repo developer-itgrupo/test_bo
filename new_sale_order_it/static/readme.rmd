@@ -1,0 +1,4 @@
+2018-09-14 11:17:00	Wilbert Marroquin Arreglando bug de padding, puede aparecer una situacion donde puede fallar pero es muy especifica.
+2018-09-11 19:03:00 Wilbert Marroquin Añadiendo funcionalidad al segundo boton Imprimir
+2018-09-11 18:07:00 Wilbert Marroquin Agregando dependencias al manifest y arreglando Terminos y condiciones
+2018-09-10 01:27:00 Wilbert Marroquin Cambio del formato de reportes para ventas y cotizaciones.

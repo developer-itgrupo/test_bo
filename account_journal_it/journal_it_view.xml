@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record id="view_account_journal_form" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="before">
+                    <header>
+                        <button name="generar_wizard" type="object" string="Generar Secuencia" class="oe_highlight"/>
+                    </header>
+                </xpath>
+                <field name="sequence_id" position="after">
+                 <field name="register_sunat" />
+                 <field name="asentar_automatic" invisible="1"/>
+                 <field name="check_rendicion" />                 
+                 <field name="check_canje_letras" />
+                </field>
+            </field>
+        </record>
+        <record id="sequence_wizard_view" model="ir.ui.view">
+            <field name="name">sequence_wizard_view</field>
+            <field name="model">sequence.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Secuencia de Diario">
+                    <group>
+                        <field name="fiscal_id" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="generar_secuencia" string="Generar Secuencia" type="object" class="oe_highlight"/>
+                        o
+                        <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                 </form>
+             </field>
+        </record>
+	</data>
+</openerp>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record model="ir.ui.view" id="it_anticipo_proveedores_form">
+            <field name="name">Anticipo a Proveedores</field>
+            <field name="model">anticipo.proveedor</field>
+            <field name="arch" type="xml">
+                <form string="Anticipo a Proveedores" version="8.0">
+                    <header>
+                        <button name="entregar_button" states="draft" string="Entregar" type="object" class="oe_highlight" />
+                        <button name="cancelar_button" states="done" string="Cancelar" type="object" />
+                        <button name="borrador_button" states="cancel" string="Volver Borrador" type="object" class="oe_highlight" />
+                        <field name='state' widget='statusbar'/>
+                    </header>
+                    <label for="name" class="oe_edit_only" attrs="{'invisible':[('name','=',False)]}"/>
+                    <h1>
+                        <field name="name" readonly="True" attrs="{'invisible':[('name','=',False)]}"/>
+                    </h1>
+                    <notebook>
+                        <page string="Anticipos">
+                            <group>                        
+                                <group>
+                                    <field name="aux_type" invisible="1"/> 
+                                    <field name="tipo" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="fecha" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="empresa" required="1" attrs="{'readonly': [('state','!=', 'draft')]}" domain="[(aux_type,'=',True)]"/>
+                                    <field name="metodo_pago" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="medio_pago" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                </group>
+                                <group>
+                                    <field name="comprobante_caja" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="comprobante_anticipo" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="memoria" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="flujo_efectivo" required="0" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="monto" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Contabilidad">
+                            <group>
+                                <group>
+                                    <field name="cuenta_anticipo" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="cuenta_caja" required="1" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                </group>
+                                <group>
+                                    <field name="fecha_vencimiento" required="0" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                    <field name="move_id" readonly="1" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_anticipo_proveedor_search" model="ir.ui.view">
+            <field name="name">anticipo.proveedor.search</field>
+            <field name="model">anticipo.proveedor</field>
+            <field name="arch" type="xml">
+                <search string="Anticipo Proveedor">
+                    <group expand="0" string="Group By">
+                        <filter string="Tipo de Anticipio" context="{'group_by': 'tipo'}" />
+                        <filter string="Empresa" context="{'group_by': 'empresa'}" />
+                        <filter string="Periodo" context="{'group_by': 'period_id'}" />
+                        <filter string="Libro" context="{'group_by': 'metodo_pago'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="it_anticipo_proveedores_view" model="ir.ui.view">
+            <field name="name">Anticipo a Proveedores</field>
+            <field name="model">anticipo.proveedor</field>
+            <field name="arch" type="xml">
+                <tree string="Anticipo a Proveedores">
+                    <field name="period_id" />
+                    <field name="fecha" />
+                    <field name="ruc" />
+                    <field name="empresa" />
+                    <field name="comprobante_anticipo" />
+                    <field name="metodo_pago" />
+                    <field name="move_id"/>
+                    <field name="comprobante_caja" />
+                    <field name="monto" />
+                    <field name="state" />
+                </tree>
+
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="anticipo_proveedores_action">
+            <field name="name">Anticipo a Proveedores</field>
+            <field name="res_model">anticipo.proveedor</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem action="anticipo_proveedores_action" id="menu_anticipo_proveedores" parent="account_bank_statement_it.menu_banco_caja"/>
+
+
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//form/notebook/page[1]/group[3]" position="inside">
+                        <field name="sequence_anticipo_proveedor" />
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</openerp>

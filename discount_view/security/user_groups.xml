@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+	<record model="ir.module.category" id="descuento_categoria">
+            <field name="name">Descuento Categoria</field>
+            <field name="description">....</field>
+    	</record>
+    	
+    	<record id="descuento_admin_group" model="res.groups"> 
+            <field name="name">Admin Descuento</field>
+            <field name="category_id" ref="descuento_categoria"/>
+        </record>
+    	
+    	<record id="descuento_usuario_group" model="res.groups"> 
+            <field name="name">Usuario descuento</field>
+            <field name="category_id" ref="descuento_categoria"/>
+        </record>
+
+    </data>
+</odoo>
+	

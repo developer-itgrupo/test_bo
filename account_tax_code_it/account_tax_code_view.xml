@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <record id="view_tax_form" model="ir.ui.view">
+            <field name="name">account.tax.form</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Codigo de Impuesto">
+                        <group>
+                            <group>
+                                <field name="base_code_id"/>
+                                <field name="tax_code_id"/>
+                            </group>
+                            <group>
+                                <field name="ref_base_code_id"/>
+                                <field name="ref_tax_code_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>   
+
+        <record id="view_tax_code_tree" model="ir.ui.view">
+            <field name="name">account.tax.code.tree</field>
+            <field name="model">account.tax.code</field>
+            <field name="arch" type="xml">
+                <tree string="Codigo Impuesto">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="parent_id" />
+                    <field name="record_shop" />
+                    <field name="record_sale" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_tax_code_search" model="ir.ui.view">
+            <field name="name">account.tax.code.search</field>
+            <field name="model">account.tax.code</field>
+            <field name="arch" type="xml">
+                <search string="Codigo Impuesto">
+                    <field name="name" />
+                    <field name="code" />
+                    <group string="Group By">
+                        <filter string="Registro Compra" domain="[]" context="{'group_by':'record_shop'}"/>
+                        <filter string="Registro Venta" domain="[]" context="{'group_by':'record_sale'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="view_tax_code_form" model="ir.ui.view">
+            <field name="name">account.tax.code.form</field>
+            <field name="model">account.tax.code</field>
+            <field name="arch" type="xml">
+                <form string="Codigo Impuesto">
+                    <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                        </group>
+                        <group>
+                            <field name="code" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Definicion">
+                            <group>
+                                <group>
+                                    <field name="parent_id" />
+                                    <field name="sequence" />
+                                    
+                                </group>
+                                <group>
+                                    <field name="record_shop"/>
+                                    <field name="record_sale"/>
+                                    <field name="record_fees"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                </form>
+              </field>
+        </record>
+
+        <record id="action_tax_code_form" model="ir.actions.act_window">
+            <field name="name">Codigo de Impuesto</field>
+            <field name="res_model">account.tax.code</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain" eval="False"/> <!-- Force empty -->
+        </record>
+
+        <menuitem action="action_tax_code_form" id="menu_action_tax_code_form" parent="account.account_account_menu" sequence="1"/>
+
+
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <field name="date_maturity" position="after">
+                    <field name="tax_code_id" />
+                </field>
+            </field>
+        </record>   
+
+
+
+        <record id="action_invoice_tree13" model="ir.actions.act_window">
+            <field name="name">Facturas Rectificativas</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('account.invoice_form')})]"/>
+            <field name="domain">[('type','=','out_refund')]</field>
+            <field name="context">{'default_type':'out_refund', 'type':'out_refund', 'journal_type': 'sale_refund'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Pulse para grabar una nueva factura Rectificativa de cliente.
+              </p><p>
+                Puede controlar la factura rectificativa de su cliente en función de lo que compró o recibió.
+              </p>
+            </field>
+        </record>
+
+        <menuitem action="action_invoice_tree13" id="menu_action_invoice_tree13" parent="account.menu_finance_receivables"/>
+
+
+        <record id="action_invoice_tree14" model="ir.actions.act_window">
+            <field name="name">Facturas Rectificativas</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('account.invoice_supplier_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('account.invoice_supplier_form')})]"/>
+            <field name="domain">[('type','=','in_refund')]</field>
+            <field name="context">{'default_type': 'in_refund', 'type': 'in_refund', 'journal_type': 'purchase_refund'}</field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Pulse para grabar una nueva factura Rectificativa de proveedor.
+              </p><p>
+                Puede controlar la factura rectificativa de su proveedor en función de lo que compró o recibió.
+              </p>
+            </field>
+        </record>
+        <menuitem action="action_invoice_tree14" id="menu_action_invoice_tree4" parent="account.menu_finance_payables"/>
+
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+		<record id="view_saldo_comprobante" model="ir.ui.view">
+            <field name="name">saldo.comprobante.tree</field>
+            <field name="model">saldo.comprobante</field>
+            <field name="arch" type="xml">
+                <tree string="Saldo Comprobante" create="false">
+                    <field name="fecha_emision" />
+                    <field name="empresa" />
+                    <field name="tipo_cuenta" />
+                    <field name="code" />
+                    <field name="tipo" />
+                    <field name="nro_comprobante" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="saldo" />
+                    <field name="divisa" />
+                    <field name="amount_currency" />
+                </tree>
+
+            </field>
+        </record>
+
+
+		<record id="saldo_comprobante_search" model="ir.ui.view">
+	        <field name="name">saldo.comprobante.search</field>
+	        <field name="model">saldo.comprobante</field>
+	        <field name="arch" type="xml">
+	            <search string="Saldo Comprobante">
+	                <separator/>
+	                <group expand="1" string="Group By...">
+	                    <filter string="Empresa" name="empresa" icon="terp-partner" context="{'group_by':'empresa'}"/>
+	                    <filter string="Cuenta" name="code" icon="terp-partner" context="{'group_by':'code'}"/>
+	                </group>
+	            </search>
+	        </field>
+	    </record>
+
+
+
+        <record id="saldo_comprobante_action" model="ir.actions.act_window">
+            <field name="name">Saldo Comprobante</field>
+            <field name="res_model">saldo.comprobante</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_saldo_comprobante"/>
+			<field name="search_view_id" ref="saldo_comprobante_search"/>
+        </record>
+
+
+
+
+    </data>
+</openerp>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <odoo>
+	<data> 
+		<!--INVENTORY-->
+		<menuitem name="Kardex Fisico" id="fixes_it_menu_inventory"
+		parent="stock.menu_stock_inventory_control" action="kardex_it.make_kardex_action_fisico"
+		 sequence="4" />
+		<!--COMPRAS-->
+		<menuitem name="Kardex Fisico" id="fixes_it_menu_purchase_1"
+		parent="purchase.menu_purchase_control" action="kardex_it.make_kardex_action_fisico"
+		 sequence="1" />
+		<menuitem name="Kardex Valorado" id="fixes_it_menu_purchase_2"
+		parent="purchase.menu_purchase_control" action="kardex_it.make_kardex_action"
+		 sequence="2" />
+
+		<delete model="ir.ui.menu" id="stock.menu_quants" />
+	</data>
+
+	
+
+</odoo>

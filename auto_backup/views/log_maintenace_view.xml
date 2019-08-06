@@ -1,0 +1,46 @@
+<odoo>
+    <data>
+        <record id="view_log_maintenace_db_form" model="ir.ui.view">
+            <field name="name">log.maintenace.db.form</field>
+            <field name="model">log.maintenace.db</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Back-up view">
+                    <group>
+                        <field name="date"/>
+                        <field name="backup"/>
+                        <field name="obs_backup"/>
+                        <field name="vacuum"/>
+                        <field name="obs_vacuum"/>
+                        <field name="reindex"/>
+                        <field name="obs_reindex"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_log_maintenace_db_tree" model="ir.ui.view">
+            <field name="name">log.maintenace.db.tree</field>
+            <field name="model">log.maintenace.db</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Backups">
+                    <field name="date"/>
+                        <field name="backup"/>
+                        <field name="vacuum"/>
+                        <field name="reindex"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="log_maintenace_db" model="ir.actions.act_window">
+            <field name="name">Log Mantimento base de datos</field>
+            <field name="res_model">log.maintenace.db</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_log_maintenace_db_tree"/>
+        </record>
+
+        <menuitem parent="auto_backup.auto_backup_menu" action="log_maintenace_db" id="log_maintenace_db_menu" string="Log mannto db"/>
+    </data>
+</odoo>

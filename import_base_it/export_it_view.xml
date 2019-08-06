@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+
+        <record id="export_sale_file_save" model="ir.ui.view">
+            <field name="name">export.sale.file.save</field>
+            <field name="model">export.file.save</field>
+            <field name="arch" type="xml">
+                <form string="Archivo" version="7.0" create="0" delete="0">
+                    <field name="output_name" invisible="1"/>
+                    <div >
+                        <h2>Exportación terminada</h2>
+                        <p>Este es el archivo generado: <field name="link" readonly="1" widget="url"/></p>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+	</data>
+</openerp>

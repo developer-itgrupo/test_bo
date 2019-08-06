@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="view_exchange_diff_line_tree">
+			<field name="name">exchange.diff.line.tree</field>
+			<field name="model">exchange.diff.line</field>
+			<field name="arch" type="xml">
+				<tree string="exchange_diff_line" create="false" edit="false" >
+					<!-- <field name="account_id" string="Cuenta" /> -->
+					<field name="account_code" string="Cuenta" />
+					<field name="invoice" string="Factura" />
+					<field name="partner_id" string="Partner" />
+					<field name="currency_id" string="Divisa" />
+					<field name="debit" string="Debe" />
+					<field name="credit" string="Haber" />
+					<field name="saldo" string="Saldo M.N." />
+					<field name="amount_currency" string="Monto Divisa" />
+					<field name="exchange" string="Tipo Cambio Cierre" />
+					<field name="amount" string="Monto Actual" />
+					<field name="diff" string="Diferencia" />
+					<field name="exchange_account_code" string="Cuenta Ajuste" />
+					<!-- <field name="exchange_account_id" string="Cuenta Ajuste" /> -->
+					<!-- <field name="line_id" string="Linea" invisible="1"/> -->
+				</tree>
+			</field>
+		</record>
+		
+		<record id='view_exchange_diff_line_action' model='ir.actions.act_window'>
+			<field name='name'>Diferencia de Cambio</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name='res_model'>exchange.diff.line</field>
+			<field name='view_type'>form</field>
+			<field name='view_mode'>tree,form</field>
+			<field name="view_id" ref="view_exchange_diff_line_tree"/>
+		</record>
+		
+		
+		<!-- Activos y pasivos View-->
+		<record model="ir.ui.view" id="view_exchange_diff_line_active_tree">
+			<field name="name">exchange.diff.line.active.tree</field>
+			<field name="model">exchange.diff.line</field>
+			<field name="arch" type="xml">
+				<tree string="exchange_diff_line_2" create="false" edit="false" >
+					<!-- <field name="account_id" string="Cuenta" /> -->
+					<field name="account_code" string="Cuenta" />
+					<field name="currency_id" string="Divisa" />
+					<field name="debit" string="Debe" />
+					<field name="credit" string="Haber" />
+					<field name="saldo" string="Saldo M.N." />
+					<field name="amount_currency" string="Monto Divisa" />
+					<field name="exchange" string="Tipo Cambio Cierre" />
+					<field name="amount" string="Monto Actual" />
+					<field name="diff" string="Diferencia" />
+					<field name="exchange_account_code" string="Cuenta Ajuste" />
+					<!-- <field name="exchange_account_id" string="Cuenta Ajuste" /> -->
+					<!-- <field name="line_id" string="Linea" invisible="1"/> -->
+				</tree>
+			</field>
+		</record>
+		
+		<record id='view_exchange_diff_line_active_action' model='ir.actions.act_window'>
+			<field name='name'>Diferencias de Cambio</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name='res_model'>exchange.diff.line</field>
+			<field name='view_type'>form</field>
+			<field name='view_mode'>tree,form</field>
+			<field name="view_id" ref="view_exchange_diff_line_active_tree"/>
+		</record>
+		
+		<record id="view_exchange_diff_line_search" model="ir.ui.view">
+			<field name="name">exchange.diff.line.search</field>
+			<field name="model">exchange.diff.line</field>
+			<field name="arch" type="xml">
+				<search string="Dif. de Cambio">
+					<field name="account_code"/>
+					<field name="partner_id"/>
+					<field name="exchange_account_code"/>
+
+					<filter icon="terp-go-year" string="Cuenta" name="account_code"/>
+					<filter icon="terp-go-year" string="Partner" name="partner_id"/>
+					<filter icon="terp-go-year" string="Cuenta Ajuste" name="exchange_account_code"/>
+					<separator/>
+					<group expand="1" string="Group By...">
+						<filter string="Cuenta" name="account_code" icon="terp-partner" context="{'group_by':'account_code'}"/>
+						<filter string="Partner" name="partner_id" icon="terp-partner" context="{'group_by':'partner_id'}"/>
+						<filter string="Cuenta Ajuste" name="exchange_account_code" icon="terp-partner" context="{'group_by':'exchange_account_code'}"/>
+					</group>
+				</search>
+			</field>
+		</record>	
+		
+		<record id="exchange_diff_line_resumido_action" model="ir.actions.act_window">
+			<field name="name">Diferencias de Cambio</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">exchange.diff.line</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="context">{'group_by':['account_code'],}</field>
+			<field name="search_view_id" ref="view_exchange_diff_line_action"/>
+		</record>
+		
+		
+		<!-- Calcular Diferencia --> 
+		
+<!-- 		<record id="view_make_exchange_diff" model="ir.ui.view">
+            <field name="name">Generar Asiento</field>
+            <field name="model">make.exchange.diff</field>
+            <field name="arch" type="xml">
+                <form string="Generar Asiento de Diferencia" version="7.0">
+                    <separator colspan="4" string="Está seguro de generar el asiento de diferencia?" />
+					<group>
+						<field name="journal_id" string="Diario" required="1"/>
+						<field name="has_extorno" string="Tiene Extorno" />
+					</group>
+                    <footer>
+                        <button name="make_calculate_differences" string="Generar Asiento" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_make_exchange_diff" model="ir.actions.act_window">
+            <field name="name">Generar Asiento</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">make.exchange.diff</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_make_exchange_diff"/>
+            <field name="target">new</field>
+            <field name="multi">True</field>
+        </record>
+
+        <record model="ir.values" id="make_exchange_diff">
+            <field name="name">Generar Asiento</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_make_exchange_diff'))" />
+            <field name="key">action</field>
+            <field name="model">exchange.diff.line</field>
+        </record> -->
+		
+		<record id="view_make_exchange_diff" model="ir.ui.view">
+            <field name="name">Generar Asiento</field>
+            <field name="model">make.exchange.diff</field>
+            <field name="arch" type="xml">
+                <form string="Generar Asiento de Diferencia" version="7.0">
+                    <separator colspan="4" string="Está seguro de generar el asiento de diferencia?" />
+					<group>
+						<field name="journal_id" string="Diario" required="1"/>
+						<field name="has_extorno" string="Tiene Extorno" />
+					</group>
+                    <footer>
+                        <button name="make_calculate_differences" string="Generar Asiento" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_make_exchange_diff" model="ir.actions.act_window">
+            <field name="name">Generar Asiento</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">make.exchange.diff</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_make_exchange_diff"/>
+            <field name="target">new</field>
+            <field name="multi">True</field>
+        </record>
+
+        <record model="ir.values" id="make_exchange_diff">
+            <field name="name">Generar Asiento</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_make_exchange_diff'))" />
+            <field name="key">action</field>
+            <field name="model">exchange.diff.line</field>
+        </record>
+		
+
+	</data>
+</odoo>

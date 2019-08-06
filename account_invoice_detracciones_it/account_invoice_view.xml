@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <field name="account_anticipo_clientes_me" position="after">
+                        <field name="account_detracciones" />                   
+                </field>
+                <field name="diario_destino" position="after">
+                        <field name="diario_detracciones" />
+                </field>
+                
+            </field>
+        </record>
+
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="payment_term_id" position="after">
+                    <label for="move_detraccion_id" />
+                    <field name="move_detraccion_id" nolabel="1" readonly="1"/>
+                </field>
+                <button name="action_invoice_cancel" position="before">
+                    <field name="ver_estado_buttom_detraccion" invisible="1"/>
+                    <field name="type" invisible="1"/>
+                    <button name="create_detraccion_gastos"  type="object" string="Generar Detracción" 
+                        attrs="{'invisible': ['|','|','|',('ver_estado_buttom_detraccion','!=',2),('state','=','paid'),('type','=','out_refund'),('type','=','in_refund')] }"/>
+                    <button name="remove_detraccion_gastos"  type="object" string="Cancelar Detracción" attrs="{'invisible':  [('ver_estado_buttom_detraccion','!=',1)] }"/>
+                </button>
+                        
+            </field>
+        </record>
+
+
+        <record id="view_create_detraccion" model="ir.ui.view">
+            <field name="name">create.detraccion.form</field>
+            <field name="model">create.detraccion</field>
+            <field name="arch" type="xml">
+                <form string="Generar Detracción">
+                    <group>
+                        <group>
+                            <field name="fecha" required="1"/>
+                        </group>
+                        <group>
+                            <field name="monto" required="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Generar" name="generar" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+        <record id="view_partner_property_form" model="ir.ui.view">
+            <field name="name">res.partner.property.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <field name="property_account_payable_id" position="after">
+                    <field name="porcentaje" />
+                </field>
+            </field>
+        </record>
+
+
+
+    </data>
+</openerp>

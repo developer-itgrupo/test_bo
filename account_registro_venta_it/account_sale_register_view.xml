@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_move_sale_register_tree" model="ir.ui.view">
+            <field name="name">account.sale.register.tree</field>
+            <field name="model">account.sale.register</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false" edit="false">
+                    <field name="periodo" string="Periodo"/>
+                    <field name="libro" string="Libro"/>
+                    <field name="voucher" string="Voucher"/>
+                    <field name="fechaemision" string="Fecha E." />
+                    <field name="fechavencimiento" string="Fecha V." />
+                    <field name="tipodocumento" string="T.D" />
+                    <field name="serie" string="Serie" />
+                    <field name="numero" string="Numero" />
+                    <field name="tipodoc" string="T.D.P." />
+                    <field name="numdoc"  string="Num. Documento" />
+                    <field name="partner" string="Razon Social" />
+                    <field name="valorexp"  string="Valor Exp." sum="valorexp"/>
+                    <field name="baseimp"  string="Base Imp." sum="baseimp"/>
+                    <field name="inafecto"  string="Inafecto" sum="inafecto"/>
+                    <field name="exonerado"  string="Exonerado" sum="exonerado"/>
+                    <field name="isc"  string="I.S.C." sum="isc"/>
+                    <field name="igv" string="I.G.V." sum="igv"/>
+                    <field name="otros" string="Otros" sum="otros"/>
+                    <field name="total"  string="Total" sum="total"/>
+                    <field name="divisa" string="Divisa" />
+                    <field name="tipodecambio" string="T.C." />
+                    <field name="tipodocmod" string="T/D" />
+                    <field name="seriemod" string="Serie" />
+                    <field name="numeromod" string="Numero" />
+                </tree>
+            </field>
+        </record>
+
+
+
+
+        <record id="view_move_sale_register_tree_simplificado" model="ir.ui.view">
+            <field name="name">account.sale.register.tree.simplificado</field>
+            <field name="model">account.sale.register</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Journal Items" create="false" edit="false">
+                    <field name="voucher" string="Voucher"/>
+                    <field name="fechaemision" string="Fecha E." />
+                    <field name="fechavencimiento" string="Fecha V." />
+                    <field name="tipodocumento" string="T.D" />
+                    <field name="serie" string="Serie" />
+                    <field name="numero" string="Numero" />
+                    <field name="tipodoc" string="T.D.P." />
+                    <field name="numdoc"  string="Num. Documento" />
+                    <field name="partner" string="Cliente" />
+                    <field name="glosa" string="Concepto"/>
+
+
+                    <field name="nogravado"   sum="nogravado"/>
+                    <field name="isc"   sum="isc"/>
+                    <field name="baseimp"  sum="baseimp"/>
+                    <field name="igv" string="I.G.V." sum="igv"/>
+                    <field name="total"  string="Total" sum="total"/>
+
+                    <field name="tipodocmod" />
+                    <field name="seriemod" />
+                    <field name="numeromod" />
+                    <field name="fechadm" />
+                    <field name="fechad" />
+                    <field name="numeromodd" />
+
+                    <field name="tipodecambio" string="T.C." />
+                    
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="account_move_sale_register_search" model="ir.ui.view">
+            <field name="name">account.sale.register.search</field>
+            <field name="model">account.sale.register</field>
+            <field name="arch" type="xml">
+                <search string="Registro Ventas">
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                        <filter string="Tipo de Documento" name="tipodoc" icon="terp-partner" context="{'group_by':'tipodoc'}"/>
+                        <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+                        <filter string="Libro" name="libro" icon="terp-partner" context="{'group_by':'libro'}"/>
+
+                        <filter string="Voucher" name="voucher" icon="terp-partner" context="{'group_by':'voucher'}"/>
+                        <filter string="RUC" name="numdoc" icon="terp-partner" context="{'group_by':'numdoc'}"/>
+                        <filter string="Fecha Documento" name="fechaemision" icon="terp-partner" context="{'group_by':'fechaemision'}"/>
+                        <filter string="Fecha Vencimiento" name="fechavencimiento" icon="terp-partner" context="{'group_by':'fechavencimiento'}"/>
+                        <filter string="Moneda" name="divisa" icon="terp-partner" context="{'group_by':'divisa'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_account_moves_sale_register_it" model="ir.actions.act_window">
+            <field name="name">Libro Diario</field>
+            <field name="res_model">account.sale.register</field>
+            <field name="view_id" ref="view_move_sale_register_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="account_move_sale_register_search"/>
+        </record>
+
+    </data>
+</openerp>

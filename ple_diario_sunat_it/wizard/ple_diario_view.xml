@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+		<record model="ir.ui.view" id="view_ple_diario_wizard_form">
+			<field name="name">ple.diario.wizard.form</field>
+			<field name="model">ple.diario.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Ple Diario" version="7.0">
+						<group>
+							<field name="period" required="1" />
+							<field name="tipo" required="1" />
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		<record id="ple_diario_wizard_action" model="ir.actions.act_window">
+			<field name="name">Ple Diario</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">ple.diario.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+		<menuitem name="Libros Electrónicos" id="libro_electronico_wizard_menu"  parent="account.menu_finance_reports" sequence="7" />
+
+		<menuitem name="Ple Diario" id="ple_diario_wizard_menu"  parent="libro_electronico_wizard_menu" action="ple_diario_wizard_action" sequence="1" />
+
+
+		<record model="ir.ui.view" id="view_ple_diario_contable_wizard_form">
+			<field name="name">ple.diario.contable.wizard.form</field>
+			<field name="model">ple.diario.contable.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Ple Diario" version="7.0">
+						<group>
+							<field name="period" required="1" />
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		<record id="ple_diario_contable_wizard_action" model="ir.actions.act_window">
+			<field name="name">Ple Diario Plan Contable</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">ple.diario.contable.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+
+		<menuitem name="Ple Plan Contable" id="ple_diario_contable_wizard_menu"  parent="libro_electronico_wizard_menu" action="ple_diario_contable_wizard_action" sequence="2" />
+
+	</data>
+</openerp>

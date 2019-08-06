@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<!-- Actualizar Productos --> 
+		<record id="view_prestaciones_report" model="ir.ui.view">
+            <field name="name">0601 Prestadores del Periodo</field>
+            <field name="model">prestadores.report</field>
+            <field name="arch" type="xml">
+                <form string="0601-Prestadores del Periodo" version="7.0">
+                    <separator colspan="4" string="Está seguro exportar estos registros?" />
+                    <footer>
+                        <button name="get_prestadores" string="Generar" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_prestaciones_report" model="ir.actions.act_window">
+            <field name="name">0601 Prestadores del Periodo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">prestadores.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_prestaciones_report"/>
+            <field name="target">new</field>
+            <field name="multi">True</field>
+        </record>
+
+        <record model="ir.values" id="prestaciones_report">
+            <field name="name">0601 Prestadores del Periodo</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' + str(ref('action_prestaciones_report'))" />
+            <field name="key">action</field>
+            <field name="model">account.forth.category</field>
+        </record>
+		
+	</data>
+</openerp>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        
+        <record id="view_account_sheet_work_f2_tree" model="ir.ui.view">
+            <field name="name">account.sheet.work.f2.visual.tree</field>
+            <field name="model">account.sheet.work.f2.visual</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Hoja de Trabajo F2" create="false">
+                    <field name="cuenta" />
+                    <field name="descripcion" />
+                    <field name="debeinicial" />
+                    <field name="haberinicial" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="debesa" />
+                    <field name="habersa" />
+                    <field name="saldodeudor" />
+                    <field name="saldoacredor" />
+                    <field name="activo" />
+                    <field name="pasivo" />
+                    <field name="perdidasnat" />
+                    <field name="ganancianat" />
+                    <field name="perdidasfun" />
+                    <field name="gananciafun" />
+
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_account_sheet_work_f2" model="ir.actions.act_window">
+            <field name="name">Hoja de Trabajo F2</field>
+            <field name="res_model">account.sheet.work.f2.visual</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_id" ref="view_account_sheet_work_f2_tree"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+    </data>
+</openerp>

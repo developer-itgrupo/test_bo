@@ -1,0 +1,5 @@
+2018-08-25 Mayor Fix : Se aumento la busqueda por variante de productos, en caso la instancia tenga productos antes de instalar esta actualizacion, correr este proceso en consultajp:
+
+					to = request.env['product.product'].search([])
+					for i in to:
+						i.write({})

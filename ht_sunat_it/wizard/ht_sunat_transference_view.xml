@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_ht_sunat_transference_wizard_form">
+			<field name="name">ht.sunat.transference.wizard.form</field>
+			<field name="model">ht.sunat.transference.wizard</field>
+			<field name="arch" type="xml">
+				<form string="" version="8.0">
+					<group string="Agregar/Modificar Transf.">
+						<field name="finalizado" invisible="1"/>
+						<field name="check" invisible="1" />
+						<h4 color="#0000ff">
+							<field name="mensaje" attrs="{'invisible': [('check', '=', False)]}" readonly="1" nolabel="1"/>
+						</h4>
+					</group>
+					<group>
+							<field name="account" required="1" attrs="{'invisible': [('finalizado', '=', True)]}" />
+							<field name="debit" required="1" attrs="{'invisible': [('finalizado', '=', True)]}" />
+							<field name="credit" required="1" attrs="{'invisible': [('finalizado', '=', True)]}" />
+					</group>
+					<footer attrs="{'invisible': [('finalizado', '=', True)]}">
+						<button string="Agregar" name="do_rebuild" type="object" class="oe_highlight"/>
+						or
+						<button string="Cancel" class="oe_link" special="cancel"/>
+					</footer>
+
+					<footer attrs="{'invisible': [('finalizado', '=', False)]}">
+						<button string="Cerrar" class="oe_link" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+	
+
+		<record id="ht_sunat_transference_wizard_action" model="ir.actions.act_window">
+			<field name="name">Agregar/Modificar Transf.</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">ht.sunat.transference.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+<!--
+		<menuitem name="Transferencia"
+            action="ht_sunat_transference_wizard_action"
+            id="menu_action_ht_sunat_transference_wizard_sunat_it_report"
+            parent="ht_sunat_it.menu_action_ht_sunat_all_it"
+            sequence="13"
+        />
+-->
+
+	</data>
+</openerp>

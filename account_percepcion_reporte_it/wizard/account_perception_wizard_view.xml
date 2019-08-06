@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_account_perception_p_wizard_form">
+			<field name="name">account.perception.p.wizard.form</field>
+			<field name="model">account.perception.p.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Generador Txt P." version="7.0">
+						<group>
+							
+							<field name="tipo" />
+							
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_perception_p_wizard_action" model="ir.actions.act_window">
+			<field name="name">Generador Txt P.</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.perception.p.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+
+
+		<record model="ir.ui.view" id="view_account_perception_pi_wizard_form">
+			<field name="name">account.perception.pi.wizard.form</field>
+			<field name="model">account.perception.pi.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Generador Txt P.I." version="7.0">
+						<group>
+							
+							<field name="tipo" />
+							
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_perception_pi_wizard_action" model="ir.actions.act_window">
+			<field name="name">Generador Txt P.I.</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.perception.pi.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+
+
+
+
+		<record model="ir.ui.view" id="view_account_perception_report_wizard_form">
+			<field name="name">account.perception.report.wizard.form</field>
+			<field name="model">account.perception.report.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Percepciones" version="7.0">
+						<group>
+							<group>
+								<field name="fiscal_id" />
+								<field name="tipo" />
+							</group>
+							<group>
+								<field name="period_ini" />
+								<field name="period_fin" />
+							</group>
+						</group>
+						<footer>
+							<button string="Generar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_perception_report_wizard_action" model="ir.actions.server">
+			<field name="name">Percepciones</field>
+			<field name="model_id" ref="model_account_perception_report_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+        <menuitem name="Percepciones" id="account_perception_wizard_menu"  parent="account_registro_compra_it.menu_finance_books_reports" action="account_perception_report_wizard_action" sequence="7" />
+
+	</data>
+</openerp>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_account_payable_analisis_vencimiento_wizard_form">
+			<field name="name">account.payable.analisis.vencimiento.wizard.form</field>
+			<field name="model">account.payable.analisis.vencimiento.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Reporte de Vencimiento" version="7.0">
+						<group>
+							<group>
+								<field name="date" required="1"/>
+							</group>
+							<group>
+							</group>
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+
+		<record id="account_payable_analisis_vencimiento_wizard_action" model="ir.actions.act_window">
+			<field name="name">Reporte de Vencimiento Por Pagar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.payable.analisis.vencimiento.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+
+
+		<record model="ir.ui.view" id="view_account_receivable_analisis_vencimiento_wizard_form">
+			<field name="name">account.receivable.analisis.vencimiento.wizard.form</field>
+			<field name="model">account.receivable.analisis.vencimiento.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Reporte de Vencimiento" version="7.0">
+						<group>
+							<group>
+								<field name="date" required="1"/>
+							</group>
+							<group>
+							</group>
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+
+
+
+		<record id="account_receivable_analisis_vencimiento_wizard_action" model="ir.actions.act_window">
+			<field name="name">Reporte de Vencimiento Por Cobrar</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.receivable.analisis.vencimiento.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+		
+
+
+		<menuitem name="Análisis de Vencimiento" id="account_payable_receivable_analisis_vencimiento_wizard_menu"  parent="account.menu_finance_reports" sequence="8" />
+
+		<menuitem name="Cuenta Por Pagar" id="account_payable_analisis_vencimiento_wizard_menu"  parent="account_payable_receivable_analisis_vencimiento_wizard_menu" action="account_payable_analisis_vencimiento_wizard_action" sequence="1" />
+
+
+		<menuitem name="Cuenta Por Cobrar" id="account_receivable_analisis_vencimiento_wizard_menu"  parent="account_payable_receivable_analisis_vencimiento_wizard_menu" action="account_receivable_analisis_vencimiento_wizard_action" sequence="2" />
+
+
+	</data>
+</openerp>

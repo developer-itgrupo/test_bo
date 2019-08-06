@@ -1,0 +1,94 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_prestamo_form_view">
+            <field name="name">account_prestamo_form_view</field>
+            <field name="model">account.prestamo</field>
+            <field name="arch" type="xml">
+                <form string="Prestamos">
+                    <header>
+                        <button name="importation" type="object" string="Importar" class="oe_highlight" states="draft"/>
+                        <button name="validate" type="object" string="Validar" class="oe_highlight" states="draft"/>
+                        <button name="cancel" type="object" string="Cancelar" class="oe_highlight" states="validated"/>
+                        <button name="eliminar_lineas" type="object" string="Eliminar Lineas" confirm="¿Estas seguro que quieres eliminar todas las lineas de este Prestamo?" class="oe_highlight" states="draft"/>
+                        <field name="state" widget="statusbar" readonly="1"/>
+                    </header>
+                    <sheet>
+                        <h1>Prestamos</h1>
+                        <group>
+                            <group>
+                                <field name="nro_prestamo" required="1"/>
+                                <field name="fecha"/>
+                                <field name="partner_id" required="1"/>
+                                <field name="currency_id" required="1"/>
+                                <field name="fecha_calculo" required="1"/>
+                            </group>
+                            <group>
+                                <field name="monto"/>
+                                <field name="intereses"/>
+                                <field name="total_deuda"/>
+                                <field name="saldo"/>
+                                <field name="tc"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Cuotas">
+                                <field name="prestamo_line">
+                                    <tree editable="bottom" delete="false">
+                                        <field name="nro_cuota" required="1"/>
+                                        <field name="fecha_vencimiento" required="1"/>
+                                        <field name="saldo_capital"/>
+                                        <field name="amortizacion_capital" required="1"/>
+                                        <field name="interes" required="1"/>
+                                        <field name="itf" required="1"/>
+                                        <field name="monto_cuota" required="1"/>
+                                        <field name="move_1" invisible="1"/>
+                                        <field name="move_2" invisible="1"/>
+                                        <button name="generar_wizard" string="Crear Asiento" type="object" attrs="{'invisible':['|',('move_1','!=',False),('move_2','!=',False)]}"/>
+                                        <button name="delete_prestamo_line" type="object" confirm="¿Esta seguro que desea eliminar esta Cuota?" icon="fa fa-trash-o"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Asientos">
+                                <field name="asiento_line">
+                                    <tree create="false" edit="false" delete="false">
+                                        <field name="nro_cuota"/>
+                                        <field name="libro"/>
+                                        <field name="fecha_contable"/>
+                                        <field name="asiento"/>
+                                        <button name="delete_move" type="object" confirm="¿Esta seguro que desea eliminar este Asiento Contable?" icon="fa fa-trash-o"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_prestamo_tree" model="ir.ui.view">
+            <field name="name">account_prestamo_tree_view</field>
+            <field name="model">account.prestamo</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="fecha"/>
+                    <field name="partner_id"/>
+                    <field name="nro_prestamo"/>
+                    <field name="monto"/>
+                    <field name="intereses"/>
+                    <field name="currency_id"/>
+                    <field name="tc"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="account_prestamo_action"> 
+            <field name="name">Prestamos</field>
+            <field name="res_model">account.prestamo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html"> <p class="oe_view_nocontent_create"> Haga click aqui para crear un Prestamo.</p></field>
+        </record>
+
+        <menuitem id="account_prestamo_menu" name="Prestamos" parent="account.menu_finance_entries" action="account_prestamo_action" sequence="100000"/>
+    </data>
+</odoo>

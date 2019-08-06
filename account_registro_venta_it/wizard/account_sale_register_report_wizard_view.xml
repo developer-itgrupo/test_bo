@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_account_sale_register_report_wizard_form">
+			<field name="name">account.sale.register.report.wizard.form</field>
+			<field name="model">account.sale.register.report.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Registro Ventas" version="8.0">
+						<group>
+							<group>
+									<field name="period_ini" />
+									<field name="period_end" />
+						
+									
+							</group>
+							<group>
+									<field name="type_show" />
+								<field name="simplificado" />		
+									
+							</group>
+						</group>
+
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>	
+		
+		<record id="account_sale_register_report_wizard_action" model="ir.actions.server">
+			<field name="name">Registro Ventas</field>
+			<field name="model_id" ref="model_account_sale_register_report_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+        <menuitem name="Registro de Ventas"
+            action="account_sale_register_report_wizard_action"
+            id="menu_action_sale_register_report_it_report"
+            parent="account_registro_compra_it.menu_finance_books_reports"
+            sequence="13"
+        />
+
+
+	</data>
+</openerp>

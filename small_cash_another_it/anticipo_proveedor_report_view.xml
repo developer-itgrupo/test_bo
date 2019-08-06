@@ -1,0 +1,69 @@
+<odoo>
+
+	<report
+		id="report_anticipo"
+		model="anticipo.proveedor"
+		string="Reporte Anticipo"
+		name="small_cash_another_it.report_anticipo_view"
+		file="anticipo.report_anticipo_view"
+		report_type="qweb-pdf"/>
+
+	<template id="report_anticipo_view">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="doc">
+				<t t-call="report.external_layout">
+					<div class="page">
+						<h1>ANTICIPO: <span t-field="doc.name"/></h1>
+						<table class="table">
+							<tbody>
+								<tr>
+									<td>
+										<label>Tipo:</label> <span t-field="doc.tipo"/>
+									</td>
+									<td>
+										<label>Fecha:</label> <span t-field="doc.fecha"/>
+									</td>
+								</tr>
+								<tr coslpan="2">
+									<td>
+										<label>Empresa:</label> <span t-field="doc.empresa"/>
+									</td>
+									
+								</tr>
+								<tr>
+									<td>
+										<label>Metodo Pago:</label> <span t-field="doc.metodo_pago"/>
+									</td>
+									<td>
+										<label>Medio Pago:</label> <span t-field="doc.empresa"/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label>Comprobante Caja:</label> <span t-field="doc.comprobante_caja"/>
+									</td>
+									<td>
+										<label>Comprobante Anticipo:</label> <span t-field="doc.comprobante_anticipo"/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label>Memoria:</label> <span t-field="doc.memoria"/>
+									</td>
+									<td>
+										<label>Comprobante Anticipo:</label> <span t-field="doc.flujo_efectivo"/>
+									</td>
+								</tr>
+								<tr coslpan="2">
+									<td>
+										<h3><label>Monto: </label> <span t-field="doc.monto"/></h3>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</t>
+			</t>
+		</t>
+	</template>
+</odoo>

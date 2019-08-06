@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_saldo_comprobante_periodo_propietario_wizard_form">
+			<field name="name">saldo.comprobante.periodo.propietario.wizard.form</field>
+			<field name="model">saldo.comprobante.periodo.propietario.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Reporte por Periodo" version="8.0">
+						<group>
+								<h1>
+									Desea descargar la cuenta corriente a la fecha?
+								</h1>
+							
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="saldo_comprobante_periodo_propietario_wizard_action" model="ir.actions.act_window">
+			<field name="name">Reporte Comprobante</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">saldo.comprobante.periodo.propietario.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+	
+		<menuitem name="Cuenta Corriente Propietarios" id="saldo_comprobante_periodo_propietario_wizard_menu"  parent="repaccount_contable_period_it.account_contable_id_fch_wizard_menu" action="saldo_comprobante_periodo_propietario_wizard_action" sequence="8" />
+
+		<menuitem name="Reporte de cuentas corrientes" id="saldo_comprobante_periodo_propietario_wizard_menu_sale"  parent="sales_team.menu_sales" action="saldo_comprobante_periodo_propietario_wizard_action" sequence="8" />
+
+
+
+
+	</data>
+</openerp>

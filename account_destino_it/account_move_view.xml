@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	
+	
+        <record id="view_account_analytic_destino_tree" model="ir.ui.view">
+            <field name="name">account.analitica.destino.tree</field>
+            <field name="model">account.analitica.destino</field>
+            <field name="arch" type="xml">
+                    <tree string="Destino" create="false" delete="false" >
+                        <field name="cta_destino_debe" readonly="1"/>
+                        <field name="cta_destino_haber" readonly="1"/>
+                        <field name="debe" readonly="1"/>
+                        <field name="haber" readonly="1"/>
+                        <field name="origen" readonly="1"/>
+                    </tree>
+            </field>
+        </record>
+		
+
+        <record id="view_move_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+					<button name="ver_destinos" string="Ver Destino" type="object" />                    
+                </xpath>
+                
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

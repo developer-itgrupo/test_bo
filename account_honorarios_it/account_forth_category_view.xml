@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+        <record id="view_account_forth_category_tree" model="ir.ui.view">
+            <field name="name">account.forth.category.tree</field>
+            <field name="model">account.forth.category</field>
+            <field eval="1" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Cuarta Categoria" create="false" edit="false">
+                    <field name="periodo" string="Periodo"/>
+					<field name="libro" string="Libro" />
+                    <field name="voucher" string="Vou"/>
+                    <field name="fechaemision" string="Fecha E." />
+                    <field name="fechapago" string="Fecha P." />
+                    <field name="tipodocumento" string="T.D" />
+                    <field name="serie" string="Serie" />
+                    <field name="numero" string="Numero" />
+                    <field name="tipodoc" string="T.D.P." />
+					<field name="numdoc"  string="Num. Documento" />
+					<field name="partner" string="Razon Social" />
+                    <field name="divisa" string="Divisa" />
+                    <field name="tipodecambio" string="Divisa" />
+					<field name="monto"  string="Monto" />
+					<field name="retencion"  string="Retencion" />
+					<field name="neto"  string="Neto Pagado" />
+					<field name="state"  string="Estado" />
+					<field name="periodopago"  string="Periodo Pago" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_forth_category_search" model="ir.ui.view">
+            <field name="name">account.forth.category.search</field>
+            <field name="model">account.forth.category</field>
+            <field name="arch" type="xml">
+                <search string="Cuarta Categoria">
+                    <separator/>
+                    <group expand="1" string="Group By...">
+                        <filter string="Periodo" name="periodo" icon="terp-partner" context="{'group_by':'periodo'}"/>
+                        <filter string="Periodo Pago" name="periodopago" icon="terp-partner" context="{'group_by':'periodopago'}"/>
+                        <filter string="Libro" name="libro" icon="terp-partner" context="{'group_by':'libro'}"/>
+                        <filter string="Partner" name="partner" icon="terp-partner" context="{'group_by':'partner'}"/>
+                        <filter string="Tipo Documento" name="tipodocumento" icon="terp-partner" context="{'group_by':'tipodocumento'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_account_forth_category" model="ir.actions.act_window">
+            <field name="name">Recibos por Honorarios</field>
+            <field name="res_model">account.forth.category</field>
+            <field name="view_id" ref="view_account_forth_category_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="account_forth_category_search"/>
+        </record>
+
+    </data>
+</openerp>

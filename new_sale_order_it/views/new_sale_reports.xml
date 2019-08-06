@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+        <report 
+            string="Presupuesto/Pedido"
+            id="sale.report_sale_order" 
+            model="sale.order" 
+            report_type="qweb-pdf"
+            name="new_sale_order_it.new_report_saleorder" 
+            file="new_sale_order_it.new_report_saleorder" 
+        />
+    </data>
+</odoo>

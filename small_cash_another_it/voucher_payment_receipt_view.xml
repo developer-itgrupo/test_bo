@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="view_account_payment_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account_payment_it.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="hide_small" invisible="1" />
+                    <field name="hide_small_destino" invisible="1"/>
+                    <field name="small_cash" attrs="{'invisible':[('hide_small','=',False)],'readonly':[('state','!=','draft')]}" domain="[('state','=','done')]" />
+                    <field name="small_cash_destino" attrs="{'invisible':[('hide_small_destino','=',False)],'readonly':[('state','!=','draft')]}" domain="[('state','=','done')]"/>
+                </field>
+            </field>
+        </record>
+
+
+
+        <record id="view_account_payment_invoice_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account_payment_it.view_account_payment_invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="journal_id" position="after">
+                    <field name="hide_small" invisible="1" />
+                    <field name="small_cash" attrs="{'invisible':[('hide_small','=',False)]}" domain="[('state','=','done'),('journal_id','=',journal_id)]" />
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

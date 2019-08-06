@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+        <record model="ir.ui.view" id="it_anticipo_proveedores_form">
+            <field name="name">Anticipo a Proveedores</field>
+            <field name="model">anticipo.proveedor</field>
+            <field name="inherit_id" ref="anticipo_proveedor_it.it_anticipo_proveedores_form"/>
+            <field name="arch" type="xml">
+				<field name="metodo_pago" position="after">
+					<field name="hide" invisible="1"/>
+					<field name="small_cash_id" domain="[('state','=','done'),('journal_id','=',metodo_pago)]" attrs="{'required':[('hide','=',True)], 'invisible':[('hide','=',False)]}" />
+				</field>
+			</field>
+		</record>
+	</data>
+</openerp>

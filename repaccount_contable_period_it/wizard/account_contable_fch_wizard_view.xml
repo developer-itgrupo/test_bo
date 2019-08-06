@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_account_contable_fch_wizard_form">
+			<field name="name">account.contable.fch.wizard.form</field>
+			<field name="model">account.contable.fch.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Reporte de Cuenta Corriente" version="7.0">
+						<group>
+							
+							<field name="pendiente" />
+							<field name="type_account" />
+							<field name="cuenta_id" />
+							<field name="partner_id" />
+							<field name="period_ini" />
+							<field name="period_end" />
+							<field name="type_show" />
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="account_contable_fch_wizard_action" model="ir.actions.server">
+			<field name="name">Reporte de Cuenta Corriente</field>
+			<field name="model_id" ref="model_account_contable_fch_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+		<!--<menuitem name="Cuentas Corrientes" id="account_contable_fch_wizard_menu"  parent="account.menu_finance_reports" action="account_contable_fch_wizard_action" sequence="7" /> -->
+
+		<menuitem name="Cuentas Corrientes" id="account_contable_id_fch_wizard_menu"  parent="account.menu_finance_reports" sequence="7" />
+
+		<menuitem name="Detalle" id="detalle_account_contable_fch_wizard_menu"  parent="repaccount_contable_period_it.account_contable_id_fch_wizard_menu" action="account_contable_fch_wizard_action" sequence="7" />
+
+
+
+
+
+	</data>
+</openerp>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		<record model="ir.ui.view" id="view_saldo_comprobante_wizard_form">
+			<field name="name">saldo.comprobante.wizard.form</field>
+			<field name="model">saldo.comprobante.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Saldo Comprobante" version="8.0">
+						<group>
+							<group>
+								<field name="fecha_ini" />
+								<field name="fecha_fin" />
+								<field name="check" />
+								<field name="mostrar" />
+							</group>
+							<group>
+								<field name="empresa" />
+								<field name="tipo" />
+								<field name="cuenta" />
+							</group>
+						</group>
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="saldo_comprobante_wizard_action" model="ir.actions.act_window">
+			<field name="name">Saldo Comprobante</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">saldo.comprobante.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+	
+		<menuitem name="Saldo por Fecha" id="saldo_comprobante_wizard_menu"  parent="repaccount_contable_period_it.account_contable_id_fch_wizard_menu" action="saldo_comprobante_wizard_action" sequence="7" />
+
+
+
+
+	</data>
+</openerp>

@@ -1,0 +1,47 @@
+<odoo>
+     <record id="sale_tarifa_tree" model="ir.ui.view">
+        <field name="name">sale.tarifa.tree</field>
+        <field name="model">product.pricelist.item</field>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <tree string="Elementos Tarifas">
+                <field name="name" string="Applicable On"/>
+                <field name="min_quantity"/>
+                <field name="last_cost" string="Ultima compra"/>
+                <field name="standart_price" string="Costo promedio"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="price" string="Price"/>
+                <field name="base" invisible="1"/>
+                <field name="sequence" invisible="1"/>
+                <field name="price_discount" invisible="1"/>
+                <field name="applied_on" invisible="1"/>
+                <field name="compute_price" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sale_tarifa_search" model="ir.ui.view">
+        <field name="name">sale.tarifa.search</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="arch" type="xml">
+            <search string="Elementos Tarifas">
+                <field name="product_id">Elementos de Tarifas</field>
+            </search>
+        </field>
+    </record>
+    <record id="action_sale_tarifa" model="ir.actions.act_window">
+            <field name="name">Elementos de Tarifas</field>
+            <field name="res_model">product.pricelist.item</field>
+            <field name="view_id" ref="sale_tarifa_tree"/>
+            <field name="type">ir.actions.act_window</field>
+            <field name="sequence" eval="1"/>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sale_tarifa_search"/>
+    </record>
+    <menuitem
+                action="action_sale_tarifa"
+                id="menu_sale_tarifa"
+                parent="sale.menu_product_pricelist_main" sequence="2"/>
+</odoo>

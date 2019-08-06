@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+    <record id="anular_facturas" model="res.groups">
+      <field name="name">Permitir Anular Facturas</field>
+    </record>
+
+        <record id="view_invoice_customer" model="ir.ui.view">
+            <field name="name">account.invoice.customer.pay</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_cancel']" position="after">
+                    <button name="anular_factura_it" type="object" string="Anular Factura"
+                        attrs="{'invisible': [('state','!=','open')]}" groups="account_invoice_anular_it.anular_facturas"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_invoice_supplier" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.pay</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_invoice_cancel']" position="after">
+                    <button name="anular_factura_it" type="object" string="Anular Factura"
+                        attrs="{'invisible': [('state','!=','open')]}" groups="account_invoice_anular_it.anular_facturas"/>
+                </xpath>
+            </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="view_mensaje_anulacionit_form">
+            <field name="name">mensaje.anulacion.it.form</field>
+            <field name="model">mensaje.anulacion.it</field>
+            <field name="arch" type="xml">
+                <form string="Anulación Factura" version="8.0">
+                    <group>
+                        <label string="¿Está usted seguro de anular la factura?" />
+                    </group>
+
+                    <footer>
+                        <button string="Anular" name="mensaje_anulacion_op" type="object" class="oe_highlight"/>
+                        <!-- <button string="Actualizar" name="actualizarsaldoinicial" type="object" class="oe_highlight"/> -->
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+	</data>
+</openerp>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_account_balance_general_wizard_form">
+			<field name="name">account.balance.general.wizard.form</field>
+			<field name="model">account.balance.general.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Situación Financiera" >
+						<group>
+							<group>
+	                    		<field name="fiscalyear_id" />
+								<field name="periodo_ini" />
+								<field name="periodo_fin" />        
+							</group>
+							<group>
+								<field name="type_show" />
+							</group>
+						</group>
+
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="account_balance_general_function" model="ir.actions.server">
+			<field name="name">Situación Financiera</field>
+			<field name="model_id" ref="model_account_balance_general_wizard" />   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+		<menuitem id="menu_situaition_finance" name="Situación Financiera" parent="account_sheet_work.account_finance_state_it" sequence="100" action="account_balance_general_function" />
+		
+
+
+		<record id="view_account_balance_general_tree" model="ir.ui.view">
+            <field name="name">account.balance.general.tree</field>
+            <field name="model">account.balance.general</field>
+            <field name="arch" type="xml">
+                <tree string="Situación Financiera" create="false">
+                    <field name="name" />
+                    <field name="grupo" />
+                    <field name="saldo" />
+                    <field name="orden" />
+                </tree>
+            </field>
+        </record>
+
+		
+
+		<record id="account_balance_general_tree_action" model="ir.actions.act_window">
+			<field name="name">Situación Financiera</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.balance.general</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+		</record>
+
+
+
+
+
+
+
+		<record id="view_asientos_descuadrados_tree" model="ir.ui.view">
+            <field name="name">asientos.descuadrados.tree</field>
+            <field name="model">asientos.descuadrados</field>
+            <field name="arch" type="xml">
+                <tree string="Asientos Descuadrados" create="false">
+                    <field name="periodo" />
+                    <field name="diario" />
+                    <field name="asiento" />
+                    <field name="debe" />
+                    <field name="haber" />
+                    <field name="descuadre" />
+                </tree>
+            </field>
+        </record>
+
+
+
+
+		<record model="ir.ui.view" id="view_asientos_descuadrados_wizard_form">
+			<field name="name">asientos.descuadrados.wizard.form</field>
+			<field name="model">asientos.descuadrados.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Asientos Descuadrados" >
+						<group>
+							<group>
+								<field name="period_ini" required="1" />
+								<field name="period_fin" required="1"/>        
+							</group>
+							<group>
+							</group>
+						</group>
+
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="asientos_descuadrados_wizard_action" model="ir.actions.server">
+			<field name="name">Asientos Descuadrados</field>
+			<field name="model_id" ref="model_asientos_descuadrados_wizard"/>   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+
+		<menuitem id="menu_asientos_descuadrados_wizard" name="Vouchers Descuadrados" parent="menu_consistencia.menu_consistencia_principal" sequence="4000" action="asientos_descuadrados_wizard_action" />
+		
+
+
+
+		<record id="view_tc_descuadrados_tree" model="ir.ui.view">
+            <field name="name">tc.descuadrados.tree</field>
+            <field name="model">tc.descuadrados</field>
+            <field name="arch" type="xml">
+                <tree string="Factura Tc Descuadrados" create="false">
+                    <field name="estado" />
+                    <field name="periodo" />
+                    <field name="libro" />
+                    <field name="voucher" />
+                    <field name="fechaemision" />
+                    <field name="tipodocumento" />
+                    <field name="numero" />
+                    <field name="tipodecambio" />
+                    <field name="tipo_venta" />
+                    <field name="check_currency_rate" />
+                </tree>
+            </field>
+        </record>
+
+
+
+
+		<record model="ir.ui.view" id="view_tc_descuadrados_wizard_form">
+			<field name="name">tc.descuadrados.wizard.form</field>
+			<field name="model">tc.descuadrados.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Factura TC Descuadrados" >
+						<group>
+							<group>
+								<field name="fecha_ini" required="1" />
+								<field name="fecha_fin" required="1"/>        
+							</group>
+							<group>
+							</group>
+						</group>
+
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="tc_descuadrados_wizard_action" model="ir.actions.server">
+			<field name="name">Venta Factura TC Descuadrados</field>
+			<field name="model_id" ref="model_tc_descuadrados_wizard"/>   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+		<menuitem id="menu_asientos_tc_descuadrados_wizard" name="Ventas Factura TC Descuadrados" parent="menu_consistencia.menu_consistencia_principal" sequence="4000" action="tc_descuadrados_wizard_action" />
+
+
+
+
+
+				<record model="ir.ui.view" id="view_tc_descuadrados_wizard_form_compra">
+			<field name="name">compra.tc.descuadrados.wizard.form</field>
+			<field name="model">compra.tc.descuadrados.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Compra Factura TC Descuadrados" >
+						<group>
+							<group>
+								<field name="fecha_ini" required="1" />
+								<field name="fecha_fin" required="1"/>        
+							</group>
+							<group>
+							</group>
+						</group>
+
+						<footer>
+							<button string="Mostrar" name="do_rebuild" type="object" class="oe_highlight"/>
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>
+				</form>
+			</field>
+		</record>
+		
+		<record id="tc_descuadrados_wizard_action_compra" model="ir.actions.server">
+			<field name="name">Compra Factura TC Descuadrados</field>
+			<field name="model_id" ref="model_compra_tc_descuadrados_wizard"/>   
+			<field name="condition">True</field>
+			<field name="type">ir.actions.server</field>
+			<field name="state">code</field>
+			<field name="code">action = model.get_wizard()</field>
+		</record>
+
+		<menuitem id="menu_asientos_tc_descuadrados_wizard_compra" name="Compras Factura TC Descuadrados" parent="menu_consistencia.menu_consistencia_principal" sequence="4000" action="tc_descuadrados_wizard_action_compra" />
+
+	</data>
+</openerp>

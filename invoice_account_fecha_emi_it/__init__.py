@@ -1,0 +1,1 @@
+import acc_invoice_inherit

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+       
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="street" position="after">
+                    <field name="street_req" invisible="0"/>
+                </field>
+                <field name="street" position="attributes">
+                    <attribute name="attrs">{'required': [('street_req','=',True)]}</attribute>
+
+                </field>                
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_tax_form">
+            <field name="name">account.tax.form</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <field name="description" position="after">
+                    <field name="ebill_tax_type"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_main_parameter_form" model="ir.ui.view">
+            <field name="name">main.parameter.form</field>
+            <field name="model">main.parameter</field>
+            <field name="inherit_id" ref="account_parametros_it.view_main_parameter_form"/>
+            <field name='arch' type='xml'>
+                <xpath expr="//notebook" position="inside">
+                    <page string="Facturación electrónica">
+                        <group>
+                            <field name="advance_product_id"/>
+                            <field name="resolution_nf"/>
+                            <field name="web_qry_nf"/>
+                            <field name="url_external_nf"/>
+                        </group>
+                        <notebook>
+                                <page string="Series y NubeFact">
+                                    <field name="serial_ids" nolabel="1">
+                                        <tree string = 'Series y NubeFact' editable="button">
+                                            <field name="serial_id" required="1"/>
+                                            <field name="token_nf" required="1"/>
+                                            <field name="path_nf" required="1"/>
+                                            <field name="is_einvoice"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

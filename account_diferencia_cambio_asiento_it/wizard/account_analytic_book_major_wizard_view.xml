@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+
+		<record model="ir.ui.view" id="view_diferencia_cambio_wizard_form">
+			<field name="name">view.diferencia.cambio.wizard.form</field>
+			<field name="model">view.diferencia.cambio.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Diferencia de Cambio Cuenta Monetaria" version="8.0">
+					<group>
+						<group>
+							<field name="period_id" />
+						</group>
+						<group>
+						</group>
+					</group>
+					<footer>
+						<button string="Mostrar" name="ver_informe" type="object" class="oe_highlight"/>
+						<!-- <button string="Actualizar" name="actualizarsaldoinicial" type="object" class="oe_highlight"/> -->
+						or
+						<button string="Generar Asiento" name="crear_asiento" type="object" class="oe_highlight"/>
+						<!-- <button string="Actualizar" name="actualizarsaldoinicial" type="object" class="oe_highlight"/> -->
+						or
+						<button string="Cancel" class="oe_link" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+	
+        <record id="view_diferencia_cambio_wizard_action" model="ir.actions.act_window">
+            <field name="name">Diferencia de Cambio Cuenta Monetaria</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">view.diferencia.cambio.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+		<menuitem name="Dif. de Cambio Cuenta Monetaria"
+            action="view_diferencia_cambio_wizard_action"
+            id="menu_view_diferencia_cambio_wizard_it"
+            parent="res_currency_rate_it.menu_main_usd_unique"
+            sequence="11"
+        />
+
+<!--
+		<record id="action_asiento_diferencia_cambioi_it" model="ir.actions.server">
+			<field name="name">Crear Asiento</field>
+			<field name="condition">True</field>
+			<field name="model_id" ref="model_view_diferencia_cambio_it" />
+			<field name="state">code</field>
+			<field name="code">action = env['view.diferencia.cambio.wizard'].browse(context['active_ids']).crear_asiento_parcial()</field>
+		</record>
+
+		<record model="ir.values" id="item_action_Asiento_costo_venta_diferencia_cambio">
+            <field eval="'client_action_multi'" name="key2"/>
+            <field eval="'view.diferencia.cambio.it'" name="model"/>
+            <field name="name">Crear Asiento</field>
+            <field name="value" eval="'ir.actions.server,%d'%action_asiento_diferencia_cambioi_it" />
+            <field name="object" eval="True"/>
+        </record>
+-->
+
+	</data>
+</openerp>

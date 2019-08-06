@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+		
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">account.invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                    <field name="journal_id" position="replace">
+                        <field name="journal_id"/>
+                        <field name="move_id"/>
+                    </field>
+            </field>
+        </record>
+
+        <record id="invoice_supplier_tree" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+            <field name="arch" type="xml">
+                    <field name="journal_id" position="replace">
+                        <field name="journal_id"/>
+                        <field name="move_id"/>
+                    </field>
+            </field>
+        </record>
+
+
+        
+
+
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="amount_tax" position="replace">                    
+                    <div class="oe_subtotal_footer oe_right">
+                        <label for="amount_tax"/>
+                        <button name="button_reset_taxes" states="draft"
+                            string="(Actualizar)" class="oe_link oe_edit_only"
+                            type="object" help="Recalcula Impuestos y Total"/>
+                    </div>
+                    <field name="amount_tax" nolabel="1" />                                
+                </field>
+                
+                <field name="payment_term_id" position="replace">
+                </field>
+
+                <xpath expr="//notebook/page[2]/group/group[1]/field[@name='name']" position="replace">                    
+                </xpath>
+
+                <field name="fiscal_position_id" position="after">
+                    <field name="payment_term_id" string="Término de Pago" required="0" attrs="{'readonly':[('state','!=','draft')]}"  />                    
+                    <field name="fecha_perception" />
+                    <field name="name" string="Referencia/Descripción" />
+                </field>
+
+
+                <field name="reference" position="attributes">
+                    <attribute name="string">Nro. Comprobante</attribute>
+                    <attribute name="required">True</attribute>
+                </field>
+
+                <field name="partner_id" position="after">
+                    <field name="it_type_document" required="1" attrs="{'readonly':[('state','!=','draft')]}"  />
+                </field>
+
+                <xpath expr="//form/sheet/group/group[2]" position="inside">
+                    <label string="T.C. Personalizado?" />
+                    <field name="check_currency_rate" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <label string="Tipo de Cambio Divisa"  />                    
+                    <field name="currency_rate_auto" nolabel="1" attrs="{'readonly':['|',('state','!=','draft'),('check_currency_rate','=',False)]}" />
+                       
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    <page string="Sunat">
+                            <group>
+                                <group string="Detracción">
+                                    <!--
+                                    <field name="date" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="code_operation" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="voucher_number" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="amount" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                -->
+                                    <field name="date_detraccion"/>
+                                    <field name="code_operation" />
+                                    <field name="voucher_number" />
+                                    <field name="amount" />
+                                </group>
+                                <group string="Percepción">
+                                    <field name="tipo_tasa_percepcion" />
+                                    <field name="numero_serie" />                                    
+                                    <field name="vacio" invisible="1" />
+                                </group>
+                            </group>
+                        <label for="account_ids"/>
+                        <field name="account_ids" context="{'compro_name': '1','get_code':'1'}" >
+                            <tree editable="bottom" string="Documentos Que Modifica">
+                                            <field name="tipo_doc" context="{'get_code':'1'}" readonly="0"/>
+                                            <field name="fecha"  readonly="0"/>
+                                            <field name="comprobante"  readonly="0"/>
+                                            <field name="perception"/>  
+                                            <field name="base_imponible"/>
+                                            <field name="igv"/>                                          
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    
+                        <page string="PLE">
+                            <group>
+                                <group>
+                                    <field name="ultimo_numero_consolidado" />
+                                    <field name="sujeto_a_retencion" />
+                                    <field name="tipo_adquisicion" />
+                                    <field name="contrato_o_proyecto" />
+                                    <field name="inconsistencia_tipo_cambio" />
+                                    <field name="proveedor_no_habido" />
+                                </group>
+                                <group>
+                                    <field name="renuncio_a_exoneracion_igv" />
+                                    <field name="inconsistencia_dni_liquidacion_comp" />
+                                    <field name="cancelado_medio_pago" />
+                                    <field name="estado_ple_compra" />
+                                    <field name="estado_ple" invisible="1"/>
+                                    <field name="periodo_ajuste_modificacion_ple_compra" invisible="1"/>
+                                    <field name="periodo_ajuste_modificacion_ple" invisible="1"/>
+                                </group>
+                            </group>
+
+                            <group>
+	                            <group>
+									<field name="ckeck_modify_ple" invisible="1"/>
+	            					<field name="period_modify_ple" attrs="{'required': [('ckeck_modify_ple','=',True)]}"/>
+									<field name="ple_diariomayor" string="PLE Diario" invisible="1" />
+								</group>
+								<group>
+								</group>
+							</group>
+
+                        </page>
+
+                        <page string="PLE NO DOMIC.">
+                            <group>
+                                <group>
+                                    <field name="renta_bruta" />
+                                    <field name="deduccion_costo_enajenacion" />
+                                    <field name="renta_neta" />
+                                    <field name="tasa_de_retencion" />
+                                    <field name="impuesto_retenido" />
+                                </group>
+                                <group>
+                                    <field name="exoneracion_aplicada" />
+                                    <field name="tipo_de_renta" />
+                                    <field name="modalidad_servicio_prestada" />
+                                    <field name="aplica_art_del_impuesto" />
+                                    <field name="beneficiario_de_pagos" />
+                                </group>
+                            </group>
+                            
+                    <group string="Sustento Credito Fiscal">
+                        <group>
+                            <field name="tipo_sustento_credito_fiscasl" />
+                            <field name="serie_sustento_credito_fiscasl" />
+                        </group>
+                        <group>
+                            <field name="anio_sustento_credito_fiscasl" />
+                            <field name="nro_comp_sustento_credito_fiscasl" />
+                        </group>
+                    </group>
+                        </page>
+                </xpath>
+                <field name="message_ids" position="after">
+                    <script>
+                        $("span:contains('Solicitar Reembolso')").text('Nota de Credito');
+                    </script>
+                </field>
+            </field>
+        </record>
+
+
+
+
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">account.invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+
+                <field name="date_due" position="attributes">
+                    <attribute name="groups"/>
+                </field>
+
+
+                <field name="amount_tax" position="replace">                    
+                    <div class="oe_subtotal_footer oe_right">
+                        <label for="amount_tax"/>
+                        <button name="button_reset_taxes" states="draft"
+                            string="(Actualizar)" class="oe_link oe_edit_only"
+                            type="object" help="Recalcula Impuestos y Total"/>
+                    </div>
+                    <field name="amount_tax" nolabel="1" />                                
+                </field>
+
+                
+                <field name="payment_term_id" position="replace">
+                </field>
+
+                <xpath expr="//page[@name='other_info']/group/group[2]/field[@name='name']" position="replace">                    
+                    <field name="name" string="Referencia/Descripción" />
+                    <field name="payment_term_id" string="Término de Pago" required="0" attrs="{'readonly':[('state','!=','draft')]}"  />
+                    <field name="fecha_perception" />
+
+                </xpath>
+
+                <field name="partner_id" position="after">
+                    <field name="it_type_document" required="1" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <field name="serie_id" string="Serie" domain="[('type_document_id','=',it_type_document)]" attrs="{'invisible':[('state','!=','draft')],'readonly':[('state','!=','draft')]}" />
+                    <field name="reference" string="Nro. Comprobante" required="1" attrs="{'readonly':[('state','!=','draft')]}"  />
+                </field>
+
+                <xpath expr="//form/sheet/group/group[2]" position="inside">
+                    <label string="T.C. Personalizado?" />
+                    <field name="check_currency_rate" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <label string="Tipo de Cambio Divisa"  />                    
+                    <field name="currency_rate_auto" nolabel="1" attrs="{'readonly':['|',('state','!=','draft'),('check_currency_rate','=',False)]}" />
+                       
+                </xpath>
+
+
+                <xpath expr="//notebook" position="inside">
+                    
+                        <page string="PLE">
+                            <group>
+                                <group>
+                                    <field name="numero_final_consolidado_cliente" />
+                                    <field name="numero_contrato_cliente" />
+                                    <field name="inconsistencia_tipo_cambio_cliente" />
+                                </group>
+                                <group>
+                                    <field name="cancelado_medio_pago_cliente" />
+                                    <field name="estado_ple_venta" />
+                                    <field name="periodo_ajuste_modificacion_ple_venta" invisible="1" />
+                                </group>
+                            </group>
+
+                            <group>
+	                            <group>
+									<field name="ckeck_modify_ple" invisible="1"/>
+	            					<field name="period_modify_ple" attrs="{'required': [('ckeck_modify_ple','=',True)]}"/>
+									<field name="ple_diariomayor" string="PLE Diario" invisible="1"/>
+								</group>
+								<group>
+								</group>
+							</group>
+							
+                        </page>
+                </xpath>
+
+
+                <xpath  expr="//notebook" position="inside">
+                    <page string="Sunat">
+                            <group>
+                                <group string="Detracción">
+                                    <!--
+                                    <field name="date" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="code_operation" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="voucher_number" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="amount" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                -->
+                                    <field name="date_detraccion"/>
+                                    <field name="code_operation" />
+                                    <field name="voucher_number" />
+                                    <field name="amount" />
+                                </group>
+                                <group string="Percepción">
+                                    <field name="tipo_tasa_percepcion" />
+                                    <field name="numero_serie" />                                    
+                                    <field name="vacio" invisible="1" />
+                                </group>
+                            </group>
+                        <label for="account_ids"/>
+                        <!-- <field name="account_ids" context="{'compro_name': '1'}" attrs="{'readonly':[('state','!=','draft')]}"> -->
+
+                        <field name="account_ids" context="{'compro_name': '1'}">
+                            <tree editable="bottom" string="Documentos Que Modifica" >
+
+                                            <field name="tipo_doc"  readonly="0"/>
+                                            <field name="fecha"  readonly="0"/>
+                                            <field name="comprobante"  readonly="0"/>
+                                            <field name="perception"/>
+                                            <field name="base_imponible"/>
+                                            <field name="igv"/>
+                                            
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <field name="message_ids" position="after">
+                    <script>
+                        $("span:contains('Factura rectificativa')").text('Nota de Credito');
+                    </script>
+                </field>
+            </field>
+        </record>
+
+	</data>
+</openerp>
