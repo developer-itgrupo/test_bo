@@ -10,7 +10,7 @@ class account_move(models.Model):
 	def create(self,vals):
 		t = super(account_move,self).create(vals)
 		anio = self.env['main.parameter'].search([])[0].fiscalyear
-		if t.fecha_contable:
+		if t.fecha_contable and anio:
 			if str(t.fecha_contable)[:4] != str(anio):
 				raise ValidationError('La fecha contable esta en otro año fiscal.')
 		return t
@@ -20,7 +20,7 @@ class account_move(models.Model):
 	def write(self,vals):
 		t = super(account_move,self).write(vals)		
 		anio = self.env['main.parameter'].search([])[0].fiscalyear
-		if self.fecha_contable:
+		if self.fecha_contable  and anio:
 			if str(self.fecha_contable)[:4] != str(anio):
 				raise ValidationError('La fecha contable esta en otro año fiscal.')
 		return t
