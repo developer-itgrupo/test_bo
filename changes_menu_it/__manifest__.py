@@ -5,7 +5,7 @@
     'name': "Arreglos BackOffice",
     'category': 'Other',
     'author': 'ITGRUPO-COMPATIBLE-BO',
-    'depends': ['account','kardex_it','account_account_it'],
+    'depends': ['account','account_account_it'],
     'version': '1.0',
     'description': """
     - Agregar Kardex Fisico y Valorado (Inventario y Compras)
