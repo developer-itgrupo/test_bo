@@ -70,7 +70,8 @@ class account_invoice(models.Model):
 				if len(tipo_cambio)>0:
 					tipo_cambio = tipo_cambio[0]
 				else:
-					raise UserError( 'Error!\nNo existe el tipo de cambio para la fecha: '+ str(fecha) )		
+					#raise UserError( 'Error!\nNo existe el tipo de cambio para la fecha: '+ str(fecha) )		
+					pass
 				vactual = 0
 				ractual = 0
 				if self.check_currency_rate:
@@ -97,7 +98,8 @@ class account_invoice(models.Model):
 				if len(tipo_cambio)>0:
 					tipo_cambio = tipo_cambio[0]
 				else:
-					raise UserError( 'Error!\nNo existe el tipo de cambio para la fecha: '+ str(fecha) )
+					#raise UserError( 'Error!\nNo existe el tipo de cambio para la fecha: '+ str(fecha) )
+					pass
 				
 				vactual = 0
 				ractual = 0
