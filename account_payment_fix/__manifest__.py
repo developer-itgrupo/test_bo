@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {
     'author': 'ADHOC SA',
     'website': 'www.adhoc.com.ar',
