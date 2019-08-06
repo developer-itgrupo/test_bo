@@ -3,7 +3,7 @@
 	'name': 'Validar la orden d epedido de cliente',
 	'category': 'sale',
 	'author': 'ODOOPERU',
-	'depends': ['product'],
+	'depends': ['product','sale'],
 	'version': '1.0.0',
 	'description':"""
 	Validar la orden d epedido de cliente

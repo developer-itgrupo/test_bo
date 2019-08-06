@@ -3,7 +3,7 @@
 	'name': 'Nuevo Estilo de Orden de Venta IT',
 	'category': 'base',
 	'author': 'ITGRUPO-COMPATIBLE-BO',
-	'depends': ['import_base_it','sale_order_contact'],
+	'depends': ['import_base_it','sale_order_contact','sale'],
 	'version': '1.0.0',
 	'description':"""
 	Cambio de reporte para las cotizaciones y ventas
