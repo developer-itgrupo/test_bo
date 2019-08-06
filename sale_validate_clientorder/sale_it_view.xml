@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>
-        <record id="view_order_form" model="ir.ui.view">
-            <field name="name">sale.order.form</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sales_report_product_image.view_order_image_form_inherit"/>
-            <field name="arch" type="xml">
-                <!--<field name="client_order_ref" position="after"/>-->
-                <field name="client_order_ref" position="after">
-                    <field name="client_order_ref_state" readonly="1" style="color:green"/>
-                </field>
-            </field>
-        </record>
-    </data>
+
 
     <data>
         <record id="product_supplierinfo_tree_view" model="ir.ui.view">
