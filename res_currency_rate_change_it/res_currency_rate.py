@@ -97,7 +97,6 @@ class account_invoice(models.Model):
 
 				if len(tipo_cambio)>0:
 					tipo_cambio = tipo_cambio[0]
-
 					vactual = 0
 					ractual = 0
 
