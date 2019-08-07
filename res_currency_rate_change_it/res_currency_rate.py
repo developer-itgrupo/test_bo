@@ -108,7 +108,7 @@ class account_invoice(models.Model):
 
 						tipo_cambio.type_sale = self.currency_rate_auto
 						print(self.currency_rate_auto)
-						tipo_cambio.rate = 1.0 / self.currency_rate_auto
+						tipo_cambio.rate = 1.0 / (self.currency_rate_auto if self.currency_rate_auto else 1)
 
 					else:
 						self.currency_rate_auto = tipo_cambio.type_sale
