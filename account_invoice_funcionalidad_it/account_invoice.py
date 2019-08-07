@@ -80,7 +80,8 @@ class account_invoice(models.Model):
 			if moneda == i.currency_id.name:
 				pass 
 			else:
-				raise UserError("La moneda de la factura no coincide con la moneda de la cuenta.")
+				#raise UserError("La moneda de la factura no coincide con la moneda de la cuenta.")
+				pass
 
 			if i.serie_id.id and i.serie_id_internal.id and i.serie_id.id == i.serie_id_internal.id:
 				i.number = i.nro_internal
